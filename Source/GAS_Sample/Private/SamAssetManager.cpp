@@ -3,6 +3,7 @@
 #include "SamAssetManager.h"
 
 #include "SamGameplayTags.h"
+#include "SamLogChannels.h"
 
 USamAssetManager& USamAssetManager::Get()
 {
@@ -15,4 +16,5 @@ void USamAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 	FSamGameplayTags::Get().InitializeNativeGameplayTags();
+	UE_LOG(SamLog, Log, TEXT("SamAssetManager finished initializing."));
 }
