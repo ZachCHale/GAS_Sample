@@ -13,5 +13,6 @@ UCLASS()
 class GAS_SAMPLE_API ASamCharacterEnemy : public ASamCharacterBase
 {
 	GENERATED_BODY()
-	
+	ASamCharacterEnemy();
+	virtual void BeginPlay() override;
 };
