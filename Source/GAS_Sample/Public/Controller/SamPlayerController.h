@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "SamPlayerController.generated.h"
 
@@ -17,7 +18,14 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	ASamPlayerController();
 	virtual void BeginPlay() override;
 
+	void Move(const FInputActionValue& InputActionValue);
+
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputMappingContext> SamContext;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<class UInputAction> MoveAction;
+
+	virtual void SetupInputComponent() override;
 };
