@@ -14,6 +14,8 @@ class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase
 {
 	GENERATED_BODY()
 
+	ASamCharacterPlayer();
+
 	void InitAbilityActorInfo();
 
 	virtual void OnRep_PlayerState() override;
