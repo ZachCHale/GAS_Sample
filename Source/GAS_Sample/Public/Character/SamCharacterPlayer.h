@@ -6,6 +6,8 @@
 #include "Character/SamCharacterBase.h"
 #include "SamCharacterPlayer.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
 /**
  * 
  */
@@ -21,5 +23,14 @@ class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase
 	virtual void OnRep_PlayerState() override;
 
 	virtual void PossessedBy(AController* NewController) override;
+	
+public:
+	void SetCameraDistanceAhead(float Distance);
+	
+
+private:
+	
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
+	TObjectPtr<UCameraComponent> CameraComponent;
 	
 };
