@@ -15,4 +15,7 @@ class GAS_SAMPLE_API ASamCharacterEnemy : public ASamCharacterBase
 	GENERATED_BODY()
 	ASamCharacterEnemy();
 	virtual void BeginPlay() override;
+
+protected:
+	virtual void InitAbilityActorInfo() override;
 };

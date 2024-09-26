@@ -8,5 +8,6 @@ FSamGameplayTags FSamGameplayTags::GameplayTags;
   
 void FSamGameplayTags::InitializeNativeGameplayTags()  
 {  
-	GameplayTags.Sample_Test_Tag = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Sample.Test.Tag"),FString("For testing purposes only"));
+	GameplayTags.Attribute_Primary_MovementSpeed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attribute.Primary.MovementSpeed"),FString("Character Movement Speed"));
 }

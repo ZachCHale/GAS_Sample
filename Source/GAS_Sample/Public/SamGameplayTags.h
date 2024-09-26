@@ -14,7 +14,7 @@ public:
 	static const FSamGameplayTags& Get(){ return GameplayTags;}  
 	static void InitializeNativeGameplayTags();
 
-	FGameplayTag Sample_Test_Tag;
+	FGameplayTag Attribute_Primary_MovementSpeed;
       
 protected:  
 private:  

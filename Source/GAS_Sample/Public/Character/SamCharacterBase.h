@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "SamCharacterBase.generated.h"
 
+struct FOnAttributeChangeData;
 class UAttributeSet;
 
 UCLASS(Abstract)
@@ -20,10 +21,18 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void InitAbilityActorInfo();
+
+	virtual void BindToAttributeChanges();
+
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	void OnMovementSpeedAttributeChanged(const FOnAttributeChangeData& Data);
+
+	void SetMovementSpeed(float NewSpeed);
 };
