@@ -8,6 +8,7 @@
 #include "SamGameModeBase.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Kismet/GameplayStatics.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 TObjectPtr<UCharacterClassInfo> USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
@@ -28,4 +29,19 @@ void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 	DefaultAttributesContextHandle.AddSourceObject(AvatarActor);
 	const FGameplayEffectSpecHandle DefaultAttributesSpecHandle = ASC->MakeOutgoingSpec(DefaultInfo.DefaultAttributes, Level, DefaultAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*DefaultAttributesSpecHandle.Data.Get());
+}
+
+bool USamAbilitySystemLibrary::ApplyGameplayEffectToTarget(AActor* Target,
+	TSubclassOf<UGameplayEffect> GameplayEffectClass, UObject* SourceObject, int32 Level)
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	if(TargetASC == nullptr)
+		return false;
+	check(GameplayEffectClass);
+	check(SourceObject);
+	FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
+	ContextHandle.AddSourceObject(SourceObject);
+	FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
+	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	return true;
 }
