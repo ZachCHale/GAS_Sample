@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "SamCharacterBase.generated.h"
 
+enum class ECharacterClass : uint8;
 struct FOnAttributeChangeData;
 class UAttributeSet;
 
@@ -35,4 +36,9 @@ protected:
 	void OnMovementSpeedAttributeChanged(const FOnAttributeChangeData& Data);
 
 	void SetMovementSpeed(float NewSpeed);
+
+	void InitDefaultAttributes();
+
+	UPROPERTY(EditDefaultsOnly)
+	ECharacterClass CharacterClass;
 };

@@ -45,6 +45,7 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	AttributeSet = SamPS->GetAttributeSet();
 	AbilitySystemComponent->InitAbilityActorInfo(SamPS, this);
 	BindToAttributeChanges();
+	InitDefaultAttributes();
 }
 
 void ASamCharacterPlayer::OnRep_PlayerState()

@@ -5,7 +5,9 @@
 #include "SamGameplayTags.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ASamCharacterBase::ASamCharacterBase()
@@ -45,4 +47,10 @@ void ASamCharacterBase::OnMovementSpeedAttributeChanged(const FOnAttributeChange
 void ASamCharacterBase::SetMovementSpeed(float NewSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+}
+
+void ASamCharacterBase::InitDefaultAttributes()
+{
+	if(!HasAuthority()) return;
+		USamAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, AbilitySystemComponent);
 }

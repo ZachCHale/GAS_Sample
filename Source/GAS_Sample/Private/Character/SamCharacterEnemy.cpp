@@ -17,7 +17,6 @@ void ASamCharacterEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
-	BindToAttributeChanges();
 }
 
 void ASamCharacterEnemy::Tick(float DeltaSeconds)
@@ -50,4 +49,6 @@ void ASamCharacterEnemy::InitAbilityActorInfo()
 {
 	Super::InitAbilityActorInfo();
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	BindToAttributeChanges();
+	InitDefaultAttributes();
 }
