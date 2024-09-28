@@ -21,4 +21,6 @@ class GAS_SAMPLE_API ASamCharacterEnemy : public ASamCharacterBase
 
 protected:
 	virtual void InitAbilityActorInfo() override;
+	
+
 };

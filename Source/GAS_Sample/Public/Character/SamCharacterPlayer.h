@@ -23,6 +23,7 @@ class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase
 	virtual void OnRep_PlayerState() override;
 
 	virtual void PossessedBy(AController* NewController) override;
+
 	
 public:
 	void SetCameraDistanceAhead(float Distance);

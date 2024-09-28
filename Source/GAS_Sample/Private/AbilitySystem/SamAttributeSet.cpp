@@ -4,6 +4,8 @@
 
 #include "SamGameplayTags.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayEffectExtension.h"
+#include "Character/SamCharacterBase.h"
 
 USamAttributeSet::USamAttributeSet()
 {
@@ -35,4 +37,30 @@ void USamAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, Health, COND_None, REPNOTIFY_Always);
+}
+
+void USamAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	if(Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+		PostExecuteIncomingDamage(Data);
+}
+
+void USamAttributeSet::PostExecuteIncomingDamage(const FGameplayEffectModCallbackData& Data)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0);
+	if(LocalIncomingDamage > 0)
+	{
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+		if(const bool bFatal = NewHealth <= 0.f)
+		{
+			ASamCharacterBase* SamCharacter = Cast<ASamCharacterBase>(Data.Target.GetAvatarActor());
+			if(SamCharacter != nullptr)
+			{
+				SamCharacter->Die();
+			}
+		}
+	}
 }

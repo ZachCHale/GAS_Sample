@@ -15,10 +15,18 @@ ASamCharacterBase::ASamCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+void ASamCharacterBase::Die()
+{
+	if(!HasAuthority()) return;
+	if(bIsDead) return;
+	bIsDead = true;
+	OnDeathDelegate.Broadcast();
+	SetLifeSpan(1.f);
+}
+
 void ASamCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASamCharacterBase::InitAbilityActorInfo()

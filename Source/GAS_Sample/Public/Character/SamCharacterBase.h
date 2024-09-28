@@ -11,6 +11,8 @@ enum class ECharacterClass : uint8;
 struct FOnAttributeChangeData;
 class UAttributeSet;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
+
 UCLASS(Abstract)
 class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
@@ -18,6 +20,12 @@ class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySyste
 
 public:
 	ASamCharacterBase();
+	
+	void Die();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathSignature OnDeathDelegate;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,4 +49,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	ECharacterClass CharacterClass;
+
+	bool bIsDead = false;
+	
 };

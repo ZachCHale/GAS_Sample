@@ -22,6 +22,7 @@ void ASamCharacterEnemy::BeginPlay()
 void ASamCharacterEnemy::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	if(bIsDead) return;
 	MoveTowardsClosestPlayer();
 }
 

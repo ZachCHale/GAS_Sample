@@ -38,6 +38,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")  
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(USamAttributeSet, Health);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")  
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(USamAttributeSet, IncomingDamage);
 	
 	UFUNCTION()
 	void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const;
@@ -51,5 +55,9 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	TMap<FGameplayTag, FAttributeFuncPtr> TagsToAttributes;
-	
+
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+private:
+	void PostExecuteIncomingDamage(const FGameplayEffectModCallbackData& Data);
 };
