@@ -5,18 +5,37 @@
 
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAttributeSet.h"
+#include "Components/WidgetComponent.h"
 #include "Player/SamPlayerState.h"
+#include "UI/SamUserWidget.h"
 
 ASamCharacterEnemy::ASamCharacterEnemy()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<USamAbilitySystemComponent>("AbilitySystemComponent");
 	AttributeSet = CreateDefaultSubobject<USamAttributeSet>("AttributeSet");
+
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
+	HealthBar->SetupAttachment(RootComponent);
 }
 
 void ASamCharacterEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
+
+	if(USamUserWidget* SamUserWidget = Cast<USamUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		SamUserWidget->SetWidgetController(this);
+	}
+	
+	const USamAttributeSet* SamAS = CastChecked<USamAttributeSet>(AttributeSet);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data){OnHealthChanged.Broadcast(Data.NewValue);});
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data){OnMaxHealthChanged.Broadcast(Data.NewValue);});
+	
+	OnHealthChanged.Broadcast(SamAS->GetHealth());
+	OnMaxHealthChanged.Broadcast(SamAS->GetMaxHealth());
 }
 
 void ASamCharacterEnemy::Tick(float DeltaSeconds)

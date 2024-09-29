@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SamWidgetControllerEvents.h"
 #include "UI/SamWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
 struct FOnAttributeChangeData;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
 /**
  * 
