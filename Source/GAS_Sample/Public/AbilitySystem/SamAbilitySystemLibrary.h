@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
+class UOverlayWidgetController;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 enum class ECharacterClass : uint8;
@@ -27,5 +28,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static bool ApplyGameplayEffectToTarget(AActor* Target,
 	TSubclassOf<UGameplayEffect> GameplayEffectClass, UObject* SourceObject, int32 Level = 1);
+
+	UFUNCTION(BlueprintCallable)
+	UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 	
 };

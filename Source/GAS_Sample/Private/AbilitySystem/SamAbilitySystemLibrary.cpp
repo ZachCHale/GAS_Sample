@@ -9,6 +9,9 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Player/SamPlayerState.h"
+#include "UI/SamWidgetController.h"
+#include "UI/HUD/SamHUD.h"
 
 TObjectPtr<UCharacterClassInfo> USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
@@ -44,4 +47,21 @@ bool USamAbilitySystemLibrary::ApplyGameplayEffectToTarget(AActor* Target,
 	FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
 	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	return true;
+}
+
+UOverlayWidgetController* USamAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+{
+	if(APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if(ASamHUD* SamHUD = Cast<ASamHUD>(PC->GetHUD()))
+		{
+			ASamPlayerState* PS = PC->GetPlayerState<ASamPlayerState>();
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UAttributeSet* AS = PS->GetAttributeSet();
+			
+			FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
+			return SamHUD->GetOverlayWidgetController(WidgetControllerParams);
+		}
+	}
+	return nullptr;
 }

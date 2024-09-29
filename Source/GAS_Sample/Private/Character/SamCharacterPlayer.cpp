@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/SamPlayerState.h"
+#include "UI/HUD/SamHUD.h"
 
 ASamCharacterPlayer::ASamCharacterPlayer()
 {
@@ -46,6 +47,13 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(SamPS, this);
 	BindToAttributeChanges();
 	InitDefaultAttributes();
+	APlayerController* PC = SamPS->GetPlayerController();
+	if(PC)
+	{
+		ASamHUD* SamHUD = PC->GetHUD<ASamHUD>();
+		SamHUD->InitOverlay(PC, SamPS, AbilitySystemComponent, AttributeSet);
+	}
+	
 }
 
 void ASamCharacterPlayer::OnRep_PlayerState()
