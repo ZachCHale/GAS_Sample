@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/SamPlayerState.h"
+#include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
 
 ASamCharacterPlayer::ASamCharacterPlayer()
@@ -51,9 +52,9 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	if(PC)
 	{
 		ASamHUD* SamHUD = PC->GetHUD<ASamHUD>();
-		SamHUD->InitOverlay(PC, SamPS, AbilitySystemComponent, AttributeSet);
+		const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet);
+		SamHUD->InitOverlay(WidgetControllerParams);
 	}
-	
 }
 
 void ASamCharacterPlayer::OnRep_PlayerState()

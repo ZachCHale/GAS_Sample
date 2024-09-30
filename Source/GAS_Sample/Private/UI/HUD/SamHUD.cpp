@@ -18,7 +18,7 @@ UOverlayWidgetController* ASamHUD::GetOverlayWidgetController(const FWidgetContr
 	return OverlayWidgetController;
 }
 
-void ASamHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
+void ASamHUD::InitOverlay(const FWidgetControllerParams& WCParams)
 {
 	checkf(OverlayClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_SamHUD"));
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_SamHUD"));
@@ -26,8 +26,8 @@ void ASamHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyste
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayClass);
 	OverlayWidget = Cast<USamUserWidget>(Widget);
 
-	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+
+	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WCParams);
 
 	OverlayWidget->SetWidgetController(WidgetController);
 
