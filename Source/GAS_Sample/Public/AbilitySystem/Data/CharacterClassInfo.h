@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "CharacterClassInfo.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 
 UENUM(BlueprintType)
@@ -19,8 +20,12 @@ USTRUCT()
 struct FCharacterClassDefaultInfo
 {
 	GENERATED_BODY()
+	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 };
 
 /**

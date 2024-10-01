@@ -16,5 +16,4 @@ void USamAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 	FSamGameplayTags::Get().InitializeNativeGameplayTags();
-	UE_LOG(SamLog, Log, TEXT("SamAssetManager finished initializing."));
 }

@@ -2,9 +2,14 @@
 
 
 #include "Controller/SamPlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "Character/SamCharacterPlayer.h"
+#include "Input/SamInputComponent.h"
 
 ASamPlayerController::ASamPlayerController()
 {
@@ -42,8 +47,9 @@ void ASamPlayerController::Tick(float DeltaSeconds)
 void ASamPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASamPlayerController::Move);
+	USamInputComponent* SamInputComponent = CastChecked<USamInputComponent>(InputComponent);
+	SamInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASamPlayerController::Move);
+	SamInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::InputActionPressed, &ThisClass::InputActionReleased, &ThisClass::InputActionHeld);
 }
 
 void ASamPlayerController::UpdateCursorInformation()
@@ -87,6 +93,33 @@ void ASamPlayerController::AdjustCameraDistanceAhead()
 	}
 }
 
+void ASamPlayerController::InputActionPressed(FGameplayTag BoundTag)
+{
+	
+	
+}
+
+void ASamPlayerController::InputActionReleased(FGameplayTag BoundTag)
+{
+	if(GetASC() == nullptr) return;
+	GetASC()->AbilityInputReleased(BoundTag);
+}
+
+void ASamPlayerController::InputActionHeld(FGameplayTag BoundTag)
+{
+	if(GetASC() == nullptr) return;
+	GetASC()->AbilityInputHeld(BoundTag);
+}
+
+USamAbilitySystemComponent* ASamPlayerController::GetASC()
+{
+	if(SamAbilitySystemComponent == nullptr)
+	{
+		SamAbilitySystemComponent = Cast<USamAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
+	}
+	return SamAbilitySystemComponent;
+}
+
 
 void ASamPlayerController::Move(const FInputActionValue& InputActionValue)
 {
@@ -102,7 +135,7 @@ void ASamPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
-const FVector& ASamPlayerController::GetCursorWorldPositon() const
+const FVector& ASamPlayerController::GetCursorWorldPosition() const
 {
 	return CursorWorldPosition;
 }

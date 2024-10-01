@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/SamGameplayAbility.h"
 #include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
@@ -34,8 +35,28 @@ void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 	ASC->ApplyGameplayEffectSpecToSelf(*DefaultAttributesSpecHandle.Data.Get());
 }
 
+void USamAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContextObject,
+	ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level)
+{
+	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if(ClassInfo == nullptr) return;
+	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClass];
+
+	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilityClasses = DefaultInfo.DefaultAbilities;
+
+	for (auto AbilityClass : DefaultAbilityClasses)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, Level);
+		if(USamGameplayAbility* SamAbility = Cast<USamGameplayAbility>(AbilitySpec.Ability) )
+		{
+			AbilitySpec.DynamicAbilityTags.AddTag(SamAbility->StartupTag);
+		}
+		ASC->GiveAbility(AbilitySpec);
+	}
+}
+
 bool USamAbilitySystemLibrary::ApplyGameplayEffectToTarget(AActor* Target,
-	TSubclassOf<UGameplayEffect> GameplayEffectClass, UObject* SourceObject, int32 Level)
+                                                           TSubclassOf<UGameplayEffect> GameplayEffectClass, UObject* SourceObject, int32 Level)
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
 	if(TargetASC == nullptr)

@@ -19,6 +19,8 @@ public:
 
 	FGameplayTag Attribute_Primary_MovementSpeed;
 
+	FGameplayTag InputBinding_SlottedAbility_1;
+
       
 protected:  
 private:  

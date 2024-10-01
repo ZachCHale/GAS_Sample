@@ -16,4 +16,7 @@ void FSamGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attribute.Vital.Health"),FString("Character Current Health"));
+
+	GameplayTags.InputBinding_SlottedAbility_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputBinding.SlottedAbility.1"),FString("Input activates the first slotted ability"));
 }

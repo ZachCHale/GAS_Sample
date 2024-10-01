@@ -62,3 +62,9 @@ void ASamCharacterBase::InitDefaultAttributes()
 	if(!HasAuthority()) return;
 		USamAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, AbilitySystemComponent);
 }
+
+void ASamCharacterBase::InitDefaultAbilities()
+{
+	if(!HasAuthority()) return;
+		USamAbilitySystemLibrary::InitializeDefaultAbilities(this, CharacterClass, AbilitySystemComponent);
+}

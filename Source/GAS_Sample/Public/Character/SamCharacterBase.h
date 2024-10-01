@@ -47,6 +47,8 @@ protected:
 
 	void InitDefaultAttributes();
 
+	void InitDefaultAbilities();
+
 	UPROPERTY(EditDefaultsOnly)
 	ECharacterClass CharacterClass;
 

@@ -3,6 +3,7 @@
 
 #include "Character/SamCharacterPlayer.h"
 
+#include "SamGameplayTags.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
@@ -48,6 +49,8 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(SamPS, this);
 	BindToAttributeChanges();
 	InitDefaultAttributes();
+	InitDefaultAbilities();
+	FSamGameplayTags GameplayTags = FSamGameplayTags::Get();
 	APlayerController* PC = SamPS->GetPlayerController();
 	if(PC)
 	{

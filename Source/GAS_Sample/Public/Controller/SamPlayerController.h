@@ -7,6 +7,9 @@
 #include "GameFramework/PlayerController.h"
 #include "SamPlayerController.generated.h"
 
+class USamInputConfig;
+class USamAbilitySystemComponent;
+struct FGameplayTag;
 /**
  * 
  */
@@ -22,14 +25,16 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	void Move(const FInputActionValue& InputActionValue);
 
 	UFUNCTION(BlueprintCallable)
-	const FVector& GetCursorWorldPositon() const;
+	const FVector& GetCursorWorldPosition() const;
 
 	UFUNCTION(BlueprintCallable)
 	const FRotator& GetPawnToCursorRotation() const;
 
 	UFUNCTION(BlueprintCallable)
 	const float& GetCursorRange() const;
-	
+
+protected:
+	virtual void SetupInputComponent() override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
@@ -38,7 +43,7 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputAction> MoveAction;
 
-	virtual void SetupInputComponent() override;
+
 
 	void UpdateCursorInformation();
 	void RotateControllerToFaceCursorWorldPosition();
@@ -49,4 +54,21 @@ private:
 	float CursorRange;
 
 	FRotator InitialControllerRotation;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USamInputConfig> InputConfig;
+
+	void InputActionPressed(FGameplayTag BoundTag);
+
+	void InputActionReleased(FGameplayTag BoundTag);
+
+	void InputActionHeld(FGameplayTag BoundTag);
+
+	UPROPERTY()
+	TObjectPtr<USamAbilitySystemComponent> SamAbilitySystemComponent;
+
+	USamAbilitySystemComponent* GetASC();
+
+	
+
 };

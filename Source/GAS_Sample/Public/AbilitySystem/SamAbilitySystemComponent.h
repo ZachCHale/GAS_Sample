@@ -13,5 +13,9 @@ UCLASS()
 class GAS_SAMPLE_API USamAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
+
+public:
+	void AbilityInputHeld(FGameplayTag GameplayTag);
+	void AbilityInputReleased(FGameplayTag GameplayTag);
+
 };

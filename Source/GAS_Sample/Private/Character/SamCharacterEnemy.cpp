@@ -71,4 +71,7 @@ void ASamCharacterEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	BindToAttributeChanges();
 	InitDefaultAttributes();
+	InitDefaultAbilities();
 }
+
+
