@@ -8,12 +8,11 @@
 #include "AbilitySystem/SamAttributeSet.h"
 #include "GameFramework/Character.h"
 
-//TArray<TObjectPtr<ASamPlayerState>> ASamPlayerState::PlayerStateList;
-
 ASamPlayerState::ASamPlayerState()
 {
 	NetUpdateFrequency = 100.f;
 	AbilitySystemComponent = CreateDefaultSubobject<USamAbilitySystemComponent>("AbilitySystemComponent");
+	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->SetTeam(ETeam::Player);
 	AttributeSet = CreateDefaultSubobject<USamAttributeSet>("AttributeSet");
 }
 

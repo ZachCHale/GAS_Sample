@@ -3,11 +3,10 @@
 #include "Character/SamCharacterBase.h"
 
 #include "SamGameplayTags.h"
-#include "SamLogChannels.h"
+
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
-#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ASamCharacterBase::ASamCharacterBase()
@@ -22,6 +21,11 @@ void ASamCharacterBase::Die()
 	bIsDead = true;
 	OnDeathDelegate.Broadcast();
 	SetLifeSpan(1.f);
+}
+
+ETeam ASamCharacterBase::GetTeam()
+{
+	return CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->GetTeam();
 }
 
 void ASamCharacterBase::BeginPlay()

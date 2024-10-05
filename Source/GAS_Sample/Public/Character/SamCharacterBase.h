@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Actor/Interface/TeamInterface.h"
 #include "SamCharacterBase.generated.h"
 
 enum class ECharacterClass : uint8;
@@ -14,7 +15,7 @@ class UAttributeSet;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
 
 UCLASS(Abstract)
-class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySystemInterface
+class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySystemInterface, public ITeamInterface
 {
 	GENERATED_BODY()
 
@@ -26,6 +27,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDeathDelegate;
 
+	virtual ETeam GetTeam() override;
 
 protected:
 	virtual void BeginPlay() override;

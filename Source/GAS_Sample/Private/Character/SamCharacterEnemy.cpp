@@ -12,6 +12,7 @@
 ASamCharacterEnemy::ASamCharacterEnemy()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<USamAbilitySystemComponent>("AbilitySystemComponent");
+	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->SetTeam(Enemy);
 	AttributeSet = CreateDefaultSubobject<USamAttributeSet>("AttributeSet");
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");

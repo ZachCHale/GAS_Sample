@@ -32,3 +32,13 @@ void USamAbilitySystemComponent::AbilityInputReleased(FGameplayTag GameplayTag)
 		}  
 	}  
 }
+
+ETeam USamAbilitySystemComponent::GetTeam()
+{
+	return Team;
+}
+
+void USamAbilitySystemComponent::SetTeam(ETeam InTeam)
+{
+	Team = InTeam;
+}
