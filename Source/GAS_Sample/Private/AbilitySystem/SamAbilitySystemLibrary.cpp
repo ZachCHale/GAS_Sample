@@ -55,20 +55,39 @@ void USamAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldCo
 	}
 }
 
-bool USamAbilitySystemLibrary::ApplyGameplayEffectToTarget(AActor* Target,
-                                                           TSubclassOf<UGameplayEffect> GameplayEffectClass, UObject* SourceObject, int32 Level)
+bool USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToTarget(AActor* Target,
+	TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* Instigator, AActor* EffectCauser, UObject* SourceObject,
+	int32 Level)
+{
+	FGameplayEffectSpecHandle SpecHandle = CreateGameplayEffectSpecHandle(GameplayEffectClass, Instigator, EffectCauser, SourceObject, Level);
+	return ApplyGameplayEffectSpecToTarget(Target, SpecHandle);
+}
+
+FGameplayEffectSpecHandle USamAbilitySystemLibrary::CreateGameplayEffectSpecHandle(
+	TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* Instigator, AActor* EffectCauser, UObject* SourceObject,
+	int32 Level)
+{
+	check(GameplayEffectClass);
+	check(SourceObject);
+	check(Instigator);
+	check(EffectCauser);
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Instigator);
+	FGameplayEffectContextHandle ContextHandle = SourceASC->MakeEffectContext();
+	ContextHandle.AddInstigator(Instigator,EffectCauser);
+	ContextHandle.AddSourceObject(SourceObject);
+	FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
+	return SpecHandle;
+}
+
+bool USamAbilitySystemLibrary::ApplyGameplayEffectSpecToTarget(AActor* Target, FGameplayEffectSpecHandle SpecHandle)
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
 	if(TargetASC == nullptr)
 		return false;
-	check(GameplayEffectClass);
-	check(SourceObject);
-	FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
-	ContextHandle.AddSourceObject(SourceObject);
-	FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
 	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	return true;
 }
+
 
 UOverlayWidgetController* USamAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {

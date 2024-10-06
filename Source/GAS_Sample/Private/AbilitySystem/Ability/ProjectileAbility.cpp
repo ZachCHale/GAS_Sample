@@ -4,6 +4,7 @@
 #include "AbilitySystem/Ability/ProjectileAbility.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Actor/Projectile.h"
 
 void UProjectileAbility::SpawnProjectile(const FTransform& ProjectileSpawnTransform, const FGameplayAbilityActivationInfo& ActivationInfo)
@@ -17,12 +18,7 @@ void UProjectileAbility::SpawnProjectile(const FTransform& ProjectileSpawnTransf
 
 	AProjectile* Projectile = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, ProjectileSpawnTransform, OwningActor, Cast<APawn>(AvatarActor), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
-	FGameplayEffectContextHandle ContextHandle = SourceASC->MakeEffectContext();
-	ContextHandle.SetAbility(this);
-	ContextHandle.AddInstigator(AvatarActor, Projectile);
-
-	FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), ContextHandle);
+	FGameplayEffectSpecHandle SpecHandle = USamAbilitySystemLibrary::CreateGameplayEffectSpecHandle(DamageEffectClass, OwningActor, Projectile, AvatarActor);
 	
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 

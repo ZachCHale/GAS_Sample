@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 #include "SamLogChannels.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Actor/Interface/TeamInterface.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -54,7 +55,7 @@ void AProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	}
 		
 
-	UObject* Attacker = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator();
+	UObject* Attacker = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigatorAbilitySystemComponent()->GetAvatarActor();
 	UObject* Defender = OtherActor;
 	
 	ETeam AllyTeam = CastChecked<ITeamInterface>(Attacker)->GetTeam();
@@ -65,10 +66,7 @@ void AProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	
 	if(HasAuthority())
 	{
-		if(UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
-		}
+		USamAbilitySystemLibrary::ApplyGameplayEffectSpecToTarget(OtherActor, DamageEffectSpecHandle);
 		Destroy();
 	}
 }
