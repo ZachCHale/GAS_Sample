@@ -19,4 +19,7 @@ void FSamGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.InputBinding_SlottedAbility_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputBinding.SlottedAbility.1"),FString("Input activates the first slotted ability"));
+
+	GameplayTags.AbilityTag_ActivateOnDeath = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("AbilityTag.ActivateOnDeath"),FString("Ability should activate when health reaches zero."));
 }

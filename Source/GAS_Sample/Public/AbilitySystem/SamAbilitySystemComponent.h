@@ -21,8 +21,11 @@ public:
 
 	virtual ETeam GetTeam() override;
 	void SetTeam(ETeam InTeam);
+	
+	void TryActivateAbilitiesByDynamicTag(FGameplayTag GameplayTag);
 
 private:
 	ETeam Team = ETeam::Neutral;
+
 
 };

@@ -19,6 +19,7 @@ void ASamCharacterBase::Die()
 	if(!HasAuthority()) return;
 	if(bIsDead) return;
 	bIsDead = true;
+	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(FSamGameplayTags::Get().AbilityTag_ActivateOnDeath);
 	OnDeathDelegate.Broadcast();
 	SetLifeSpan(1.f);
 }

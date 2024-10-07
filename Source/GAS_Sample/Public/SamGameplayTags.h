@@ -21,6 +21,8 @@ public:
 
 	FGameplayTag InputBinding_SlottedAbility_1;
 
+	FGameplayTag AbilityTag_ActivateOnDeath;
+
       
 protected:  
 private:  

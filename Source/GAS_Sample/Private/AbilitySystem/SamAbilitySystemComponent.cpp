@@ -14,7 +14,7 @@ void USamAbilitySystemComponent::AbilityInputHeld(FGameplayTag GameplayTag)
 			AbilitySpecInputPressed(AbilitySpec);  
 			if(!AbilitySpec.IsActive())  
 			{  
-				TryActivateAbility(AbilitySpec.Handle);  
+				TryActivateAbility(AbilitySpec.Handle);
 			}  
 		}  
 	}  
@@ -41,4 +41,18 @@ ETeam USamAbilitySystemComponent::GetTeam()
 void USamAbilitySystemComponent::SetTeam(ETeam InTeam)
 {
 	Team = InTeam;
+}
+
+void USamAbilitySystemComponent::TryActivateAbilitiesByDynamicTag(FGameplayTag GameplayTag)
+{
+	for(FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())  
+	{  
+		if(AbilitySpec.DynamicAbilityTags.HasTagExact(GameplayTag))  
+		{  
+			if(!AbilitySpec.IsActive())  
+			{  
+				TryActivateAbility(AbilitySpec.Handle);
+			}  
+		}  
+	} 
 }
