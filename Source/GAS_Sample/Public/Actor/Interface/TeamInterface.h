@@ -30,4 +30,6 @@ class GAS_SAMPLE_API ITeamInterface
 
 public:
 	virtual ETeam GetTeam();
+	
+	static bool IsRelativeEnemy(TScriptInterface<ITeamInterface> Source, TScriptInterface<ITeamInterface> Target);
 };

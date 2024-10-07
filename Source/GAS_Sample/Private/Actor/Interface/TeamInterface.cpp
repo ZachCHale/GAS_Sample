@@ -8,3 +8,20 @@ ETeam ITeamInterface::GetTeam()
 {
 	return ETeam::Neutral;
 }
+
+bool ITeamInterface::IsRelativeEnemy(TScriptInterface<ITeamInterface> Source, TScriptInterface<ITeamInterface> Target)
+{
+	ETeam TargetTeam = Target->GetTeam();
+	switch (Source->GetTeam()) {
+	case Player:
+		return TargetTeam != Player;
+		break;
+	case Enemy:
+		return TargetTeam == Player;
+		break;
+	case Neutral:
+		return false;
+		break;
+	}
+	return false;
+}

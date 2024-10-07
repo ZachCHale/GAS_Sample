@@ -46,22 +46,18 @@ void AProjectile::BeginPlay()
 void AProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	AActor* SourceActor = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigatorAbilitySystemComponent()->GetAvatarActor();
+	check(SourceActor->Implements<UTeamInterface>())
 	if(!OtherActor->Implements<UTeamInterface>())
 	{
 		if(HasAuthority())
 			Destroy();
 		return;
 	}
-		
 
-	UObject* Attacker = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigatorAbilitySystemComponent()->GetAvatarActor();
-	UObject* Defender = OtherActor;
-	
-	ETeam AllyTeam = CastChecked<ITeamInterface>(Attacker)->GetTeam();
-	ETeam DefenderTeam = CastChecked<ITeamInterface>(Defender)->GetTeam();
+	bool bIsEnemy = ITeamInterface::IsRelativeEnemy(SourceActor, OtherActor);
 
-	if(AllyTeam == DefenderTeam)
+	if(!bIsEnemy)
 		return;
 	
 	if(HasAuthority())

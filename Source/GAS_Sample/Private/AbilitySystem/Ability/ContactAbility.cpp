@@ -23,8 +23,8 @@ void UContactAbility::ApplyToActorsInContactRange(const FGameplayAbilityActivati
 	bool bIsServer =  HasAuthority(&ActivationInfo);
 	if (!bIsServer) return;
 
-	AActor* Attacker = GetAvatarActorFromActorInfo();
-	ETeam AllyTeam = CastChecked<ITeamInterface>(Attacker)->GetTeam();
+	AActor* SourceActor = GetAvatarActorFromActorInfo();
+	check(SourceActor->Implements<UTeamInterface>())
 
 	//Collision Channels to check
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
@@ -34,23 +34,19 @@ void UContactAbility::ApplyToActorsInContactRange(const FGameplayAbilityActivati
 
 	TArray<AActor*> OverlappedActors;
 	
-	UKismetSystemLibrary::SphereOverlapActors(this, Attacker->GetActorLocation(), ContactRadius, ObjectTypes, NULL, IgnoredActors, OverlappedActors);
+	UKismetSystemLibrary::SphereOverlapActors(this, SourceActor->GetActorLocation(), ContactRadius, ObjectTypes, NULL, IgnoredActors, OverlappedActors);
 
-	for (auto Defender : OverlappedActors)
+	for (auto OtherActor : OverlappedActors)
 	{
-		if(!Defender->Implements<UTeamInterface>())
-		{
+		if(!OtherActor->Implements<UTeamInterface>())
 			continue;
-		}
-		ETeam DefenderTeam = CastChecked<ITeamInterface>(Defender)->GetTeam();
-		if(AllyTeam == DefenderTeam)
+		if(!ITeamInterface::IsRelativeEnemy(SourceActor, OtherActor))
 			continue;
 
-		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToTarget(Defender, GameplayEffectClass, GetOwningActorFromActorInfo(), Attacker, Attacker);
-		
+		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToTarget(OtherActor, GameplayEffectClass, GetOwningActorFromActorInfo(), SourceActor, SourceActor);
 	}
 	if(bDrawDebugSphere)
-		DrawDebugSphere(GetWorld(),Attacker->GetActorLocation(),ContactRadius, 12, FColor::Emerald,false, 3.f);
+		DrawDebugSphere(GetWorld(),SourceActor->GetActorLocation(),ContactRadius, 12, FColor::Emerald,false, 3.f);
 }
 
 void UContactAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)

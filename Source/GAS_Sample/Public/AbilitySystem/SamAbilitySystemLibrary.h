@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
+class ITeamInterface;
 struct FGameplayEffectSpecHandle;
 class UOverlayWidgetController;
 class UGameplayEffect;
@@ -40,5 +41,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
+	
 	
 };

@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SamGameplayAbility.h"
+#include "Actor/Interface/TeamInterface.h"
 #include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
