@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SamWidgetControllerEvents.h"
+#include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
@@ -24,8 +25,17 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnProgressBarStatChangedSignature OnXPProgressChangedDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnIntStatChangedSignature OnLevelChangedDelegate;
 
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
-	
+
+private:
+	void OnXPChanged(int32 NewXP);
+	void OnLevelChanged(int32 NewLevel);
 };

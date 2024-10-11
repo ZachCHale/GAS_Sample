@@ -29,6 +29,9 @@ public:
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level = 1);
 
 	static void InitializeDefaultAbilities(const UObject* WorldContextObject, ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level = 1);
+
+	UFUNCTION(BlueprintCallable)
+	static bool CreateAndApplyGameplayEffectToSelf(AActor* Target, TSubclassOf<UGameplayEffect> GameplayEffectClass, int32 Level = 1);
 	
 	UFUNCTION(BlueprintCallable)
 	static bool CreateAndApplyGameplayEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* Instigator, AActor* EffectCauser, UObject* SourceObject, int32 Level = 1 );

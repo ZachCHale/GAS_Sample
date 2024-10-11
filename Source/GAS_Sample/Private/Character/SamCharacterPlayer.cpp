@@ -76,3 +76,33 @@ void ASamCharacterPlayer::SetCameraDistanceAhead(float Distance)
 {
 	SpringArmComponent->SetRelativeLocation(FVector(Distance ,0.f,0.f));
 }
+
+int32 ASamCharacterPlayer::GetLevel()
+{
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
+	return SamPS->GetLevel();
+}
+
+int32 ASamCharacterPlayer::GetXP()
+{
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
+	return SamPS->GetXP();
+}
+
+void ASamCharacterPlayer::AddToXP(int32 AddedXP)
+{
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
+	return SamPS->AddToXP(AddedXP);
+}
+
+void ASamCharacterPlayer::AddToLevel(int32 AddedLevels)
+{
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
+	return SamPS->AddToLevel(AddedLevels);
+}
+
+int32 ASamCharacterPlayer::FindLevelForXP(int32 XPValue)
+{
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
+	return SamPS->FindLevelForXP(XPValue);
+}

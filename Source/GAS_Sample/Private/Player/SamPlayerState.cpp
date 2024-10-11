@@ -6,7 +6,9 @@
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAttributeSet.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
 
 ASamPlayerState::ASamPlayerState()
 {
@@ -14,6 +16,16 @@ ASamPlayerState::ASamPlayerState()
 	AbilitySystemComponent = CreateDefaultSubobject<USamAbilitySystemComponent>("AbilitySystemComponent");
 	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->SetTeam(ETeam::Player);
 	AttributeSet = CreateDefaultSubobject<USamAttributeSet>("AttributeSet");
+
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+}
+
+void ASamPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ASamPlayerState, Level);
+	DOREPLIFETIME(ASamPlayerState, TotalExperience);
 }
 
 UAbilitySystemComponent* ASamPlayerState::GetAbilitySystemComponent() const
@@ -64,4 +76,33 @@ TArray<FVector> ASamPlayerState::GetAllPlayerCharacterLocations()
 		Locations.Add(Character->GetActorLocation());
 	}
 	return Locations;
+}
+
+void ASamPlayerState::AddToXP(int32 AddedXP)
+{
+	TotalExperience += AddedXP;  
+	ExperienceChangedDelegate.Broadcast(TotalExperience);  
+}
+
+  
+void ASamPlayerState::AddToLevel(int32 AddedLevels)  
+{  
+	Level+=AddedLevels;  
+	LevelChangedDelegate.Broadcast(Level);  
+}
+
+int32 ASamPlayerState::FindLevelForXP(int32 XPValue)
+{
+	check(LevelUpInfo)
+	return LevelUpInfo->FindLevelFromTotalExp(XPValue);
+}
+
+void ASamPlayerState::OnRep_Level(int32 OldLevel)  
+{  
+	LevelChangedDelegate.Broadcast(Level);  
+}  
+  
+void ASamPlayerState::OnRep_TotalExperience(int32 OldTotalExperience)  
+{  
+	ExperienceChangedDelegate.Broadcast(TotalExperience);  
 }

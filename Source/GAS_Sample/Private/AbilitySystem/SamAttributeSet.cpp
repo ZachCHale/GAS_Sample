@@ -5,7 +5,9 @@
 #include "SamGameplayTags.h"
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
+#include "SamLogChannels.h"
 #include "Character/SamCharacterBase.h"
+#include "Player/PlayerInterface.h"
 
 USamAttributeSet::USamAttributeSet()
 {
@@ -44,6 +46,8 @@ void USamAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 	Super::PostGameplayEffectExecute(Data);
 	if(Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 		PostExecuteIncomingDamage(Data);
+	else if(Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+		PostExecuteIncomingXP(Data);
 }
 
 void USamAttributeSet::PostExecuteIncomingDamage(const FGameplayEffectModCallbackData& Data)
@@ -63,4 +67,29 @@ void USamAttributeSet::PostExecuteIncomingDamage(const FGameplayEffectModCallbac
 			}
 		}
 	}
+}
+
+void USamAttributeSet::PostExecuteIncomingXP(const FGameplayEffectModCallbackData& Data)
+{
+	const float LocalIncomingXP = GetIncomingXP();
+	SetIncomingXP(0);
+
+	AActor* TargetActor = Data.Target.GetAvatarActor();
+	if(!TargetActor->Implements<UPlayerInterface>())
+		return;
+
+	IPlayerInterface* Player = Cast<IPlayerInterface>(TargetActor);
+	
+	int32 CurrentLevel = Player->GetLevel();
+	int32 CurrentXP = Player->GetXP();
+	int32 NewXP = CurrentXP + LocalIncomingXP;
+	int NewLevel = Player->FindLevelForXP(NewXP);
+	int32 LevelChange = NewLevel-CurrentLevel;
+	if(LevelChange > 0)
+	{
+		//LevelUp
+		Player->AddToLevel(LevelChange);
+		UE_LOG(SamLog, Log, TEXT("Level Up %d"), Player->GetLevel());
+	}
+	Player->AddToXP(LocalIncomingXP);
 }

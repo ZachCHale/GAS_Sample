@@ -55,10 +55,24 @@ void USamAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldCo
 		ASC->GiveAbility(AbilitySpec);
 	}
 }
+//Use this for applying from objects that don't have an ASC.
+bool USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(AActor* Target,
+	TSubclassOf<UGameplayEffect> GameplayEffectClass, int32 Level)
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	if(TargetASC == nullptr)
+		return false;
+	AActor* Instigator = TargetASC->GetOwnerActor();
+	AActor* EffectCauser = Instigator;
+	UObject* SourceObject = TargetASC->GetAvatarActor();
+	
+	FGameplayEffectSpecHandle SpecHandle = CreateGameplayEffectSpecHandle(GameplayEffectClass, Instigator, EffectCauser, SourceObject, Level);
+	return ApplyGameplayEffectSpecToTarget(Target, SpecHandle);
+}
 
 bool USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToTarget(AActor* Target,
-	TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* Instigator, AActor* EffectCauser, UObject* SourceObject,
-	int32 Level)
+                                                                    TSubclassOf<UGameplayEffect> GameplayEffectClass, AActor* Instigator, AActor* EffectCauser, UObject* SourceObject,
+                                                                    int32 Level)
 {
 	FGameplayEffectSpecHandle SpecHandle = CreateGameplayEffectSpecHandle(GameplayEffectClass, Instigator, EffectCauser, SourceObject, Level);
 	return ApplyGameplayEffectSpecToTarget(Target, SpecHandle);

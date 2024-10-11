@@ -17,6 +17,9 @@ ASamCharacterEnemy::ASamCharacterEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(RootComponent);
+
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 }
 
 void ASamCharacterEnemy::BeginPlay()

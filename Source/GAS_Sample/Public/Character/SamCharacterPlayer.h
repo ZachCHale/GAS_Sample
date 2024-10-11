@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/SamCharacterBase.h"
+#include "Player/PlayerInterface.h"
 #include "SamCharacterPlayer.generated.h"
 
 class UCameraComponent;
@@ -12,7 +13,7 @@ class USpringArmComponent;
  * 
  */
 UCLASS()
-class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase
+class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,12 @@ class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase
 	
 public:
 	void SetCameraDistanceAhead(float Distance);
+
+	virtual int32 GetLevel() override;
+	virtual int32 GetXP() override;
+	virtual void AddToXP(int32 AddedXP) override;
+	virtual void AddToLevel(int32 AddedLevels) override;
+	virtual int32 FindLevelForXP(int32 XPValue) override;
 	
 
 private:
