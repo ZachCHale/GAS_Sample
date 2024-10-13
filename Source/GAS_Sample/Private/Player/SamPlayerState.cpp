@@ -36,13 +36,15 @@ UAbilitySystemComponent* ASamPlayerState::GetAbilitySystemComponent() const
 void ASamPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-	PlayerStateList.Add(this);
+	if(HasAuthority())
+		PlayerStateList.Add(this);
 }
 
 void ASamPlayerState::Destroyed()
 {
 	Super::Destroyed();
-	PlayerStateList.Remove(this);
+	if(HasAuthority())
+		PlayerStateList.Remove(this);
 }
 
 UAttributeSet* ASamPlayerState::GetAttributeSet() const
@@ -97,12 +99,12 @@ int32 ASamPlayerState::FindLevelForExp(int32 ExpValue)
 	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
 }
 
-void ASamPlayerState::OnRep_Level(const int32 OldLevel) const
+void ASamPlayerState::OnRep_Level(const int32& OldLevel) const
 {  
 	LevelChangedDelegate.Broadcast(Level);  
 }  
   
-void ASamPlayerState::OnRep_TotalExp(const int32 OldTotalExp) const
+void ASamPlayerState::OnRep_TotalExp(const int32& OldTotalExp) const
 {  
 	ExpChangedDelegate.Broadcast(TotalExp);  
 }

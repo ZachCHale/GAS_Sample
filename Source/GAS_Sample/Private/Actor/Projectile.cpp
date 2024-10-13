@@ -14,6 +14,7 @@
 AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("Sphere");
 	SetRootComponent(SphereComponent);
@@ -46,6 +47,7 @@ void AProjectile::BeginPlay()
 void AProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if(!DamageEffectSpecHandle.Data.IsValid()) return;
 	AActor* SourceActor = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigatorAbilitySystemComponent()->GetAvatarActor();
 	check(SourceActor->Implements<UTeamInterface>())
 	if(!OtherActor->Implements<UTeamInterface>())

@@ -66,9 +66,9 @@ private:
 	int32 TotalExp = 0;  
   
 	UFUNCTION()  
-	void OnRep_Level(const int32 OldLevel) const;  
+	void OnRep_Level(const int32& OldLevel) const;  
   
 	UFUNCTION()  
-	void OnRep_TotalExp(const int32 OldTotalExp) const;
+	void OnRep_TotalExp(const int32& OldTotalExp) const;
 
 };
