@@ -34,12 +34,11 @@ void ASamCharacterEnemy::BeginPlay()
 	
 	const USamAttributeSet* SamAS = CastChecked<USamAttributeSet>(AttributeSet);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddLambda(
-		[this](const FOnAttributeChangeData& Data){OnHealthChanged.Broadcast(Data.NewValue);});
+		[this, SamAS](const FOnAttributeChangeData& Data){OnHealthChanged.Broadcast(Data.NewValue, SamAS->GetMaxHealth(), Data.NewValue/SamAS->GetMaxHealth());});
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddLambda(
-		[this](const FOnAttributeChangeData& Data){OnMaxHealthChanged.Broadcast(Data.NewValue);});
+		[this, SamAS](const FOnAttributeChangeData& Data){OnHealthChanged.Broadcast(SamAS->GetHealth(), Data.NewValue, SamAS->GetHealth()/Data.NewValue);});
 	
-	OnHealthChanged.Broadcast(SamAS->GetHealth());
-	OnMaxHealthChanged.Broadcast(SamAS->GetMaxHealth());
+	OnHealthChanged.Broadcast(SamAS->GetHealth(), SamAS->GetMaxHealth(), SamAS->GetHealth()/SamAS->GetMaxHealth());
 }
 
 void ASamCharacterEnemy::Tick(float DeltaSeconds)

@@ -18,10 +18,8 @@ class GAS_SAMPLE_API ASamCharacterEnemy : public ASamCharacterBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChangedSignature OnHealthChanged;
+	FOnProgressBarStatChangedSignature OnHealthChanged;
 	
-	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChangedSignature OnMaxHealthChanged;
 private:
 	ASamCharacterEnemy();
 	virtual void BeginPlay() override;

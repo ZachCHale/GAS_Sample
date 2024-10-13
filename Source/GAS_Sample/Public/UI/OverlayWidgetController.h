@@ -19,12 +19,9 @@ class GAS_SAMPLE_API UOverlayWidgetController : public USamWidgetController
 	GENERATED_BODY()
 	
 public:
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChangedSignature OnHealthChanged;
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChangedSignature OnMaxHealthChanged;
+	FOnProgressBarStatChangedSignature OnHealthChangedDelegate;
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnProgressBarStatChangedSignature OnExpProgressChangedDelegate;
@@ -36,6 +33,9 @@ public:
 	virtual void BindCallbacksToDependencies() override;
 
 private:
-	void OnExpChanged(int32 NewExp);
-	void OnLevelChanged(int32 NewLevel);
+
+	void OnHealthChanged(const FOnAttributeChangeData& NewHealth) const;
+	void OnMaxHealthChanged(const FOnAttributeChangeData& NewMaxHealth) const;
+	void OnExpChanged(int32 NewExp) const;
+	void OnLevelChanged(int32 NewLevel) const;
 };
