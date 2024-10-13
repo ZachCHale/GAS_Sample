@@ -18,9 +18,9 @@ class GAS_SAMPLE_API IPlayerInterface
 	GENERATED_BODY()
 
 public:
-	virtual int32 GetXP() = 0;
+	virtual int32 GetTotalExp() = 0;
 	virtual int32 GetLevel() = 0;
-	virtual void AddToXP(int32 AddedXP) = 0;
+	virtual void AddToExp(int32 AddedExp) = 0;
 	virtual void AddToLevel(int32 AddedLevels) = 0;
-	virtual int32 FindLevelForXP(int32 XPValue) = 0;
+	virtual int32 FindLevelForExp(int32 ExpValue) = 0;
 };

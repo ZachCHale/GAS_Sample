@@ -44,8 +44,8 @@ public:
 	ATTRIBUTE_ACCESSORS(USamAttributeSet, IncomingDamage);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")  
-	FGameplayAttributeData IncomingXP;
-	ATTRIBUTE_ACCESSORS(USamAttributeSet, IncomingXP);
+	FGameplayAttributeData IncomingExp;
+	ATTRIBUTE_ACCESSORS(USamAttributeSet, IncomingExp);
 	
 	UFUNCTION()
 	void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const;
@@ -64,5 +64,5 @@ public:
 
 private:
 	void PostExecuteIncomingDamage(const FGameplayEffectModCallbackData& Data);
-	void PostExecuteIncomingXP(const FGameplayEffectModCallbackData& Data);
+	void PostExecuteIncomingExp(const FGameplayEffectModCallbackData& Data);
 };

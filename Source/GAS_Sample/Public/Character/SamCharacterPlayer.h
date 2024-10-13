@@ -30,10 +30,10 @@ public:
 	void SetCameraDistanceAhead(float Distance);
 
 	virtual int32 GetLevel() override;
-	virtual int32 GetXP() override;
-	virtual void AddToXP(int32 AddedXP) override;
+	virtual int32 GetTotalExp() override;
+	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
-	virtual int32 FindLevelForXP(int32 XPValue) override;
+	virtual int32 FindLevelForExp(int32 ExpValue) override;
 	
 
 private:

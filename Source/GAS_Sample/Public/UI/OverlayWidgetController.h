@@ -27,7 +27,7 @@ public:
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnProgressBarStatChangedSignature OnXPProgressChangedDelegate;
+	FOnProgressBarStatChangedSignature OnExpProgressChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnIntStatChangedSignature OnLevelChangedDelegate;
@@ -36,6 +36,6 @@ public:
 	virtual void BindCallbacksToDependencies() override;
 
 private:
-	void OnXPChanged(int32 NewXP);
+	void OnExpChanged(int32 NewExp);
 	void OnLevelChanged(int32 NewLevel);
 };

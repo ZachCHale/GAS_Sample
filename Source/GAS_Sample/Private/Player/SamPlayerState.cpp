@@ -25,7 +25,7 @@ void ASamPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ASamPlayerState, Level);
-	DOREPLIFETIME(ASamPlayerState, TotalExperience);
+	DOREPLIFETIME(ASamPlayerState, TotalExp);
 }
 
 UAbilitySystemComponent* ASamPlayerState::GetAbilitySystemComponent() const
@@ -78,10 +78,10 @@ TArray<FVector> ASamPlayerState::GetAllPlayerCharacterLocations()
 	return Locations;
 }
 
-void ASamPlayerState::AddToXP(int32 AddedXP)
+void ASamPlayerState::AddToExp(int32 AddedExp)
 {
-	TotalExperience += AddedXP;  
-	ExperienceChangedDelegate.Broadcast(TotalExperience);  
+	TotalExp += AddedExp;  
+	ExpChangedDelegate.Broadcast(TotalExp);  
 }
 
   
@@ -91,18 +91,18 @@ void ASamPlayerState::AddToLevel(int32 AddedLevels)
 	LevelChangedDelegate.Broadcast(Level);  
 }
 
-int32 ASamPlayerState::FindLevelForXP(int32 XPValue)
+int32 ASamPlayerState::FindLevelForExp(int32 ExpValue)
 {
 	check(LevelUpInfo)
-	return LevelUpInfo->FindLevelFromTotalExp(XPValue);
+	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
 }
 
-void ASamPlayerState::OnRep_Level(int32 OldLevel)  
+void ASamPlayerState::OnRep_Level(const int32 OldLevel) const
 {  
 	LevelChangedDelegate.Broadcast(Level);  
 }  
   
-void ASamPlayerState::OnRep_TotalExperience(int32 OldTotalExperience)  
+void ASamPlayerState::OnRep_TotalExp(const int32 OldTotalExp) const
 {  
-	ExperienceChangedDelegate.Broadcast(TotalExperience);  
+	ExpChangedDelegate.Broadcast(TotalExp);  
 }

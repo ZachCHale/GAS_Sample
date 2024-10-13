@@ -36,14 +36,14 @@ public:
 	static TArray<FVector> GetAllPlayerCharacterLocations();
 
 	virtual int32 GetLevel() override { return Level; }
-	virtual int32 GetXP() override { return TotalExperience; };
+	virtual int32 GetTotalExp() override { return TotalExp; };
 
-	virtual void AddToXP(int32 AddedXP) override;
+	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
 
-	virtual int32 FindLevelForXP(int32 XPValue) override;
+	virtual int32 FindLevelForExp(int32 ExpValue) override;
   
-	FOnPlayerStatChangedSignature ExperienceChangedDelegate;  
+	FOnPlayerStatChangedSignature ExpChangedDelegate;  
 	FOnPlayerStatChangedSignature LevelChangedDelegate;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -62,13 +62,13 @@ private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Level)  
 	int32 Level = 1;  
   
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_TotalExperience)  
-	int32 TotalExperience = 0;  
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_TotalExp)  
+	int32 TotalExp = 0;  
   
 	UFUNCTION()  
-	void OnRep_Level(int32 OldLevel);  
+	void OnRep_Level(const int32 OldLevel) const;  
   
 	UFUNCTION()  
-	void OnRep_TotalExperience(int32 OldTotalExperience);
+	void OnRep_TotalExp(const int32 OldTotalExp) const;
 
 };

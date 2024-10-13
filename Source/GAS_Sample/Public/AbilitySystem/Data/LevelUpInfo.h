@@ -15,13 +15,13 @@ struct FLevelUpInfoItem
 };
 
 USTRUCT(BlueprintType)
-struct FExperienceProgressDetails
+struct FExpProgressDetails
 {
 	GENERATED_BODY()
 	UPROPERTY(BlueprintReadOnly)
-	int32 CurrentExperience;
+	int32 CurrentExp;
 	UPROPERTY(BlueprintReadOnly)
-	int32 NeededExperience;
+	int32 NeededExp;
 	UPROPERTY(BlueprintReadOnly)
 	float ProgressPercentage;
 };
@@ -39,8 +39,6 @@ public:
 	TArray<FLevelUpInfoItem> LevelUpInfo;
 
 	int32 FindLevelFromTotalExp(int32 TotalExp);
-	float GetPercentProgress(int32 TotalExp);
 
-	FExperienceProgressDetails GetExperienceProgressDetails(int32 TotalXP);
-	
+	FExpProgressDetails GetExpProgressDetails(int32 TotalExp);
 };

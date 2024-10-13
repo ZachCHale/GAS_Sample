@@ -17,8 +17,8 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnMaxHealthChanged.Broadcast(SamAS->GetMaxHealth());
 
 	ULevelUpInfo* LevelUpInfo = SamPS->LevelUpInfo;
-	FExperienceProgressDetails XPDetails = LevelUpInfo->GetExperienceProgressDetails(SamPS->GetXP());
-	OnXPProgressChangedDelegate.Broadcast(XPDetails.CurrentExperience, XPDetails.NeededExperience, XPDetails.ProgressPercentage);
+	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(SamPS->GetTotalExp());
+	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 	OnLevelChangedDelegate.Broadcast(SamPS->GetLevel());
 }
 
@@ -31,20 +31,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data){OnMaxHealthChanged.Broadcast(Data.NewValue);});
 
-	SamPS->ExperienceChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	SamPS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
 	SamPS->LevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnLevelChanged);
 }
 
-void UOverlayWidgetController::OnXPChanged(int32 NewXP)
+void UOverlayWidgetController::OnExpChanged(int32 NewExp)
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 	ULevelUpInfo* LevelUpInfo = SamPS->LevelUpInfo;
 	checkf(LevelUpInfo, TEXT("Unable to find level up info"));
-	FExperienceProgressDetails XPDetails = LevelUpInfo->GetExperienceProgressDetails(NewXP);
+	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(NewExp);
 
-	OnXPProgressChangedDelegate.Broadcast(XPDetails.CurrentExperience, XPDetails.NeededExperience, XPDetails.ProgressPercentage);
+	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 	
-	UE_LOG(SamLog, Log, TEXT("XP: %d / %d = %f"), XPDetails.CurrentExperience, XPDetails.NeededExperience, XPDetails.ProgressPercentage);
+	UE_LOG(SamLog, Log, TEXT("Exp: %d / %d = %f"), ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 }
 
 void UOverlayWidgetController::OnLevelChanged(int32 NewLevel)

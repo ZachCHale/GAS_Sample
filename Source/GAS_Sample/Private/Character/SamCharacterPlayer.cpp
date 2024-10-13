@@ -83,16 +83,16 @@ int32 ASamCharacterPlayer::GetLevel()
 	return SamPS->GetLevel();
 }
 
-int32 ASamCharacterPlayer::GetXP()
+int32 ASamCharacterPlayer::GetTotalExp()
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
-	return SamPS->GetXP();
+	return SamPS->GetTotalExp();
 }
 
-void ASamCharacterPlayer::AddToXP(int32 AddedXP)
+void ASamCharacterPlayer::AddToExp(int32 AddedExp)
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
-	return SamPS->AddToXP(AddedXP);
+	return SamPS->AddToExp(AddedExp);
 }
 
 void ASamCharacterPlayer::AddToLevel(int32 AddedLevels)
@@ -101,8 +101,8 @@ void ASamCharacterPlayer::AddToLevel(int32 AddedLevels)
 	return SamPS->AddToLevel(AddedLevels);
 }
 
-int32 ASamCharacterPlayer::FindLevelForXP(int32 XPValue)
+int32 ASamCharacterPlayer::FindLevelForExp(int32 ExpValue)
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
-	return SamPS->FindLevelForXP(XPValue);
+	return SamPS->FindLevelForExp(ExpValue);
 }
