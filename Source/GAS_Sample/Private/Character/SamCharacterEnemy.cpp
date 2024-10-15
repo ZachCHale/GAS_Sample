@@ -4,6 +4,7 @@
 #include "Character/SamCharacterEnemy.h"
 
 #include "AbilitySystem/SamAbilitySystemComponent.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "Player/SamPlayerState.h"
@@ -50,7 +51,7 @@ void ASamCharacterEnemy::Tick(float DeltaSeconds)
 
 void ASamCharacterEnemy::MoveTowardsClosestPlayer()
 {
-	TArray<FVector> PlayerLocations = ASamPlayerState::GetAllPlayerCharacterLocations();
+	TArray<FVector> PlayerLocations = USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(this);
 	if(PlayerLocations.Num() == 0) return;
 	FVector TargetPosition = PlayerLocations[0];
 	float TargetDistance = FVector::Dist(GetActorLocation(), TargetPosition);

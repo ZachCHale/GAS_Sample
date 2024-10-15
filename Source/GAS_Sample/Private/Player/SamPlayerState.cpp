@@ -3,7 +3,6 @@
 
 #include "Player/SamPlayerState.h"
 
-#include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAttributeSet.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
@@ -69,17 +68,6 @@ TArray<TObjectPtr<ACharacter>> ASamPlayerState::GetAllPlayerCharacters()
 	return Characters;
 }
 
-TArray<FVector> ASamPlayerState::GetAllPlayerCharacterLocations()
-{
-	TArray<TObjectPtr<ACharacter>> Characters = ASamPlayerState::GetAllPlayerCharacters();
-	TArray<FVector> Locations;
-	for (auto Character : Characters)
-	{
-		Locations.Add(Character->GetActorLocation());
-	}
-	return Locations;
-}
-
 void ASamPlayerState::AddToExp(int32 AddedExp)
 {
 	TotalExp += AddedExp;  
@@ -99,12 +87,12 @@ int32 ASamPlayerState::FindLevelForExp(int32 ExpValue)
 	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
 }
 
-void ASamPlayerState::OnRep_Level(const int32& OldLevel) const
+void ASamPlayerState::OnRep_Level(int32 OldLevel) const
 {  
 	LevelChangedDelegate.Broadcast(Level);  
 }  
   
-void ASamPlayerState::OnRep_TotalExp(const int32& OldTotalExp) const
+void ASamPlayerState::OnRep_TotalExp(int32 OldTotalExp) const
 {  
 	ExpChangedDelegate.Broadcast(TotalExp);  
 }

@@ -11,6 +11,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SamGameplayAbility.h"
 #include "Actor/Interface/TeamInterface.h"
+#include "GameFramework/Character.h"
 #include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
@@ -119,4 +120,20 @@ UOverlayWidgetController* USamAbilitySystemLibrary::GetOverlayWidgetController(c
 		}
 	}
 	return nullptr;
+}
+
+TArray<FVector> USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(const UObject* WorldContextObject)
+{
+	static double LastQueryTime = -1;
+	static TArray<FVector> CurrentLocations;
+	if(LastQueryTime == UGameplayStatics::GetTimeSeconds(WorldContextObject))
+		return CurrentLocations;
+	LastQueryTime = UGameplayStatics::GetTimeSeconds(WorldContextObject);
+	CurrentLocations.Empty();
+	TArray<TObjectPtr<ACharacter>> PlayerCharacters = ASamPlayerState::GetAllPlayerCharacters();
+	for (TObjectPtr<ACharacter> PlayerCharacter : PlayerCharacters)
+	{
+		CurrentLocations.Add(PlayerCharacter->GetActorLocation());
+	}
+	return CurrentLocations;
 }

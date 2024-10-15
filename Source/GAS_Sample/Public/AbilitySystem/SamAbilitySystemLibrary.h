@@ -44,6 +44,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable)
+	static TArray<FVector> GetCurrentPlayerCharacterLocations(const UObject* WorldContextObject);
 	
 	
 };

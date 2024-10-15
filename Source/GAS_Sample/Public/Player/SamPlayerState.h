@@ -27,13 +27,12 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	virtual void BeginPlay() override;
-
+	
 	virtual void Destroyed() override;
 	
 	UAttributeSet* GetAttributeSet() const;
 
 	static TArray<TObjectPtr<ACharacter>> GetAllPlayerCharacters();
-	static TArray<FVector> GetAllPlayerCharacterLocations();
 
 	virtual int32 GetLevel() override { return Level; }
 	virtual int32 GetTotalExp() override { return TotalExp; };
@@ -66,9 +65,9 @@ private:
 	int32 TotalExp = 0;  
   
 	UFUNCTION()  
-	void OnRep_Level(const int32& OldLevel) const;  
+	void OnRep_Level(int32 OldLevel) const;  
   
 	UFUNCTION()  
-	void OnRep_TotalExp(const int32& OldTotalExp) const;
+	void OnRep_TotalExp(int32 OldTotalExp) const;
 
 };

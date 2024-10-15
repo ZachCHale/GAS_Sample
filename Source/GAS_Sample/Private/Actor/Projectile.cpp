@@ -57,6 +57,9 @@ void AProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		return;
 	}
 
+	if(!UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		return;
+
 	bool bIsEnemy = ITeamInterface::IsRelativeEnemy(SourceActor, OtherActor);
 
 	if(!bIsEnemy)
