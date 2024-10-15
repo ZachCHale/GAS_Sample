@@ -30,6 +30,11 @@ ETeam ASamCharacterBase::GetTeam()
 	return CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->GetTeam();
 }
 
+bool ASamCharacterBase::GetIsDead() const
+{
+	return bIsDead;
+}
+
 void ASamCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

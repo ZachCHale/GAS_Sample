@@ -29,6 +29,9 @@ public:
 
 	virtual ETeam GetTeam() override;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool GetIsDead() const;
+
 protected:
 	virtual void BeginPlay() override;
 
