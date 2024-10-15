@@ -51,6 +51,8 @@ void ASamCharacterEnemy::Tick(float DeltaSeconds)
 
 void ASamCharacterEnemy::MoveTowardsClosestPlayer()
 {
+	if(!HasAuthority())
+		return;
 	TArray<FVector> PlayerLocations = USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(this);
 	if(PlayerLocations.Num() == 0) return;
 	FVector TargetPosition = PlayerLocations[0];

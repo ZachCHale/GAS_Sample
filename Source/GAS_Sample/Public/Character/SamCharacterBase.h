@@ -55,5 +55,7 @@ protected:
 	ECharacterClass CharacterClass;
 
 	bool bIsDead = false;
-	
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiCastHandleDeath();
 };

@@ -20,8 +20,9 @@ void ASamCharacterBase::Die()
 	if(bIsDead) return;
 	bIsDead = true;
 	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(FSamGameplayTags::Get().AbilityTag_ActivateOnDeath);
-	OnDeathDelegate.Broadcast();
 	SetLifeSpan(1.f);
+	GetMovementComponent()->StopMovementImmediately();
+	MultiCastHandleDeath();
 }
 
 ETeam ASamCharacterBase::GetTeam()
@@ -72,4 +73,9 @@ void ASamCharacterBase::InitDefaultAbilities()
 {
 	if(!HasAuthority()) return;
 		USamAbilitySystemLibrary::InitializeDefaultAbilities(this, CharacterClass, AbilitySystemComponent);
+}
+
+void ASamCharacterBase::MultiCastHandleDeath_Implementation()
+{
+	OnDeathDelegate.Broadcast();
 }
