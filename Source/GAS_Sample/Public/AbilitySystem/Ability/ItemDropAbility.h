@@ -14,9 +14,9 @@ struct FItemDrop
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> DropObjectClass;
 	UPROPERTY(EditDefaultsOnly)
-	int32 MinimumAmount;
+	int32 MinimumAmount = 1;
 	UPROPERTY(EditDefaultsOnly)
-	int32 MaximumAmount;
+	int32 MaximumAmount = 1;
 };
 
 USTRUCT(BlueprintType)
@@ -26,7 +26,7 @@ struct FItemDropGroup
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemDrop> Items;
 	UPROPERTY(EditDefaultsOnly)
-	int32 DropWeight;
+	int32 DropWeight = 1;
 };
 
 USTRUCT(BlueprintType)

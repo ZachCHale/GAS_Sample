@@ -35,17 +35,18 @@ void UItemDropAbility::DropItems(const FItemDropGroup& ItemGroup)
 {
 	FVector SpawnLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
 	FRotator SpawnRotation = FRotator();
-
-	UE_LOG(SamLog, Log, TEXT("Dropping Items"));
+	
 	for (auto Drop : ItemGroup.Items)
 	{
 		int32 Amount = FMath::RandRange(Drop.MinimumAmount, Drop.MaximumAmount);
 		for(int32 i = 0; i < Amount; i++)
 		{
 			AActor* InstancedItem = GetWorld()->SpawnActor<AActor>(Drop.DropObjectClass, SpawnLocation, SpawnRotation);
-			UStaticMeshComponent* MeshComponent = InstancedItem->GetComponentByClass<UStaticMeshComponent>();
-			if(MeshComponent != nullptr)
-			MeshComponent->AddForce(FVector(FMath::RandRange(-1.f, 1.f),FMath::RandRange(-1.f, 1.f), FMath::RandRange(0.5f, 1.f)).GetSafeNormal() * 3000.f);
+			UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(InstancedItem->GetRootComponent());
+			if(PrimitiveComponent == nullptr)
+				return;
+			
+			PrimitiveComponent->AddImpulse(FVector(FMath::RandRange(-1.f, 1.f),FMath::RandRange(-1.f, 1.f), FMath::RandRange(0.5f, 1.f)).GetSafeNormal() * 300.f, NAME_None, true);
 		}
 	}
 }

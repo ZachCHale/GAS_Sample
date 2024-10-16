@@ -11,7 +11,7 @@ struct FLevelUpInfoItem
 {
 	GENERATED_BODY()
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 ExpRequirement;
+	int32 ExpRequirement = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -19,11 +19,11 @@ struct FExpProgressDetails
 {
 	GENERATED_BODY()
 	UPROPERTY(BlueprintReadOnly)
-	int32 CurrentExp;
+	int32 CurrentExp = 0;
 	UPROPERTY(BlueprintReadOnly)
-	int32 NeededExp;
+	int32 NeededExp = 0;
 	UPROPERTY(BlueprintReadOnly)
-	float ProgressPercentage;
+	float ProgressPercentage = 0;
 };
 
 /**
