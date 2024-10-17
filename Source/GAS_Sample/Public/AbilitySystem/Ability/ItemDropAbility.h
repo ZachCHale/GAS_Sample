@@ -6,7 +6,7 @@
 #include "AbilitySystem/SamGameplayAbility.h"
 #include "ItemDropAbility.generated.h"
 
-USTRUCT(BlueprintType)
+/*USTRUCT(BlueprintType)
 struct FItemDrop
 {
 	GENERATED_BODY()
@@ -35,7 +35,7 @@ struct FItemDropRoll
 	GENERATED_BODY()
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemDropGroup> PossibleItems;
-};
+};*/
 
 /**
  * 
@@ -48,9 +48,30 @@ class GAS_SAMPLE_API UItemDropAbility : public USamGameplayAbility
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 protected:
+	//Use CustomSpawnAmountCalculation() for spawn amount. Defaults to 1 if not overridden.
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FItemDropRoll> DropTables;
-private:
-	void DropItems(const FItemDropGroup& ItemGroup);
+	bool bUseCustomSpawnAmountCalculation = false;
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "!bUseCustomSpawnAmountCalculation"))
+	int32 SpawnAmount = 1;
 
+	//Adds impulse to items in a random direction if the root component is a UPrimitive.
+	UPROPERTY(EditDefaultsOnly)
+	float ThrowItemStrength = 0;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> ItemClass;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void InitItemExtraData(AActor* ItemInstance);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void InitItemReplication(AActor* ItemInstance);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	FTransform InitItemTransform();
+	
+	void AddImpulseToItem(const AActor* ItemInstance) const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 CustomSpawnAmountCalculation();
 };

@@ -16,16 +16,30 @@ enum class ECharacterClass : uint8
 	DefaultEnemyClass,
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
+struct FExpRewardInfo
+{
+	GENERATED_BODY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 OrbCount = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 OrbExpValue = 1;
+};
+
+USTRUCT(BlueprintType)
 struct FCharacterClassDefaultInfo
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Kill Reward")
+	FExpRewardInfo ExpReward;
+	
 };
 
 /**
@@ -39,4 +53,7 @@ class GAS_SAMPLE_API UCharacterClassInfo : public UDataAsset
 public:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<ECharacterClass,FCharacterClassDefaultInfo> ClassDefaultInfo;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
 };

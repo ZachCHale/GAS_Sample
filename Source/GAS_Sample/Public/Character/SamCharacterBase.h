@@ -8,6 +8,7 @@
 #include "Actor/Interface/TeamInterface.h"
 #include "SamCharacterBase.generated.h"
 
+struct FCharacterClassDefaultInfo;
 enum class ECharacterClass : uint8;
 struct FOnAttributeChangeData;
 class UAttributeSet;
@@ -31,6 +32,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetIsDead() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	ECharacterClass GetCharacterClass(){ return CharacterClass; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FCharacterClassDefaultInfo GetCharacterClassDefaultInfo();
 
 protected:
 	virtual void BeginPlay() override;

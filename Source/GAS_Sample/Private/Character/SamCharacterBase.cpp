@@ -7,6 +7,7 @@
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ASamCharacterBase::ASamCharacterBase()
@@ -34,6 +35,11 @@ ETeam ASamCharacterBase::GetTeam()
 bool ASamCharacterBase::GetIsDead() const
 {
 	return bIsDead;
+}
+
+FCharacterClassDefaultInfo ASamCharacterBase::GetCharacterClassDefaultInfo()
+{
+	return USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(this, CharacterClass);
 }
 
 void ASamCharacterBase::BeginPlay()

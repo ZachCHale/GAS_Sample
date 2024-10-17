@@ -23,6 +23,8 @@ public:
 
 	FGameplayTag AbilityTag_ActivateOnDeath;
 
+	FGameplayTag SetByCallerMagnitude_ExpRewardValue;
+
       
 protected:  
 private:  

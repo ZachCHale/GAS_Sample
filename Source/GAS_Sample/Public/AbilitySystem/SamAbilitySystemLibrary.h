@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
+#include "Data/CharacterClassInfo.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
+struct FCharacterClassDefaultInfo;
 class ITeamInterface;
 struct FGameplayEffectSpecHandle;
 class UOverlayWidgetController;
@@ -23,8 +25,12 @@ class GAS_SAMPLE_API USamAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	
-	static TObjectPtr<UCharacterClassInfo> GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FCharacterClassDefaultInfo GetDefaultInfoForCharacterClass(const UObject* WorldContextObject, const ECharacterClass CharacterClass);
 
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level = 1);
 

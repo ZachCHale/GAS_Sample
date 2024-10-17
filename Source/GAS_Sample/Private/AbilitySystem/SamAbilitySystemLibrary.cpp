@@ -16,11 +16,17 @@
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
 
-TObjectPtr<UCharacterClassInfo> USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+UCharacterClassInfo* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
 	ASamGameModeBase* SamGameMode = Cast<ASamGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if(SamGameMode == nullptr) return nullptr;
 	return SamGameMode->CharacterClassInfo;
+}
+
+FCharacterClassDefaultInfo USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(const UObject* WorldContextObject,
+	const ECharacterClass CharacterClass)
+{
+	return GetCharacterClassInfo(WorldContextObject)->GetClassDefaultInfo(CharacterClass);
 }
 
 void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level)

@@ -22,4 +22,7 @@ void FSamGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.AbilityTag_ActivateOnDeath = UGameplayTagsManager::Get().AddNativeGameplayTag(
 	FName("AbilityTag.ActivateOnDeath"),FString("Ability should activate when health reaches zero."));
+
+	GameplayTags.SetByCallerMagnitude_ExpRewardValue = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("SetByCallerMagnitude.ExpRewardValue"), FString("Caller Magnitude for Exp Reward Effect"));
 }
