@@ -22,6 +22,7 @@ void ASamCharacterBase::Die()
 	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(FSamGameplayTags::Get().AbilityTag_ActivateOnDeath);
 	SetLifeSpan(1.f);
 	GetMovementComponent()->StopMovementImmediately();
+	SetActorEnableCollision(false);
 	MultiCastHandleDeath();
 }
 
