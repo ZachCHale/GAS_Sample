@@ -21,6 +21,6 @@ namespace SamTags::AbilityTags
 
 namespace SamTags::CallerMagnitudeTags
 {
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitudeTags_IncomingExp, "CallerMagnitude.IncomingExp","Caller Magnitude for Effects that grant Exp")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitudeTags_IncomingDamage, "CallerMagnitude.IncomingDamage","Caller Magnitude for Effects that apply damage")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitude_IncomingExp, "CallerMagnitude.IncomingExp","Caller Magnitude for Effects that grant Exp")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitude_IncomingDamage, "CallerMagnitude.IncomingDamage","Caller Magnitude for Effects that apply damage")
 }

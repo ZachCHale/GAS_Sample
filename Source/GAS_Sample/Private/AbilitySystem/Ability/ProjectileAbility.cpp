@@ -3,7 +3,9 @@
 
 #include "AbilitySystem/Ability/ProjectileAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "SamGameplayTags.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Actor/Projectile.h"
 
@@ -19,6 +21,7 @@ void UProjectileAbility::SpawnProjectile(const FTransform& ProjectileSpawnTransf
 	AProjectile* Projectile = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, ProjectileSpawnTransform, OwningActor, Cast<APawn>(AvatarActor), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	FGameplayEffectSpecHandle SpecHandle = USamAbilitySystemLibrary::CreateGameplayEffectSpecHandle(DamageEffectClass, OwningActor, Projectile, AvatarActor);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, SamTags::CallerMagnitudeTags::CallerMagnitude_IncomingDamage, DamageValue);
 	
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 

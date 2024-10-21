@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "SamGameplayTags.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Actor/Interface/TeamInterface.h"
@@ -43,7 +44,11 @@ void UContactAbility::ApplyToActorsInContactRange(const FGameplayAbilityActivati
 		if(!ITeamInterface::IsRelativeEnemy(SourceActor, OtherActor))
 			continue;
 
-		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToTarget(OtherActor, GameplayEffectClass, GetOwningActorFromActorInfo(), SourceActor, SourceActor);
+		FGameplayEffectSpecHandle SpecHandle = USamAbilitySystemLibrary::CreateGameplayEffectSpecHandle(
+			GameplayEffectClass, GetOwningActorFromActorInfo(), SourceActor, SourceActor);
+
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, SamTags::CallerMagnitudeTags::CallerMagnitude_IncomingDamage, DamageValue);
+		USamAbilitySystemLibrary::ApplyGameplayEffectSpecToTarget(OtherActor, SpecHandle);
 	}
 	if(bDrawDebugSphere)
 		DrawDebugSphere(GetWorld(),SourceActor->GetActorLocation(),ContactRadius, 12, FColor::Emerald,false, 3.f);
