@@ -50,7 +50,6 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	BindToAttributeChanges();
 	InitDefaultAttributes();
 	InitDefaultAbilities();
-	FSamGameplayTags GameplayTags = FSamGameplayTags::Get();
 	APlayerController* PC = SamPS->GetPlayerController();
 	if(PC)
 	{

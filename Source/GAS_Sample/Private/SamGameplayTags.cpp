@@ -2,27 +2,25 @@
 
 #include "SamGameplayTags.h"  
 
-#include "GameplayTagsManager.h"
+namespace SamTags::AttributeTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_MovementSpeed, "Attribute.Primary.MovementSpeed","Character Movement Speed")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Vital_MaxHealth, "Attribute.Vital.MaxHealth","Character Max Health")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Vital_Health, "Attribute.Vital.Health","Character Current Health")
+}
 
-FSamGameplayTags FSamGameplayTags::GameplayTags;  
-  
-void FSamGameplayTags::InitializeNativeGameplayTags()  
-{  
-	GameplayTags.Attribute_Primary_MovementSpeed = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attribute.Primary.MovementSpeed"),FString("Character Movement Speed"));
+namespace SamTags::InputBindingTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputBinding_SlottedAbility_1, "InputBinding.SlottedAbility.1","Input activates the first slotted ability")
+}
 
-	GameplayTags.Attribute_Vital_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attribute.Vital.MaxHealth"),FString("Character Max Health"));
+namespace SamTags::AbilityTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AbilityTag_ActivateOnDeath, "AbilityTag.ActivateOnDeath","Ability should activate when health reaches zero.")
+}
 
-	GameplayTags.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attribute.Vital.Health"),FString("Character Current Health"));
-
-	GameplayTags.InputBinding_SlottedAbility_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputBinding.SlottedAbility.1"),FString("Input activates the first slotted ability"));
-
-	GameplayTags.AbilityTag_ActivateOnDeath = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	FName("AbilityTag.ActivateOnDeath"),FString("Ability should activate when health reaches zero."));
-
-	GameplayTags.SetByCallerMagnitude_ExpRewardValue = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("SetByCallerMagnitude.ExpRewardValue"), FString("Caller Magnitude for Exp Reward Effect"));
+namespace SamTags::CallerMagnitudeTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitudeTags_IncomingExp, "CallerMagnitude.IncomingExp","Caller Magnitude for Effects that grant Exp")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitudeTags_IncomingDamage, "CallerMagnitude.IncomingDamage","Caller Magnitude for Effects that apply damage")
 }

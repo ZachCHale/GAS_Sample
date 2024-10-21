@@ -20,7 +20,7 @@ void ASamCharacterBase::Die()
 	if(!HasAuthority()) return;
 	if(bIsDead) return;
 	bIsDead = true;
-	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(FSamGameplayTags::Get().AbilityTag_ActivateOnDeath);
+	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(SamTags::AbilityTags::AbilityTag_ActivateOnDeath);
 	SetLifeSpan(1.f);
 	GetMovementComponent()->StopMovementImmediately();
 	SetActorEnableCollision(false);
@@ -54,10 +54,9 @@ void ASamCharacterBase::InitAbilityActorInfo()
 
 void ASamCharacterBase::BindToAttributeChanges()
 {
-	const FSamGameplayTags& GameplayTags = FSamGameplayTags::Get();
 	USamAttributeSet* SamAttributeSet = CastChecked<USamAttributeSet>(AttributeSet);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAttributeSet->TagsToAttributes[GameplayTags.Attribute_Primary_MovementSpeed]()).AddUObject(this, &ASamCharacterBase::OnMovementSpeedAttributeChanged);
-	SetMovementSpeed(SamAttributeSet->TagsToAttributes[GameplayTags.Attribute_Primary_MovementSpeed]().GetNumericValue(SamAttributeSet));
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAttributeSet->TagsToAttributes[SamTags::AttributeTags::Attribute_Primary_MovementSpeed]()).AddUObject(this, &ASamCharacterBase::OnMovementSpeedAttributeChanged);
+	SetMovementSpeed(SamAttributeSet->TagsToAttributes[SamTags::AttributeTags::Attribute_Primary_MovementSpeed]().GetNumericValue(SamAttributeSet));
 }
 
 UAbilitySystemComponent* ASamCharacterBase::GetAbilitySystemComponent() const

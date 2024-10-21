@@ -15,5 +15,4 @@ USamAssetManager& USamAssetManager::Get()
 void USamAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
-	FSamGameplayTags::Get().InitializeNativeGameplayTags();
 }

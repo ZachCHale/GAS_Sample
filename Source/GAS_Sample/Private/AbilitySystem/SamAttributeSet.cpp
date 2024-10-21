@@ -1,7 +1,6 @@
 // Copyright ZH_Dev
 
 #include "AbilitySystem/SamAttributeSet.h"
-
 #include "SamGameplayTags.h"
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
@@ -11,11 +10,9 @@
 
 USamAttributeSet::USamAttributeSet()
 {
-	const FSamGameplayTags& Tags = FSamGameplayTags::Get();
-
-	TagsToAttributes.Add(Tags.Attribute_Primary_MovementSpeed, GetMovementSpeedAttribute);
-	TagsToAttributes.Add(Tags.Attribute_Vital_MaxHealth, GetMaxHealthAttribute);
-	TagsToAttributes.Add(Tags.Attribute_Vital_Health, GetHealthAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Primary_MovementSpeed, GetMovementSpeedAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Vital_MaxHealth, GetMaxHealthAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Vital_Health, GetHealthAttribute);
 }
 
 void USamAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const

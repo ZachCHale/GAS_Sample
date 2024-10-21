@@ -6,40 +6,6 @@
 #include "AbilitySystem/SamGameplayAbility.h"
 #include "ItemDropAbility.generated.h"
 
-/*USTRUCT(BlueprintType)
-struct FItemDrop
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> DropObjectClass;
-	UPROPERTY(EditDefaultsOnly)
-	int32 MinimumAmount = 1;
-	UPROPERTY(EditDefaultsOnly)
-	int32 MaximumAmount = 1;
-};
-
-USTRUCT(BlueprintType)
-struct FItemDropGroup
-{
-	GENERATED_BODY()
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FItemDrop> Items;
-	UPROPERTY(EditDefaultsOnly)
-	int32 DropWeight = 1;
-};
-
-USTRUCT(BlueprintType)
-struct FItemDropRoll
-{
-	GENERATED_BODY()
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FItemDropGroup> PossibleItems;
-};*/
-
-/**
- * 
- */
 UCLASS()
 class GAS_SAMPLE_API UItemDropAbility : public USamGameplayAbility
 {
