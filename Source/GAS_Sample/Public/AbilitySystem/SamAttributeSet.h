@@ -31,6 +31,12 @@ public:
 	ATTRIBUTE_ACCESSORS(USamAttributeSet, MovementSpeed);
 	UFUNCTION()
 	void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const;
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Block, Category = "Primary Attributes")  
+	FGameplayAttributeData Block;
+	ATTRIBUTE_ACCESSORS(USamAttributeSet, Block);
+	UFUNCTION()
+	void OnRep_Block(const FGameplayAttributeData& OldBlock) const;
 
 	/*
 	 *	Vital Attributes

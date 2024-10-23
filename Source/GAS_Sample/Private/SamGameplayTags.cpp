@@ -14,6 +14,7 @@ namespace SamTags::AttributeTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Resistance_Physical, "Attribute.Resistance.Physical", "Resistance to Physical attacks")
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Resistance_Magic, "Attribute.Attack.Magic", "Resistance to Magic attacks")
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Block, "Attribute.Primary.Block", "Fixed Damage Negation")
 }
 
 namespace SamTags::InputBindingTags

@@ -11,11 +11,13 @@ namespace SamTags::AttributeTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Vital_Health);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_MovementSpeed);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Block);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Attack_Damage)
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Resistance_Physical);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Resistance_Magic);
+
 }
 
 //Input Binding Tags

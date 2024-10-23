@@ -13,6 +13,7 @@ struct SamDamageStatics
 	// Target
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MagicResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(Block)
 	
 	SamDamageStatics()
 	{
@@ -22,8 +23,10 @@ struct SamDamageStatics
 		//Target
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USamAttributeSet, PhysicalResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USamAttributeSet, MagicResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USamAttributeSet, Block, Target, false);
+
 	}
-	FGameplayEffectAttributeCaptureDefinition& GatCaptureDefFromTag(const FGameplayTag& Tag) const
+	FGameplayEffectAttributeCaptureDefinition& GetCaptureDefFromTag(const FGameplayTag& Tag) const
 	{
 		static TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDef;
 		if(TagsToCaptureDef.IsEmpty())
@@ -31,6 +34,7 @@ struct SamDamageStatics
 			TagsToCaptureDef.Add(SamTags::AttributeTags::Attribute_Attack_Damage, DamageScaleDef);
 			TagsToCaptureDef.Add(SamTags::AttributeTags::Attribute_Resistance_Physical, PhysicalResistanceDef);
 			TagsToCaptureDef.Add(SamTags::AttributeTags::Attribute_Resistance_Magic, MagicResistanceDef);
+			TagsToCaptureDef.Add(SamTags::AttributeTags::Attribute_Primary_Block, BlockDef);
 		}
 		checkf(TagsToCaptureDef.Contains(Tag), TEXT("TagsToCaptureDef doesnt contain [%s] in ExecCalc_Damage"), *Tag.ToString());
 		return TagsToCaptureDef[Tag];
@@ -48,6 +52,7 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().DamageScaleDef);
 	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().MagicResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().BlockDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -73,7 +78,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		float CMag_DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageType, false, 0);
 
 		float Tgt_ResistanceTypeValue = 0.f;
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().GatCaptureDefFromTag(ResistanceType), EvalParams, Tgt_ResistanceTypeValue);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().GetCaptureDefFromTag(ResistanceType), EvalParams, Tgt_ResistanceTypeValue);
 		Tgt_ResistanceTypeValue = FMath::Clamp<float>(Tgt_ResistanceTypeValue, 0.f, 1.f);
 		FinalDamage += CMag_DamageTypeValue * (1-Tgt_ResistanceTypeValue);
 	}
@@ -82,7 +87,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DamageScaleDef, EvalParams, Src_DamageScale);
 	
 	FinalDamage *= Src_DamageScale;
+
+	float Tgt_Block = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockDef, EvalParams, Tgt_Block);
+	Tgt_Block = FMath::Max<float>(0.f, Tgt_Block);
+	FinalDamage -= Tgt_Block;
+	
 	FinalDamage = FMath::Max<float>(0.f, FinalDamage);
+	
 	const FGameplayModifierEvaluatedData EvaluatedData(USamAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, FinalDamage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }

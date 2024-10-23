@@ -11,6 +11,7 @@
 USamAttributeSet::USamAttributeSet()
 {
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Primary_MovementSpeed, GetMovementSpeedAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Primary_Block, GetBlockAttribute);
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Vital_MaxHealth, GetMaxHealthAttribute);
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Vital_Health, GetHealthAttribute);
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Attack_Damage, GetDamageScaleAttribute);
@@ -21,6 +22,11 @@ USamAttributeSet::USamAttributeSet()
 void USamAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USamAttributeSet,MovementSpeed,OldMovementSpeed);
+}
+
+void USamAttributeSet::OnRep_Block(const FGameplayAttributeData& OldBlock) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USamAttributeSet,Block,OldBlock);
 }
 
 void USamAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
@@ -52,11 +58,13 @@ void USamAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, Block, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, DamageScale, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MagicResistance, COND_None, REPNOTIFY_Always);
+
 }
 
 void USamAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
