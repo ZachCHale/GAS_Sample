@@ -47,7 +47,11 @@ void UContactAbility::ApplyToActorsInContactRange(const FGameplayAbilityActivati
 		FGameplayEffectSpecHandle SpecHandle = USamAbilitySystemLibrary::CreateGameplayEffectSpecHandle(
 			GameplayEffectClass, GetOwningActorFromActorInfo(), SourceActor, SourceActor);
 
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, SamTags::CallerMagnitudeTags::CallerMagnitude_IncomingDamage, DamageValue);
+		for (auto [DamageTypeTag, Value] : DamageTypeValues)
+		{
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageTypeTag, Value);
+		}
+		
 		USamAbilitySystemLibrary::ApplyGameplayEffectSpecToTarget(OtherActor, SpecHandle);
 	}
 	if(bDrawDebugSphere)

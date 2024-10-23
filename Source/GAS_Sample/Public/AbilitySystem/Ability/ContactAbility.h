@@ -19,7 +19,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ApplyToActorsInContactRange(const FGameplayAbilityActivationInfo& ActivationInfo);
 	UPROPERTY(EditDefaultsOnly)
-	float DamageValue;
+	TMap<FGameplayTag, float> DamageTypeValues;
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect>  GameplayEffectClass;
