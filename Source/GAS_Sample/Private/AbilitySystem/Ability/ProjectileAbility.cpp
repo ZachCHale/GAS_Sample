@@ -21,8 +21,11 @@ void UProjectileAbility::SpawnProjectile(const FTransform& ProjectileSpawnTransf
 	AProjectile* Projectile = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, ProjectileSpawnTransform, OwningActor, Cast<APawn>(AvatarActor), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	FGameplayEffectSpecHandle SpecHandle = USamAbilitySystemLibrary::CreateGameplayEffectSpecHandle(DamageEffectClass, OwningActor, Projectile, AvatarActor);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, SamTags::CallerMagnitudeTags::CallerMagnitude_IncomingDamage, DamageValue);
-	
+
+	for (auto [DamageTypeTag, Value] : DamageTypeValues)
+	{
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageTypeTag, Value);
+	}
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 
 	Projectile->FinishSpawning(ProjectileSpawnTransform);

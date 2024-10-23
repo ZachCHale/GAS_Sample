@@ -13,6 +13,9 @@ USamAttributeSet::USamAttributeSet()
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Primary_MovementSpeed, GetMovementSpeedAttribute);
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Vital_MaxHealth, GetMaxHealthAttribute);
 	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Vital_Health, GetHealthAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Attack_Damage, GetDamageScaleAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Resistance_Magic, GetMagicResistanceAttribute);
+	TagsToAttributes.Add(SamTags::AttributeTags::Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
 }
 
 void USamAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const
@@ -30,12 +33,30 @@ void USamAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) con
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USamAttributeSet,Health,OldHealth);
 }
 
+void USamAttributeSet::OnRep_DamageScale(const FGameplayAttributeData& OldDamageScale) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USamAttributeSet,DamageScale,OldDamageScale);
+}
+
+void USamAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USamAttributeSet, PhysicalResistance, OldPhysicalResistance);
+}
+
+void USamAttributeSet::OnRep_MagicResistance(const FGameplayAttributeData& OldMagicResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USamAttributeSet, MagicResistance, OldMagicResistance);
+}
+
 void USamAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, DamageScale, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(USamAttributeSet, MagicResistance, COND_None, REPNOTIFY_Always);
 }
 
 void USamAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

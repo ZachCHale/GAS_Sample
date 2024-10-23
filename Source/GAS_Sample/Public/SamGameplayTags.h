@@ -2,7 +2,6 @@
 #pragma once
 
 #include "CoreMinimal.h"  
-#include "GameplayTagContainer.h"
 #include "NativeGameplayTags.h"
 
 //Attribute Tags
@@ -10,7 +9,13 @@ namespace SamTags::AttributeTags
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Vital_MaxHealth);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Vital_Health);
+	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_MovementSpeed);
+	
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Attack_Damage)
+	
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Resistance_Physical);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Resistance_Magic);
 }
 
 //Input Binding Tags
@@ -33,4 +38,18 @@ namespace SamTags::CallerMagnitudeTags
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CallerMagnitude_IncomingExp);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CallerMagnitude_IncomingDamage);
+}
+
+//Damage Type Tags
+//Represents categories of damage. Used as CallerMagnitudes within ExecCalc_Damage
+namespace SamTags::DamageTypes
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(DamageType_Physical);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(DamageType_Magic);
+}
+
+namespace SamTags::Mappings
+{
+	TMap<FGameplayTag, FGameplayTag> GetDamageTypesToResistancesMap();
+	
 }
