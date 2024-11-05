@@ -15,4 +15,5 @@ USamAssetManager& USamAssetManager::Get()
 void USamAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
+	UE_LOG(SamLog, Log, TEXT("SamAssetManager in use."))
 }

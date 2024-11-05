@@ -16,5 +16,14 @@ class GAS_SAMPLE_API USamGameplayAbility : public UGameplayAbility
 public:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag StartupTag;
-	
+	virtual const FGameplayTagContainer* GetCooldownTags() const override;
+	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	float CooldownDuration;
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTagContainer CooldownTags;
+private:
+	UPROPERTY(Transient)
+	FGameplayTagContainer TempCooldownTags;
 };

@@ -63,6 +63,12 @@ public:
 	ATTRIBUTE_ACCESSORS(USamAttributeSet, DamageScale);
 	UFUNCTION()
 	void OnRep_DamageScale(const FGameplayAttributeData& OldDamageScale) const;
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AttackSpeed, Category = "Attack Attributes")  
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(USamAttributeSet, AttackSpeed);
+	UFUNCTION()
+	void OnRep_AttackSpeed(const FGameplayAttributeData& OldAttackSpeed) const;
 
 	/*
 	 *	Resistance Attributes

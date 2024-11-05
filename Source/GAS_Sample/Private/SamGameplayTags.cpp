@@ -10,9 +10,10 @@ namespace SamTags::AttributeTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Vital_Health, "Attribute.Vital.Health","Character Current Health")
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Attack_Damage, "Attribute.Attack.Damage", "Damage Scaling for attacks")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Attack_AttackSpeed, "Attribute.Attack.AttackSpeed", "Attack Speed")
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Resistance_Physical, "Attribute.Resistance.Physical", "Resistance to Physical attacks")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Resistance_Magic, "Attribute.Attack.Magic", "Resistance to Magic attacks")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Resistance_Magic, "Attribute.Resistance.Magic", "Resistance to Magic attacks")
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attribute_Primary_Block, "Attribute.Primary.Block", "Fixed Damage Negation")
 }
@@ -31,12 +32,18 @@ namespace SamTags::CallerMagnitudeTags
 {
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitude_IncomingExp, "CallerMagnitude.IncomingExp","Caller Magnitude for Effects that grant Exp")
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitude_IncomingDamage, "CallerMagnitude.IncomingDamage","Caller Magnitude for Effects that apply damage. Used in ExecCalc_Damage. Exec Calc will look at Damage Tags set by caller.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CallerMagnitude_AbilityCooldown, "CallerMagnitude.AbilityCooldown", "Allows abilities to set the duration of their cooldown.")
 }
 
 namespace SamTags::DamageTypes
 {
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(DamageType_Physical, "DamageType.Physical","Physical Damage")
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(DamageType_Magic, "DamageType.Magic","Magic Damage")
+}
+
+namespace SamTags::Cooldown
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cooldown_PrimaryAttack, "Cooldown.PrimaryAttack", "Cooldown tag for primary attack")
 }
 
 namespace SamTags::Mappings

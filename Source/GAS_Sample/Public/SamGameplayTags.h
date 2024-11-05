@@ -14,6 +14,8 @@ namespace SamTags::AttributeTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Primary_Block);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Attack_Damage)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Attack_AttackSpeed)
+
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Resistance_Physical);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Resistance_Magic);
@@ -40,6 +42,7 @@ namespace SamTags::CallerMagnitudeTags
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CallerMagnitude_IncomingExp);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CallerMagnitude_IncomingDamage);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CallerMagnitude_AbilityCooldown);
 }
 
 //Damage Type Tags
@@ -50,8 +53,13 @@ namespace SamTags::DamageTypes
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(DamageType_Magic);
 }
 
+namespace SamTags::Cooldown
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cooldown_PrimaryAttack);
+}
+
 namespace SamTags::Mappings
 {
 	TMap<FGameplayTag, FGameplayTag> GetDamageTypesToResistancesMap();
-	
 }
+
