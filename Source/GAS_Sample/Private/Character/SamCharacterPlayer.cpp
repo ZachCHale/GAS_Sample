@@ -54,12 +54,12 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	InitDefaultAttributes();
 	InitDefaultAbilities();
 	APlayerController* PC = SamPS->GetPlayerController();
-	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	//SamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
 	if(PC)
 	{
 		if(ASamHUD* SamHUD = PC->GetHUD<ASamHUD>())
 		{
-			const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet, SamGS);
+			const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet);
 			SamHUD->InitOverlay(WidgetControllerParams);
 		}
 

@@ -122,11 +122,7 @@ UOverlayWidgetController* USamAbilitySystemLibrary::GetOverlayWidgetController(c
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
 			
-			UWorld* World = GetWorld();
-			check(World->GetGameState() != nullptr)
-			AGameStateBase* GS = World->GetGameState();
-			
-			FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS, GS);
+			FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
 			return SamHUD->GetOverlayWidgetController(WidgetControllerParams);
 		}
 	}
@@ -141,8 +137,9 @@ TArray<FVector> USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(con
 		return CurrentLocations;
 	LastQueryTime = UGameplayStatics::GetTimeSeconds(WorldContextObject);
 	CurrentLocations.Empty();
-	TArray<TObjectPtr<ACharacter>> PlayerCharacters = ASamPlayerState::GetAllPlayerCharacters();
-	for (TObjectPtr<ACharacter> PlayerCharacter : PlayerCharacters)
+	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
+	TArray<ACharacter*> PlayerCharacters = SamGS->GetAllPlayerCharacters();
+	for (ACharacter* PlayerCharacter : PlayerCharacters)
 	{
 		CurrentLocations.Add(PlayerCharacter->GetActorLocation());
 	}
@@ -153,5 +150,6 @@ ASamGameStateBase* USamAbilitySystemLibrary::GetSamGameStateBase(const UObject* 
 {
 	UWorld* World = WorldContextObject->GetWorld();
 	check(World)
-	return CastChecked<ASamGameStateBase>(World->GetGameState());
+	AGameStateBase* GS = World->GetGameState();
+	return CastChecked<ASamGameStateBase>(GS);
 }

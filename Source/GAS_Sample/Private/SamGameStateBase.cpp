@@ -5,6 +5,7 @@
 
 #include "SamLogChannels.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
 
 void ASamGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -28,12 +29,30 @@ void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 	SharedPlayerLevel+=AddedLevels;  
 	LevelChangedDelegate.Broadcast(SharedPlayerLevel);
 	UE_LOG(SamLog, Log, TEXT("SharedLevel %d"), SharedPlayerLevel);
+	
 }
 
 int32 ASamGameStateBase::FindLevelForExp(int32 ExpValue)
 {
 	check(LevelUpInfo)
 	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
+}
+
+TArray<ACharacter*> ASamGameStateBase::GetAllPlayerCharacters()
+{
+	TArray<TObjectPtr<ACharacter>> Characters;
+
+	for (auto PS : PlayerArray)
+	{
+		if(APlayerController* PC = PS->GetPlayerController())
+		{
+			if(ACharacter* Character = PC->GetCharacter())
+			{
+				Characters.AddUnique(Character);
+			}
+		}
+	}
+	return Characters;
 }
 
 void ASamGameStateBase::OnRep_SharedPlayerLevel(int32 OldLevel) const

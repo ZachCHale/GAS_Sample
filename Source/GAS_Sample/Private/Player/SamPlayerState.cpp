@@ -30,8 +30,9 @@ UAbilitySystemComponent* ASamPlayerState::GetAbilitySystemComponent() const
 void ASamPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-	if(HasAuthority())
-		PlayerStateList.Add(this);
+
+	ASamGameStateBase *SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	SamGS->AddPlayerState(this);
 }
 
 void ASamPlayerState::Destroyed()
@@ -44,23 +45,6 @@ void ASamPlayerState::Destroyed()
 UAttributeSet* ASamPlayerState::GetAttributeSet() const
 {
 	return AttributeSet;
-}
-
-TArray<TObjectPtr<ACharacter>> ASamPlayerState::GetAllPlayerCharacters()
-{
-	TArray<TObjectPtr<ACharacter>> Characters;
-	
-	for (auto PS : PlayerStateList)
-	{
-		if(APlayerController* PC = PS->GetPlayerController())
-		{
-			if(ACharacter* Character = PC->GetCharacter())
-			{
-				Characters.Add(Character);
-			}
-		}
-	}
-	return Characters;
 }
 
 int32 ASamPlayerState::GetLevel()

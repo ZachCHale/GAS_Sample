@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
+	TArray<ACharacter*> GetAllPlayerCharacters();
+
+
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SharedPlayerLevel)  
 	int32 SharedPlayerLevel = 1;  

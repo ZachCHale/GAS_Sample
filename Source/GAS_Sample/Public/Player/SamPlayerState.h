@@ -30,8 +30,6 @@ public:
 	
 	UAttributeSet* GetAttributeSet() const;
 
-	static TArray<TObjectPtr<ACharacter>> GetAllPlayerCharacters();
-
 	virtual int32 GetLevel() override;
 	virtual int32 GetTotalExp() override;
 
