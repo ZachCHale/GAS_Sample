@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "SamGameStateBase.h"
 #include "AbilitySystem/SamGameplayAbility.h"
 #include "Actor/Interface/TeamInterface.h"
 #include "GameFramework/Character.h"
@@ -121,7 +122,11 @@ UOverlayWidgetController* USamAbilitySystemLibrary::GetOverlayWidgetController(c
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
 			
-			FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
+			UWorld* World = GetWorld();
+			check(World->GetGameState() != nullptr)
+			AGameStateBase* GS = World->GetGameState();
+			
+			FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS, GS);
 			return SamHUD->GetOverlayWidgetController(WidgetControllerParams);
 		}
 	}
@@ -142,4 +147,11 @@ TArray<FVector> USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(con
 		CurrentLocations.Add(PlayerCharacter->GetActorLocation());
 	}
 	return CurrentLocations;
+}
+
+ASamGameStateBase* USamAbilitySystemLibrary::GetSamGameStateBase(const UObject* WorldContextObject)
+{
+	UWorld* World = WorldContextObject->GetWorld();
+	check(World)
+	return CastChecked<ASamGameStateBase>(World->GetGameState());
 }

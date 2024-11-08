@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
+class ASamGameStateBase;
 struct FCharacterClassDefaultInfo;
 class ITeamInterface;
 struct FGameplayEffectSpecHandle;
@@ -53,6 +54,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static TArray<FVector> GetCurrentPlayerCharacterLocations(const UObject* WorldContextObject);
-	
+
+	UFUNCTION(BlueprintCallable)
+	static ASamGameStateBase* GetSamGameStateBase(const UObject* WorldContextObject);
 	
 };

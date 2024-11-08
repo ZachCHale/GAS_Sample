@@ -3,6 +3,7 @@
 
 #include "UI/OverlayWidgetController.h"
 
+#include "SamGameStateBase.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAttributeSet.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
@@ -13,8 +14,10 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	USamAttributeSet* SamAS = CastChecked<USamAttributeSet>(AttributeSet);
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 	OnHealthChangedDelegate.Broadcast(SamAS->GetHealth(), SamAS->GetMaxHealth(), SamAS->GetHealth()/SamAS->GetMaxHealth());
-
-	ULevelUpInfo* LevelUpInfo = SamPS->LevelUpInfo;
+	
+	ASamGameStateBase* SamGS = CastChecked<ASamGameStateBase>(GameState);
+	ULevelUpInfo* LevelUpInfo = SamGS->LevelUpInfo;
+	
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(SamPS->GetTotalExp());
 	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 	OnLevelChangedDelegate.Broadcast(SamPS->GetLevel());
@@ -25,10 +28,14 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 	const USamAttributeSet* SamAS = CastChecked<USamAttributeSet>(AttributeSet);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnHealthChanged);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChanged);
 
-	SamPS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
-	SamPS->LevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnLevelChanged);
+	ASamGameStateBase* SamGS = CastChecked<ASamGameStateBase>(GameState);
+	
+	SamGS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
+	SamGS->LevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnLevelChanged);
+	
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChanged);
+	
 }
 
 void UOverlayWidgetController::OnHealthChanged(const FOnAttributeChangeData& NewHealth) const
@@ -45,8 +52,9 @@ void UOverlayWidgetController::OnMaxHealthChanged(const FOnAttributeChangeData& 
 
 void UOverlayWidgetController::OnExpChanged(int32 NewExp) const
 {
-	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
-	ULevelUpInfo* LevelUpInfo = SamPS->LevelUpInfo;
+	ASamGameStateBase* SamGS = CastChecked<ASamGameStateBase>(GameState);
+	ULevelUpInfo* LevelUpInfo = SamGS->LevelUpInfo;
+	
 	checkf(LevelUpInfo, TEXT("Unable to find level up info"));
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(NewExp);
 

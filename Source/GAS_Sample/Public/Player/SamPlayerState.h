@@ -21,8 +21,6 @@ class GAS_SAMPLE_API ASamPlayerState : public APlayerState, public IAbilitySyste
 	GENERATED_BODY()
 public:
 	ASamPlayerState();
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -34,19 +32,13 @@ public:
 
 	static TArray<TObjectPtr<ACharacter>> GetAllPlayerCharacters();
 
-	virtual int32 GetLevel() override { return Level; }
-	virtual int32 GetTotalExp() override { return TotalExp; };
+	virtual int32 GetLevel() override;
+	virtual int32 GetTotalExp() override;
 
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
 
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
-  
-	FOnPlayerStatChangedSignature ExpChangedDelegate;  
-	FOnPlayerStatChangedSignature LevelChangedDelegate;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
 protected:
 	UPROPERTY()
@@ -57,17 +49,5 @@ protected:
 
 private:
 	static inline TArray<TObjectPtr<ASamPlayerState>> PlayerStateList;
-
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Level)  
-	int32 Level = 1;  
-  
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_TotalExp)  
-	int32 TotalExp = 0;  
-  
-	UFUNCTION()  
-	void OnRep_Level(int32 OldLevel) const;  
-  
-	UFUNCTION()  
-	void OnRep_TotalExp(int32 OldTotalExp) const;
 
 };

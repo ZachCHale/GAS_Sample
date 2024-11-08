@@ -19,5 +19,6 @@ void USamWidgetController::SetWidgetControllerParams(const FWidgetControllerPara
 	PlayerController = WCParams.PlayerController;  
 	PlayerState = WCParams.PlayerState;  
 	AbilitySystemComponent = WCParams.AbilitySystemComponent;  
-	AttributeSet = WCParams.AttributeSet;  
+	AttributeSet = WCParams.AttributeSet;
+	GameState = WCParams.GameState;
 }

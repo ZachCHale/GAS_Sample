@@ -4,14 +4,17 @@
 #include "Character/SamCharacterPlayer.h"
 
 #include "SamGameplayTags.h"
+#include "SamGameStateBase.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
+
 
 ASamCharacterPlayer::ASamCharacterPlayer()
 {
@@ -51,11 +54,12 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	InitDefaultAttributes();
 	InitDefaultAbilities();
 	APlayerController* PC = SamPS->GetPlayerController();
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
 	if(PC)
 	{
 		if(ASamHUD* SamHUD = PC->GetHUD<ASamHUD>())
 		{
-			const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet);
+			const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet, SamGS);
 			SamHUD->InitOverlay(WidgetControllerParams);
 		}
 

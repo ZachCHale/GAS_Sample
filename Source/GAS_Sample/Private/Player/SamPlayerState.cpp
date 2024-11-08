@@ -3,7 +3,9 @@
 
 #include "Player/SamPlayerState.h"
 
+#include "SamGameStateBase.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/Character.h"
@@ -18,13 +20,6 @@ ASamPlayerState::ASamPlayerState()
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-}
-
-void ASamPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ASamPlayerState, Level);
-	DOREPLIFETIME(ASamPlayerState, TotalExp);
 }
 
 UAbilitySystemComponent* ASamPlayerState::GetAbilitySystemComponent() const
@@ -68,31 +63,33 @@ TArray<TObjectPtr<ACharacter>> ASamPlayerState::GetAllPlayerCharacters()
 	return Characters;
 }
 
+int32 ASamPlayerState::GetLevel()
+{
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	return SamGS->GetLevel();
+}
+
+int32 ASamPlayerState::GetTotalExp()
+{
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	return SamGS->GetTotalExp();
+}
+
 void ASamPlayerState::AddToExp(int32 AddedExp)
 {
-	TotalExp += AddedExp;  
-	ExpChangedDelegate.Broadcast(TotalExp);  
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	SamGS->AddToExp(AddedExp);
 }
 
   
 void ASamPlayerState::AddToLevel(int32 AddedLevels)  
 {  
-	Level+=AddedLevels;  
-	LevelChangedDelegate.Broadcast(Level);  
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	SamGS->AddToLevel(AddedLevels);
 }
 
 int32 ASamPlayerState::FindLevelForExp(int32 ExpValue)
 {
-	check(LevelUpInfo)
-	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
-}
-
-void ASamPlayerState::OnRep_Level(int32 OldLevel) const
-{  
-	LevelChangedDelegate.Broadcast(Level);  
-}  
-  
-void ASamPlayerState::OnRep_TotalExp(int32 OldTotalExp) const
-{  
-	ExpChangedDelegate.Broadcast(TotalExp);  
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	return SamGS->FindLevelForExp(ExpValue);
 }
