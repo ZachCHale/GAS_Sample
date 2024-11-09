@@ -53,20 +53,8 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	BindToAttributeChanges();
 	InitDefaultAttributes();
 	InitDefaultAbilities();
-
-	if(InitHUD())
-	{
-		if(HasAuthority())
-			UE_LOG(SamLog, Log, TEXT("A"))
-		UE_LOG(SamLog, Log, TEXT("Init HUD from Character suceeded."))
-	}else
-	{
-		if(HasAuthority())
-			UE_LOG(SamLog, Log, TEXT("A"))
-		UE_LOG(SamLog, Log, TEXT("Init HUD from Character failed."))
-	}
-	/*APlayerController* PC = SamPS->GetPlayerController();
-	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	
+	APlayerController* PC = SamPS->GetPlayerController();
 	if(PC)
 	{
 		if(ASamHUD* SamHUD = PC->GetHUD<ASamHUD>())
@@ -74,21 +62,18 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 			const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet);
 			SamHUD->InitOverlay(WidgetControllerParams);
 		}
-	}*/
+	}
 }
 
 void ASamCharacterPlayer::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	//UE_LOG(SamLog, Log, TEXT("OnRep_PlayerState"));
-	
 	InitAbilityActorInfo();
 }
 
 void ASamCharacterPlayer::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	//UE_LOG(SamLog, Log, TEXT("Possessed"));
 	InitAbilityActorInfo();
 }
 
@@ -125,37 +110,4 @@ int32 ASamCharacterPlayer::FindLevelForExp(int32 ExpValue)
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
 	return SamPS->FindLevelForExp(ExpValue);
-}
-
-bool ASamCharacterPlayer::InitHUD()
-{
-	//Player State and Game State can be replicated in to client in any order, into hud gets called from both.
-	ASamPlayerState* SamPS = Cast<ASamPlayerState>(GetPlayerState());
-
-	if (SamPS == nullptr)
-	{
-		UE_LOG(SamLog, Warning, TEXT("Init HUD postponed, Playerstate not ready"));
-		return false;
-	}
-
-	APlayerController* PC = SamPS->GetPlayerController();
-	
-	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-
-	if(SamGS == nullptr)
-	{
-		UE_LOG(SamLog, Warning, TEXT("Init HUD postponed, Gamestate not ready."));
-		return false;
-	}
-	
-	if(PC)
-	{
-		if(ASamHUD* SamHUD = PC->GetHUD<ASamHUD>())
-		{
-			const FWidgetControllerParams WidgetControllerParams(PC, SamPS, AbilitySystemComponent, AttributeSet);
-			SamHUD->InitOverlay(WidgetControllerParams);
-			return true;
-		}
-	}
-	return false;
 }

@@ -27,8 +27,6 @@ public:
 	virtual void BeginPlay() override;
 	
 	virtual void Destroyed() override;
-
-	virtual void PostInitializeComponents() override;
 	
 	UAttributeSet* GetAttributeSet() const;
 

@@ -19,30 +19,6 @@ void ASamGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ASamGameStateBase, SharedPlayerExp);
 }
 
-void ASamGameStateBase::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	UE_LOG(SamLog, Log, TEXT("State init"))
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(),0);
-	if(PC == nullptr) return;
-	ASamCharacterPlayer* Character = Cast<ASamCharacterPlayer>(PC->GetCharacter());
-	if(Character != nullptr)
-	{
-		if(Character->InitHUD())
-		{
-			if(HasAuthority())
-				UE_LOG(SamLog, Log, TEXT("A"))
-
-			UE_LOG(SamLog, Log, TEXT("Init HUD from Game State suceeded."))
-		}else
-		{
-			if(HasAuthority())
-				UE_LOG(SamLog, Log, TEXT("A"))
-			UE_LOG(SamLog, Log, TEXT("Init HUD from Game State failed."))
-		}
-	}
-}
-
 void ASamGameStateBase::AddToExp(int32 AddedExp)
 {
 	if(!HasAuthority()) return;

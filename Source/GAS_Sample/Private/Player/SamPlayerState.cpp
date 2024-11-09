@@ -8,9 +8,6 @@
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
-#include "AbilitySystem/Data/LevelUpInfo.h"
-#include "GameFramework/Character.h"
-#include "Net/UnrealNetwork.h"
 
 ASamPlayerState::ASamPlayerState()
 {
@@ -43,11 +40,6 @@ void ASamPlayerState::Destroyed()
 		PlayerStateList.Remove(this);
 }
 
-void ASamPlayerState::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	UE_LOG(SamLog, Log, TEXT("PostInit"))
-}
 
 UAttributeSet* ASamPlayerState::GetAttributeSet() const
 {

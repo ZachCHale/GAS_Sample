@@ -39,7 +39,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
 
-	bool b_IsInitialized = false;
-	
+	void FinishInitOverlay(const  FWidgetControllerParams& WCParams, const AGameStateBase* GameState);
 	
 };

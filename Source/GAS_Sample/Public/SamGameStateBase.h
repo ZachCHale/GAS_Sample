@@ -20,15 +20,11 @@ class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IPlayerI
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	
 	FOnGameStatChangedSignature ExpChangedDelegate;  
 	FOnGameStatChangedSignature LevelChangedDelegate;
 
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
-
-	virtual void PostInitializeComponents() override;
 
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;

@@ -33,8 +33,6 @@ public:
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
-
-	bool InitHUD();
 	
 
 private:

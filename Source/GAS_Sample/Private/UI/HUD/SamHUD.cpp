@@ -3,6 +3,7 @@
 
 #include "UI/HUD/SamHUD.h"
 
+#include "SamLogChannels.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/OverlayWidgetController.h"
 #include "UI/SamUserWidget.h"
@@ -22,12 +23,23 @@ void ASamHUD::InitOverlay(const FWidgetControllerParams& WCParams)
 {
 	checkf(OverlayClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_SamHUD"));
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_SamHUD"));
-	if(b_IsInitialized) return;
-	b_IsInitialized = true;
+
+	if(AGameStateBase* GS = GetWorld()->GetGameState())
+	{
+		FinishInitOverlay(WCParams, GS);
+	}else
+	{
+		GetWorld()->GameStateSetEvent.AddLambda([this, WCParams](AGameStateBase* GS){
+			FinishInitOverlay(WCParams, GS);
+		});
+	}
+}
+
+void ASamHUD::FinishInitOverlay(const FWidgetControllerParams& WCParams, const AGameStateBase* GameState)
+{
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayClass);
 	OverlayWidget = Cast<USamUserWidget>(Widget);
-
-
+	
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WCParams);
 
 	OverlayWidget->SetWidgetController(WidgetController);
@@ -36,3 +48,6 @@ void ASamHUD::InitOverlay(const FWidgetControllerParams& WCParams)
 	
 	Widget->AddToViewport();
 }
+
+
+
