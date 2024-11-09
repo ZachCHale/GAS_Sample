@@ -27,6 +27,8 @@ public:
 	virtual void BeginPlay() override;
 	
 	virtual void Destroyed() override;
+
+	virtual void PostInitializeComponents() override;
 	
 	UAttributeSet* GetAttributeSet() const;
 
@@ -37,6 +39,7 @@ public:
 	virtual void AddToLevel(int32 AddedLevels) override;
 
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
+
 
 protected:
 	UPROPERTY()

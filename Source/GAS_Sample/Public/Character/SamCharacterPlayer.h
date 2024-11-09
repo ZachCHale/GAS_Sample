@@ -24,7 +24,6 @@ class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase, public IPla
 	virtual void OnRep_PlayerState() override;
 
 	virtual void PossessedBy(AController* NewController) override;
-
 	
 public:
 	void SetCameraDistanceAhead(float Distance);
@@ -34,6 +33,8 @@ public:
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
+
+	bool InitHUD();
 	
 
 private:

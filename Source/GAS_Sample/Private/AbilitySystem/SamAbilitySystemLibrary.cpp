@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "SamGameStateBase.h"
+#include "SamLogChannels.h"
 #include "AbilitySystem/SamGameplayAbility.h"
 #include "Actor/Interface/TeamInterface.h"
 #include "GameFramework/Character.h"
@@ -151,5 +152,10 @@ ASamGameStateBase* USamAbilitySystemLibrary::GetSamGameStateBase(const UObject* 
 	UWorld* World = WorldContextObject->GetWorld();
 	check(World)
 	AGameStateBase* GS = World->GetGameState();
+	if(GS == nullptr)
+	{
+		UE_LOG(SamLog, Error, TEXT("GameStateWasNull"))
+		return nullptr;
+	}
 	return CastChecked<ASamGameStateBase>(GS);
 }

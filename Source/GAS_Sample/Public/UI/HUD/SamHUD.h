@@ -38,6 +38,8 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+
+	bool b_IsInitialized = false;
 	
 	
 };

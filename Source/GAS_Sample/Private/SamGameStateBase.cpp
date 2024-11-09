@@ -5,14 +5,42 @@
 
 #include "SamLogChannels.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "Character/SamCharacterPlayer.h"
+#include "Controller/SamPlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "UI/HUD/SamHUD.h"
 
 void ASamGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ASamGameStateBase, SharedPlayerLevel);
 	DOREPLIFETIME(ASamGameStateBase, SharedPlayerExp);
+}
+
+void ASamGameStateBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	UE_LOG(SamLog, Log, TEXT("State init"))
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(),0);
+	if(PC == nullptr) return;
+	ASamCharacterPlayer* Character = Cast<ASamCharacterPlayer>(PC->GetCharacter());
+	if(Character != nullptr)
+	{
+		if(Character->InitHUD())
+		{
+			if(HasAuthority())
+				UE_LOG(SamLog, Log, TEXT("A"))
+
+			UE_LOG(SamLog, Log, TEXT("Init HUD from Game State suceeded."))
+		}else
+		{
+			if(HasAuthority())
+				UE_LOG(SamLog, Log, TEXT("A"))
+			UE_LOG(SamLog, Log, TEXT("Init HUD from Game State failed."))
+		}
+	}
 }
 
 void ASamGameStateBase::AddToExp(int32 AddedExp)
@@ -29,6 +57,12 @@ void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 	SharedPlayerLevel+=AddedLevels;  
 	LevelChangedDelegate.Broadcast(SharedPlayerLevel);
 	UE_LOG(SamLog, Log, TEXT("SharedLevel %d"), SharedPlayerLevel);
+
+	if(SharedPlayerLevel != 0)
+	{
+		PauseAndOpenLevelUpScreen();
+	}
+		
 	
 }
 
@@ -63,4 +97,11 @@ void ASamGameStateBase::OnRep_SharedPlayerLevel(int32 OldLevel) const
 void ASamGameStateBase::OnRep_SharedPlayerExp(int32 OldTotalExp) const
 {  
 	ExpChangedDelegate.Broadcast(SharedPlayerExp);  
+}
+
+void ASamGameStateBase::PauseAndOpenLevelUpScreen()
+{
+	if(!HasAuthority())return;
+	
+	GetWorld()->GetFirstPlayerController()->SetPause(true);
 }

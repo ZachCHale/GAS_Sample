@@ -28,6 +28,8 @@ public:
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
 
+	virtual void PostInitializeComponents() override;
+
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
 
@@ -37,7 +39,6 @@ public:
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
 	TArray<ACharacter*> GetAllPlayerCharacters();
-
 
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SharedPlayerLevel)  
@@ -51,8 +52,8 @@ private:
   
 	UFUNCTION()  
 	void OnRep_SharedPlayerExp(int32 OldExp) const;
-
 	
+	void PauseAndOpenLevelUpScreen();
 	
 	
 };

@@ -22,7 +22,8 @@ void ASamHUD::InitOverlay(const FWidgetControllerParams& WCParams)
 {
 	checkf(OverlayClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_SamHUD"));
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_SamHUD"));
-	
+	if(b_IsInitialized) return;
+	b_IsInitialized = true;
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayClass);
 	OverlayWidget = Cast<USamUserWidget>(Widget);
 

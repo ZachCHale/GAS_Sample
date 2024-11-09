@@ -4,6 +4,7 @@
 #include "Player/SamPlayerState.h"
 
 #include "SamGameStateBase.h"
+#include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
@@ -40,6 +41,12 @@ void ASamPlayerState::Destroyed()
 	Super::Destroyed();
 	if(HasAuthority())
 		PlayerStateList.Remove(this);
+}
+
+void ASamPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	UE_LOG(SamLog, Log, TEXT("PostInit"))
 }
 
 UAttributeSet* ASamPlayerState::GetAttributeSet() const
