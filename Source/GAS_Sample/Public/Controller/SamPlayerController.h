@@ -33,8 +33,12 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	UFUNCTION(BlueprintCallable)
 	const float& GetCursorRange() const;
 
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void Sever_ReadyToProceedWithLevelUpSelection();
+
 protected:
 	virtual void SetupInputComponent() override;
+
 
 private:
 	UPROPERTY(EditAnywhere, Category="Input")

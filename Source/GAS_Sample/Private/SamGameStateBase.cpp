@@ -30,16 +30,15 @@ void ASamGameStateBase::AddToExp(int32 AddedExp)
 void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 {
 	if(!HasAuthority()) return;
-	SharedPlayerLevel+=AddedLevels;  
-	LevelChangedDelegate.Broadcast(SharedPlayerLevel);
-	UE_LOG(SamLog, Log, TEXT("SharedLevel %d"), SharedPlayerLevel);
+	SharedPlayerLevel+=AddedLevels;
+	//Broadcast Events to clients
+	Multicast_StartLevelUpEvent(SharedPlayerLevel);
 
+	//Pause Game
 	if(SharedPlayerLevel != 0)
 	{
-		PauseAndOpenLevelUpScreen();
+		GetWorld()->GetFirstPlayerController()->SetPause(true);
 	}
-		
-	
 }
 
 int32 ASamGameStateBase::FindLevelForExp(int32 ExpValue)
@@ -65,6 +64,68 @@ TArray<ACharacter*> ASamGameStateBase::GetAllPlayerCharacters()
 	return Characters;
 }
 
+void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
+{
+	EndLevelUpSelectionDelegate.Broadcast();
+}
+
+void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
+{
+	if (!PlayerState->IsInactive())
+	{
+		if(!PlayerArray.Contains(PlayerState))
+		{
+			PlayerArray.AddUnique(PlayerState);
+			LevelUpSelectionState.Add(FPlayerLevelUpSelectionState(PlayerState));
+		}
+	}
+}
+
+void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
+{
+	Super::RemovePlayerState(PlayerState);
+	for(int i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		if(PlayerState == LevelUpSelectionState[i].PlayerState)
+		{
+			LevelUpSelectionState.RemoveAt(i);
+			return;
+		}
+	}
+}
+
+void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* PlayerState)
+{
+	check(HasAuthority());
+	bool bAreAllPlayersReady = true;
+	for (int i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		if(LevelUpSelectionState[i].PlayerState == PlayerState)
+		{
+			LevelUpSelectionState[i].bIsReady = true;
+		}
+		bAreAllPlayersReady &= LevelUpSelectionState[i].bIsReady;
+	}
+	if(bAreAllPlayersReady)
+	{
+		UE_LOG(SamLog, Log, TEXT("Should unpause now."));
+		for(int i = 0; i < LevelUpSelectionState.Num(); i++)
+		{
+			LevelUpSelectionState[i].bIsReady = false;
+		}
+		Multicast_EndLevelUpEvent(SharedPlayerLevel);
+		GetWorld()->GetFirstPlayerController()->SetPause(false);
+	}
+	
+}
+
+void ASamGameStateBase::Multicast_StartLevelUpEvent_Implementation(int32 NewLevel)
+{
+	LevelChangedDelegate.Broadcast(NewLevel);
+	//Todo: Generate choices for every player before the UI tries to show the choices.
+	BeginLevelUpSelectionDelegate.Broadcast();
+}
+
 void ASamGameStateBase::OnRep_SharedPlayerLevel(int32 OldLevel) const
 {  
 	LevelChangedDelegate.Broadcast(SharedPlayerLevel);  
@@ -72,12 +133,7 @@ void ASamGameStateBase::OnRep_SharedPlayerLevel(int32 OldLevel) const
   
 void ASamGameStateBase::OnRep_SharedPlayerExp(int32 OldTotalExp) const
 {  
-	ExpChangedDelegate.Broadcast(SharedPlayerExp);  
+	ExpChangedDelegate.Broadcast(SharedPlayerExp);
 }
 
-void ASamGameStateBase::PauseAndOpenLevelUpScreen()
-{
-	if(!HasAuthority())return;
-	
-	GetWorld()->GetFirstPlayerController()->SetPause(true);
-}
+

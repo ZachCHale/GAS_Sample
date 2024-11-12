@@ -18,7 +18,7 @@ class GAS_SAMPLE_API ASamCharacterEnemy : public ASamCharacterBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintAssignable)
-	FOnProgressBarStatChangedSignature OnHealthChanged;
+	FOnProgressBarStatChangedSignature_Dynamic OnHealthChanged;
 	
 private:
 	ASamCharacterEnemy();

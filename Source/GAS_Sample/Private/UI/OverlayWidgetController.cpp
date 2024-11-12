@@ -37,6 +37,11 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		UE_LOG(SamLog, Warning, TEXT("Success"))
 	SamGS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
 	SamGS->LevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnLevelChanged);
+	SamGS->BeginLevelUpSelectionDelegate.AddUObject(this, &UOverlayWidgetController::OnBeginLevelUpSelection);
+	SamGS->EndLevelUpSelectionDelegate.AddUObject(this, &UOverlayWidgetController::OnEndLevelUpSelection);
+
+
+	//OnLevelChangedDelegate.AddDynamic(this, &ThisClass::Test);
 	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChanged);
 	
@@ -71,6 +76,21 @@ void UOverlayWidgetController::OnLevelChanged(int32 NewLevel) const
 {
 	OnLevelChangedDelegate.Broadcast(NewLevel);
 	UE_LOG(SamLog, Log, TEXT("Level: %d"), NewLevel);
+}
+
+void UOverlayWidgetController::OnBeginLevelUpSelection() const
+{
+	OnBeginLevelUpSelectionDelegate.Broadcast();
+}
+
+void UOverlayWidgetController::OnEndLevelUpSelection() const
+{
+	OnEndLevelUpSelectionDelegate.Broadcast();
+}
+
+void UOverlayWidgetController::Test(int32 NewLevel)
+{
+	UE_LOG(SamLog, Error, TEXT("TEST FIRED"))
 }
 
 

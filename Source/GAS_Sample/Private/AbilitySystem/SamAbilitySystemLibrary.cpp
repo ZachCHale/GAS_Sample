@@ -159,3 +159,5 @@ ASamGameStateBase* USamAbilitySystemLibrary::GetSamGameStateBase(const UObject* 
 	}
 	return CastChecked<ASamGameStateBase>(GS);
 }
+
+

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SamGameStateBase.h"
 #include "SamWidgetControllerEvents.h"
 #include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
@@ -21,13 +22,19 @@ class GAS_SAMPLE_API UOverlayWidgetController : public USamWidgetController
 public:
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnProgressBarStatChangedSignature OnHealthChangedDelegate;
+	FOnProgressBarStatChangedSignature_Dynamic OnHealthChangedDelegate;
 	
 	UPROPERTY(BlueprintAssignable)
-	FOnProgressBarStatChangedSignature OnExpProgressChangedDelegate;
+	FOnProgressBarStatChangedSignature_Dynamic OnExpProgressChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnIntStatChangedSignature OnLevelChangedDelegate;
+	FOnIntStatChangedSignature_Dynamic OnLevelChangedDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnLevelUpSelectionSignature_Dynamic OnBeginLevelUpSelectionDelegate;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnLevelUpSelectionSignature_Dynamic OnEndLevelUpSelectionDelegate;
 
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
@@ -38,4 +45,9 @@ private:
 	void OnMaxHealthChanged(const FOnAttributeChangeData& NewMaxHealth) const;
 	void OnExpChanged(int32 NewExp) const;
 	void OnLevelChanged(int32 NewLevel) const;
+	void OnBeginLevelUpSelection() const;
+	void OnEndLevelUpSelection() const;
+
+	UFUNCTION()
+	void Test(int32 NewLevel);
 };

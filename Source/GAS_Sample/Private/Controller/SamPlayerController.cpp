@@ -7,7 +7,9 @@
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "SamGameStateBase.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Character/SamCharacterPlayer.h"
 #include "Input/SamInputComponent.h"
 
@@ -50,6 +52,14 @@ void ASamPlayerController::SetupInputComponent()
 	USamInputComponent* SamInputComponent = CastChecked<USamInputComponent>(InputComponent);
 	SamInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASamPlayerController::Move);
 	SamInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::InputActionPressed, &ThisClass::InputActionReleased, &ThisClass::InputActionHeld);
+}
+
+void ASamPlayerController::Sever_ReadyToProceedWithLevelUpSelection_Implementation()
+{
+	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
+	{
+		SamGS->Auth_ReadyUpPlayerForLevelUpSelection(PlayerState);
+	}
 }
 
 void ASamPlayerController::UpdateCursorInformation()
