@@ -24,6 +24,11 @@ public:
 	
 	void TryActivateAbilitiesByDynamicTag(FGameplayTag GameplayTag);
 
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurrentUpgradeLevel(FGameplayTag UpgradeTag);
+
+	void Auth_IncrementUpgradeEffect(FGameplayTag UpgradeTag);
+
 private:
 	ETeam Team = ETeam::Neutral;
 

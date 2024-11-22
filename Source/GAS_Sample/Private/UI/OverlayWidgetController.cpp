@@ -22,6 +22,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(SamPS->GetTotalExp());
 	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 	OnLevelChangedDelegate.Broadcast(SamPS->GetLevel());
+	OnPlayerReadyCountChangedDelegate.Broadcast(0, SamGS->PlayerArray.Num());
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
@@ -31,20 +32,14 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnHealthChanged);
 
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-
-	//Gamestate is ready, otherwise, wait for it to replicate.
-	if(SamGS)
-		UE_LOG(SamLog, Warning, TEXT("Success"))
+	
 	SamGS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
 	SamGS->LevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnLevelChanged);
 	SamGS->BeginLevelUpSelectionDelegate.AddUObject(this, &UOverlayWidgetController::OnBeginLevelUpSelection);
 	SamGS->EndLevelUpSelectionDelegate.AddUObject(this, &UOverlayWidgetController::OnEndLevelUpSelection);
-
-
-	//OnLevelChangedDelegate.AddDynamic(this, &ThisClass::Test);
+	SamGS->PlayerReadyCountChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnPlayerReadyCountChanged);
 	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChanged);
-	
 }
 
 void UOverlayWidgetController::OnHealthChanged(const FOnAttributeChangeData& NewHealth) const
@@ -66,16 +61,12 @@ void UOverlayWidgetController::OnExpChanged(int32 NewExp) const
 	
 	checkf(LevelUpInfo, TEXT("Unable to find level up info"));
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(NewExp);
-
 	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
-	
-	UE_LOG(SamLog, Log, TEXT("Exp: %d / %d = %f"), ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 }
 
 void UOverlayWidgetController::OnLevelChanged(int32 NewLevel) const
 {
 	OnLevelChangedDelegate.Broadcast(NewLevel);
-	UE_LOG(SamLog, Log, TEXT("Level: %d"), NewLevel);
 }
 
 void UOverlayWidgetController::OnBeginLevelUpSelection() const
@@ -86,6 +77,11 @@ void UOverlayWidgetController::OnBeginLevelUpSelection() const
 void UOverlayWidgetController::OnEndLevelUpSelection() const
 {
 	OnEndLevelUpSelectionDelegate.Broadcast();
+}
+
+void UOverlayWidgetController::OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const
+{
+	OnPlayerReadyCountChangedDelegate.Broadcast(NewReadyCount, NewTotalPlayerCount);
 }
 
 void UOverlayWidgetController::Test(int32 NewLevel)

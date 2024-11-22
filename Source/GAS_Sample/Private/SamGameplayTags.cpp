@@ -60,3 +60,12 @@ namespace SamTags::Mappings
 	}
 }
 
+namespace SamTags::UpgradeTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_MovementSpeed, "Upgrade.MovementSpeed", "Upgrade associated with movement speed increases.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_AttackSpeed, "Upgrade.AttackSpeed", "Upgrade associated with attack speed increases.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_DamageScale, "Upgrade.DamageScale", "Upgrade associated with damage scale increases.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_HealthBoost, "Upgrade.HealthBoost", "Upgrade associated with max health increases.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_HealthRegen, "Upgrade.HealthRegen", "Upgrade associated with health regen increases.")
+}
+

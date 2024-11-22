@@ -3,6 +3,9 @@
 
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 
+#include "SamLogChannels.h"
+#include "AbilitySystem/SamAbilitySystemLibrary.h"
+
 void USamAbilitySystemComponent::AbilityInputHeld(FGameplayTag GameplayTag)
 {
 	if(!GameplayTag.IsValid()) return;  
@@ -55,4 +58,42 @@ void USamAbilitySystemComponent::TryActivateAbilitiesByDynamicTag(FGameplayTag G
 			}  
 		}  
 	} 
+}
+
+int32 USamAbilitySystemComponent::GetCurrentUpgradeLevel(FGameplayTag UpgradeTag)
+{
+	TArray<FGameplayEffectSpec> ActiveEffectSpecs;
+	ActiveGameplayEffects.GetAllActiveGameplayEffectSpecs(ActiveEffectSpecs);
+	auto ActiveEffectHandles= GetActiveEffectsWithAllTags(FGameplayTagContainer(UpgradeTag));
+	checkf(ActiveEffectHandles.Num() <= 1, TEXT("Found multiple active effects with the same Upgrade Tag: %s. Upgrade Tags should be unique to one gameplay effect class."), *UpgradeTag.GetTagName().ToString());
+	if(ActiveEffectHandles.Num() == 1)
+	{
+		const FActiveGameplayEffect* FoundEffect = GetActiveGameplayEffect(ActiveEffectHandles[0]);
+		UE_LOG(SamLog, Log, TEXT("Found this"));
+		return FoundEffect->Spec.GetLevel();
+	}
+	return 0;
+}
+
+void USamAbilitySystemComponent::Auth_IncrementUpgradeEffect(FGameplayTag UpgradeTag)
+{
+	TArray<FGameplayEffectSpec> ActiveEffectSpecs;
+	ActiveGameplayEffects.GetAllActiveGameplayEffectSpecs(ActiveEffectSpecs);
+	auto ActiveEffectHandles= GetActiveEffectsWithAllTags(FGameplayTagContainer(UpgradeTag));
+	checkf(ActiveEffectHandles.Num() <= 1, TEXT("Found multiple active effects with the same Upgrade Tag. Upgrade Tags should be unique to one gameplay effect class."));
+	if(ActiveEffectHandles.Num() == 1)
+	{
+		//Upgrade Existing Effect
+		const FActiveGameplayEffect* FoundEffect = GetActiveGameplayEffect(ActiveEffectHandles[0]);
+		int32 CurrentEffectLevel = FoundEffect->Spec.GetLevel();
+		SetActiveGameplayEffectLevel(ActiveEffectHandles[0], CurrentEffectLevel + 1);
+		UE_LOG(SamLog, Log, TEXT("Upgraded %s Effect! to %d"), *UpgradeTag.GetTagName().ToString(), CurrentEffectLevel+1);
+	}else
+	{
+		//Create New Effect at Level 1
+		UUpgradeInfo* UpgradeInfo = USamAbilitySystemLibrary::GetUpgradeInfo(this);
+		check(UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect != nullptr)
+		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(GetOwnerActor(), UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect, 1);
+		UE_LOG(SamLog, Log, TEXT("New %s Effect!"), *UpgradeTag.GetTagName().ToString());
+	}
 }

@@ -159,3 +159,19 @@ const float& ASamPlayerController::GetCursorRange() const
 {
 	return CursorRange;
 }
+
+void ASamPlayerController::Sever_SendLevelUpSelection_Implementation(FGameplayTag UpgradeTag)
+{
+	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
+	{
+		SamGS->Auth_SendPlayerLevelUpSelection(PlayerState, UpgradeTag);
+	}
+}
+
+void ASamPlayerController::Sever_ClearLevelUpSelection_Implementation()
+{
+	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
+	{
+		SamGS->Auth_ClearPlayerLevelUpSelection(PlayerState);
+	}
+}

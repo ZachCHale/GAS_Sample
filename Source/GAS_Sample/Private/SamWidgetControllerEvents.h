@@ -13,3 +13,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnProgressBarStatChangedSignatur
 UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpSelectionSignature_Dynamic);
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature_Dynamic, int, ReadyPlayerCount, int, TotalPlayerCount);
+

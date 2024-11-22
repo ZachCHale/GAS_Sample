@@ -36,6 +36,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnLevelUpSelectionSignature_Dynamic OnEndLevelUpSelectionDelegate;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerReadyCountChangedSignature_Dynamic OnPlayerReadyCountChangedDelegate;
+
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 
@@ -47,6 +50,7 @@ private:
 	void OnLevelChanged(int32 NewLevel) const;
 	void OnBeginLevelUpSelection() const;
 	void OnEndLevelUpSelection() const;
+	void OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
 
 	UFUNCTION()
 	void Test(int32 NewLevel);

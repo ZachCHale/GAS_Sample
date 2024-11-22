@@ -63,3 +63,11 @@ namespace SamTags::Mappings
 	TMap<FGameplayTag, FGameplayTag> GetDamageTypesToResistancesMap();
 }
 
+namespace SamTags::UpgradeTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_MovementSpeed);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_AttackSpeed);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_DamageScale);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_HealthBoost);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_HealthRegen);
+}

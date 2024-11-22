@@ -4,12 +4,14 @@
 #include "SamGameStateBase.h"
 
 #include "SamLogChannels.h"
+#include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Character/SamCharacterPlayer.h"
 #include "Controller/SamPlayerController.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/SamPlayerState.h"
 #include "UI/HUD/SamHUD.h"
 
 void ASamGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -24,15 +26,17 @@ void ASamGameStateBase::AddToExp(int32 AddedExp)
 	if(!HasAuthority()) return;
 	SharedPlayerExp += AddedExp;  
 	ExpChangedDelegate.Broadcast(SharedPlayerExp);
-	UE_LOG(SamLog, Log, TEXT("SharedExp %d"), SharedPlayerExp);
 }
 
 void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 {
+	//TODO: Handle Edge case of multiple level ups, keep a backlogged count of level ups, when we go to unpause, open selection again instead.
 	if(!HasAuthority()) return;
+	StateStatus = EGameStateStatus::LevelUpSelection;
 	SharedPlayerLevel+=AddedLevels;
+	Auth_GenerateUpgradesForPlayers();
 	//Broadcast Events to clients
-	Multicast_StartLevelUpEvent(SharedPlayerLevel);
+	Multicast_StartLevelUpEvent(SharedPlayerLevel, SharedPlayerExp, LevelUpSelectionState);
 
 	//Pause Game
 	if(SharedPlayerLevel != 0)
@@ -69,6 +73,12 @@ void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
 	EndLevelUpSelectionDelegate.Broadcast();
 }
 
+void ASamGameStateBase::Multicast_UpdateReadyCount_Implementation(int32 NewReady, int32 NewTotal)
+{
+	PlayerReadyCount = NewReady;
+	PlayerReadyCountChangedDelegate.Broadcast(NewReady, NewTotal);
+}
+
 void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
 {
 	if (!PlayerState->IsInactive())
@@ -77,6 +87,7 @@ void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
 		{
 			PlayerArray.AddUnique(PlayerState);
 			LevelUpSelectionState.Add(FPlayerLevelUpSelectionState(PlayerState));
+			PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
 		}
 	}
 }
@@ -89,6 +100,7 @@ void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 		if(PlayerState == LevelUpSelectionState[i].PlayerState)
 		{
 			LevelUpSelectionState.RemoveAt(i);
+			PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
 			return;
 		}
 	}
@@ -108,7 +120,6 @@ void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* Play
 	}
 	if(bAreAllPlayersReady)
 	{
-		UE_LOG(SamLog, Log, TEXT("Should unpause now."));
 		for(int i = 0; i < LevelUpSelectionState.Num(); i++)
 		{
 			LevelUpSelectionState[i].bIsReady = false;
@@ -119,21 +130,145 @@ void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* Play
 	
 }
 
-void ASamGameStateBase::Multicast_StartLevelUpEvent_Implementation(int32 NewLevel)
+void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(APlayerState* PlayerState, FGameplayTag UpgradeTag)
 {
-	LevelChangedDelegate.Broadcast(NewLevel);
-	//Todo: Generate choices for every player before the UI tries to show the choices.
+	check(HasAuthority());
+	if(StateStatus != EGameStateStatus::LevelUpSelection)return;
+	bool bAreAllPlayersReady = true;
+	int32 ReadyCount = 0;
+	for (int32 i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		if(LevelUpSelectionState[i].PlayerState == PlayerState)
+		{
+			LevelUpSelectionState[i].bIsReady = true;
+			//ToDo: Add validation that UpgradeTag is a valid choice. Needs to be done from the SeverRPC located in the player controller 
+			LevelUpSelectionState[i].CurrentlySelectedChoice = UpgradeTag;
+		}
+		if(LevelUpSelectionState[i].bIsReady)
+			ReadyCount++;
+		bAreAllPlayersReady &= LevelUpSelectionState[i].bIsReady;
+	}
+	int32 PrevReadyCount = PlayerReadyCount;
+	PlayerReadyCount = ReadyCount;
+	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
+	if(bAreAllPlayersReady)
+	{
+		for(int32 i = 0; i < LevelUpSelectionState.Num(); i++)
+		{
+			//TODO: Apply gameplay effects for UpgradeTag
+			UE_LOG(SamLog, Log, TEXT("%s submitted %s"), *LevelUpSelectionState[i].PlayerState->GetName(), *LevelUpSelectionState[i].CurrentlySelectedChoice.GetTagName().ToString());
+			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(LevelUpSelectionState[i].PlayerState);
+			USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
+			SamASC->Auth_IncrementUpgradeEffect(LevelUpSelectionState[i].CurrentlySelectedChoice);
+			LevelUpSelectionState[i].ResetSelectionState();
+		}
+		StateStatus = EGameStateStatus::Gameplay;
+		Multicast_EndLevelUpEvent(SharedPlayerLevel);
+		GetWorld()->GetFirstPlayerController()->SetPause(false);
+	}
+}
+
+void ASamGameStateBase::Auth_ClearPlayerLevelUpSelection(APlayerState* PlayerState)
+{
+	check(HasAuthority());
+	int32 ReadyCount = 0;
+	for (int i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		if(LevelUpSelectionState[i].PlayerState == PlayerState)
+		{
+			LevelUpSelectionState[i].bIsReady = false;
+			LevelUpSelectionState[i].CurrentlySelectedChoice = FGameplayTag();
+		}
+		else if(LevelUpSelectionState[i].bIsReady)
+		{
+			ReadyCount++;
+		}
+	}
+	int32 PrevCount = PlayerReadyCount;
+	PlayerReadyCount = ReadyCount;
+	//OnRep_PlayerReadyCount(PrevCount);
+	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
+}
+
+TArray<FUpgradeInfoItem> ASamGameStateBase::GetLocalPlayerSelectionChoices()
+{
+	TArray<FUpgradeInfoItem> ChoicesInfo;
+	for (auto PlayerSelectionState : LevelUpSelectionState)
+	{
+		//If on client, remote player states won't have a controller
+		if(PlayerSelectionState.PlayerState->GetPlayerController() == nullptr)
+			continue;
+		if(PlayerSelectionState.PlayerState->GetPlayerController()->IsLocalPlayerController())
+		{
+			for (auto Tag : PlayerSelectionState.UpgradeChoiceTags)
+			{
+				ChoicesInfo.Add(UpgradeInfo->GetUpgradeInfoFromTag(Tag));
+			}
+			break;
+		}
+	}
+	return ChoicesInfo;
+}
+
+void ASamGameStateBase::Multicast_StartLevelUpEvent_Implementation(int32 NewLevel, int32 NewExp, const TArray<FPlayerLevelUpSelectionState>& UpdatedLevelUpSelectionState)
+{
+	//Replication doesn't seem to work when the game is paused, so we need to manually replicate from the RPC
+	SharedPlayerExp = NewExp;
+	OnRep_SharedPlayerExp();
+	SharedPlayerLevel = NewLevel;
+	OnRep_SharedPlayerLevel();
+	//ExpChangedDelegate.Broadcast(SharedPlayerExp);
+	//LevelChangedDelegate.Broadcast(SharedPlayerLevel);
+
+	
+	//Server generates the upgrade choices and sends them via this RPC
+	//Replicate the relevant data for Upgrade selection before broadcasting UpgradeSelectionDelegate.
+	LevelUpSelectionState = UpdatedLevelUpSelectionState;
+
+	//Debug, TODO:Remove
+	for (auto PlayerSelectionState : LevelUpSelectionState)
+	{
+		//If on client, remote player states won't have a controller
+		if(PlayerSelectionState.PlayerState->GetPlayerController() == nullptr)
+			continue;
+		if(PlayerSelectionState.PlayerState->GetPlayerController()->IsLocalPlayerController())
+		{
+			for (auto ChoiceTag : PlayerSelectionState.UpgradeChoiceTags)
+			{
+				UE_LOG(SamLog, Log, TEXT("%s"), *ChoiceTag.GetTagName().ToString())
+			}
+		}
+	}
+	
 	BeginLevelUpSelectionDelegate.Broadcast();
 }
 
-void ASamGameStateBase::OnRep_SharedPlayerLevel(int32 OldLevel) const
-{  
+void ASamGameStateBase::OnRep_SharedPlayerLevel() const
+{
 	LevelChangedDelegate.Broadcast(SharedPlayerLevel);  
 }  
   
-void ASamGameStateBase::OnRep_SharedPlayerExp(int32 OldTotalExp) const
-{  
+void ASamGameStateBase::OnRep_SharedPlayerExp() const
+{
 	ExpChangedDelegate.Broadcast(SharedPlayerExp);
 }
+
+void ASamGameStateBase::OnRep_PlayerReadyCount() const
+{
+	PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
+}
+
+void ASamGameStateBase::Auth_GenerateUpgradesForPlayers()
+{
+	if(!HasAuthority()) return;
+	for (auto& PlayerLevelUpState : LevelUpSelectionState)
+	{
+		PlayerLevelUpState.ResetSelectionState();
+		PlayerLevelUpState.UpgradeChoiceTags = UpgradeInfo->GetRandomUpgradeTags(3);
+	}
+
+}
+
+
 
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "Data/CharacterClassInfo.h"
+#include "Data/UpgradeInfo.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
@@ -29,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static UUpgradeInfo* GetUpgradeInfo(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FCharacterClassDefaultInfo GetDefaultInfoForCharacterClass(const UObject* WorldContextObject, const ECharacterClass CharacterClass);
@@ -57,5 +61,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static ASamGameStateBase* GetSamGameStateBase(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable)
+	static UAbilitySystemComponent* GetLocalASC(const UObject* WorldContextObject);
+	
 	
 };

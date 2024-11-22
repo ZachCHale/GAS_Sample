@@ -118,11 +118,10 @@ void USamAttributeSet::PostExecuteIncomingExp(const FGameplayEffectModCallbackDa
 	int32 NewExp = CurrentExp + LocalIncomingExp;
 	int NewLevel = Player->FindLevelForExp(NewExp);
 	int32 LevelChange = NewLevel-CurrentLevel;
+	Player->AddToExp(LocalIncomingExp);
 	if(LevelChange > 0)
 	{
 		//LevelUp
 		Player->AddToLevel(LevelChange);
-		UE_LOG(SamLog, Log, TEXT("Level Up %d"), Player->GetLevel());
 	}
-	Player->AddToExp(LocalIncomingExp);
 }

@@ -25,8 +25,15 @@ UCharacterClassInfo* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObje
 	return SamGameMode->CharacterClassInfo;
 }
 
+UUpgradeInfo* USamAbilitySystemLibrary::GetUpgradeInfo(const UObject* WorldContextObject)
+{
+	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
+	if(SamGS == nullptr) return nullptr;
+	return SamGS->UpgradeInfo;
+}
+
 FCharacterClassDefaultInfo USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(const UObject* WorldContextObject,
-	const ECharacterClass CharacterClass)
+                                                                                     const ECharacterClass CharacterClass)
 {
 	return GetCharacterClassInfo(WorldContextObject)->GetClassDefaultInfo(CharacterClass);
 }
@@ -159,5 +166,17 @@ ASamGameStateBase* USamAbilitySystemLibrary::GetSamGameStateBase(const UObject* 
 	}
 	return CastChecked<ASamGameStateBase>(GS);
 }
+
+UAbilitySystemComponent* USamAbilitySystemLibrary::GetLocalASC(const UObject* WorldContextObject)
+{
+	if(APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		ASamPlayerState* SamPS = PC->GetPlayerState<ASamPlayerState>();
+		return SamPS->GetAbilitySystemComponent();
+	}
+	return nullptr;
+}
+
+
 
 

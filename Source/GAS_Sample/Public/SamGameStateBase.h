@@ -3,11 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/UpgradeInfo.h"
 #include "GameFramework/GameStateBase.h"
 #include "Player/PlayerInterface.h"
 #include "SamGameStateBase.generated.h"
 
 class ULevelUpInfo;
+
+UENUM()
+enum EGameStateStatus: int32
+{
+	LevelUpSelection,
+	Gameplay,
+};
 
 USTRUCT()
 struct FPlayerLevelUpSelectionState
@@ -17,23 +25,33 @@ struct FPlayerLevelUpSelectionState
 	{
 		PlayerState = nullptr;
 		bIsReady = false;
-		PlaceholderChoices.Init(0,3);
-		CurrentlySelectedChoice = 0;
+		CurrentlySelectedChoice = FGameplayTag();
 	}
 	FPlayerLevelUpSelectionState(APlayerState* NewPS)
 	{
 		PlayerState = NewPS;
 		bIsReady = false;
-		PlaceholderChoices.Init(0,3);
-		CurrentlySelectedChoice = 0;
+		CurrentlySelectedChoice = FGameplayTag();
 	}
+	UPROPERTY()
 	APlayerState* PlayerState;
+	UPROPERTY()
 	bool bIsReady;
-	TArray<int32> PlaceholderChoices;
-	int32 CurrentlySelectedChoice;
+	UPROPERTY()
+	TArray<FGameplayTag> UpgradeChoiceTags;
+	//Add some validation, just make sure Upgrade Choice tags contains this.
+	UPROPERTY()
+	FGameplayTag CurrentlySelectedChoice;
+	void ResetSelectionState()
+	{
+		bIsReady = false;
+		CurrentlySelectedChoice = FGameplayTag();
+		UpgradeChoiceTags.Empty();
+	}
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStatChangedSignature, int32);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32, int32);
 //TODO: Add a param representing choices that were generated on the server. Create a ServerRPC that sends the index of the choice made by the client.
 //Where should choices be stored until client selects? We can keep all of them on the Player State or game state. Clients dont NEED to know about the other players choices, but there isn't any harm in it, and could be used later.
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
@@ -45,12 +63,16 @@ class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IPlayerI
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	FOnGameStatChangedSignature ExpChangedDelegate;
 	//This should be used for updating UI values that display the level.
 	FOnGameStatChangedSignature LevelChangedDelegate;
 	//This should be used specifically for opening and filling the level up screen.
 	FOnLevelupSelectionSignature BeginLevelUpSelectionDelegate;
 	FOnLevelupSelectionSignature EndLevelUpSelectionDelegate;
+
+	FOnPlayerReadyCountChangedSignature PlayerReadyCountChangedDelegate;
+
 	
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
@@ -62,13 +84,20 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UUpgradeInfo> UpgradeInfo;
 
 	TArray<ACharacter*> GetAllPlayerCharacters();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_StartLevelUpEvent(int32 NewLevel);
+	void Multicast_StartLevelUpEvent(int32 NewLevel, int32 NewExp, const TArray<FPlayerLevelUpSelectionState>& UpdatedLevelUpSelectionState);
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EndLevelUpEvent(int32 NewLevel);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_UpdateReadyCount(int32 NewReady, int32 NewTotal);
+
 
 	virtual void AddPlayerState(APlayerState* PlayerState) override;
 
@@ -76,6 +105,15 @@ public:
 	
 	UFUNCTION()
 	void Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* PlayerState);
+
+	UFUNCTION()
+	void Auth_SendPlayerLevelUpSelection(APlayerState* PlayerState, FGameplayTag UpgradeTag);
+
+	UFUNCTION()
+	void Auth_ClearPlayerLevelUpSelection(APlayerState* PlayerState);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FUpgradeInfoItem> GetLocalPlayerSelectionChoices();
 
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SharedPlayerLevel)  
@@ -85,11 +123,19 @@ private:
 	int32 SharedPlayerExp = 0;
 
 	UFUNCTION()  
-	void OnRep_SharedPlayerLevel(int32 OldLevel) const;  
+	void OnRep_SharedPlayerLevel() const;  
   
 	UFUNCTION()  
-	void OnRep_SharedPlayerExp(int32 OldExp) const;
+	void OnRep_SharedPlayerExp() const;
+	
+	UFUNCTION()  
+	void OnRep_PlayerReadyCount() const;
 
 	TArray<FPlayerLevelUpSelectionState> LevelUpSelectionState;
+
+	void Auth_GenerateUpgradesForPlayers();
+
+	EGameStateStatus StateStatus = EGameStateStatus::Gameplay;
 	
+	int32 PlayerReadyCount = 0;
 };
