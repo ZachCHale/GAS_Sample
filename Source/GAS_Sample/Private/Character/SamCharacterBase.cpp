@@ -72,6 +72,7 @@ void ASamCharacterBase::OnMovementSpeedAttributeChanged(const FOnAttributeChange
 void ASamCharacterBase::SetMovementSpeed(float NewSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+	GetCharacterMovement()->MaxAcceleration = NewSpeed;
 }
 
 void ASamCharacterBase::InitDefaultAttributes()

@@ -37,3 +37,14 @@ TArray<FGameplayTag> UUpgradeInfo::GetRandomUpgradeTags(int32 TagCount)
 	}
 	return RandomTags;
 }
+
+FStatChangePreview UUpgradeInfo::GetStatChangePreview(FGameplayTag UpgradeTag, int32 StartingLevel, int32 EndingLevel)
+{
+	const FString ContextString("StatChangePreview");
+	FRealCurve* Curve = UpgradeMagnitudeTable->FindCurve(UpgradeTag.GetTagName(), ContextString, true);
+	FStatChangePreview StatChange;
+	StatChange.StartingValue =	Curve->Eval(StartingLevel);
+	StatChange.PredictedValue = Curve->Eval(EndingLevel);
+	StatChange.StatName = GetUpgradeInfoFromTag(UpgradeTag).StatName;
+	return StatChange;
+}

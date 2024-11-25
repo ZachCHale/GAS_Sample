@@ -10,6 +10,18 @@
 #include "UpgradeInfo.generated.h"
 
 USTRUCT(BlueprintType)
+struct FStatChangePreview
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadOnly)
+	FText StatName;
+	UPROPERTY(BlueprintReadOnly)
+	float StartingValue;
+	UPROPERTY(BlueprintReadOnly)
+	float PredictedValue;
+};
+
+USTRUCT(BlueprintType)
 struct FUpgradeInfoItem
 {
 	GENERATED_BODY()
@@ -21,8 +33,13 @@ struct FUpgradeInfoItem
 	FGameplayTag UpgradeTag;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> UpgradeEffect;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText StatName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool PercentageFormat;
 };
+
+
 
 UCLASS()
 class GAS_SAMPLE_API UUpgradeInfo : public UDataAsset
@@ -32,7 +49,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FUpgradeInfoItem> UpgradeInfo;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UCurveTable> UpgradeMagnitudeTable;
+
 	FUpgradeInfoItem GetUpgradeInfoFromTag(FGameplayTag UpgradeTag) const;
 
 	TArray<FGameplayTag> GetRandomUpgradeTags(int32 TagCount);
+
+	UFUNCTION(BlueprintCallable)
+	FStatChangePreview GetStatChangePreview(FGameplayTag UpgradeTag, int32 StartingLevel, int32 EndingLevel);
+
 };
