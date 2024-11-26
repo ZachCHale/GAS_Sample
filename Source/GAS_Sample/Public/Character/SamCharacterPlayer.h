@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/SamCharacterBase.h"
-#include "Player/PlayerInterface.h"
+#include "Player/ExpLevelInterface.h"
 #include "SamCharacterPlayer.generated.h"
 
 class UCameraComponent;
@@ -13,7 +13,7 @@ class USpringArmComponent;
  * 
  */
 UCLASS()
-class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase, public IPlayerInterface
+class GAS_SAMPLE_API ASamCharacterPlayer : public ASamCharacterBase, public IExpLevelInterface
 {
 	GENERATED_BODY()
 

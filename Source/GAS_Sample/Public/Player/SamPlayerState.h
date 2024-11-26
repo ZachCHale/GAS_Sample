@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
-#include "PlayerInterface.h"
+#include "ExpLevelInterface.h"
 
 #include "SamPlayerState.generated.h"
 
@@ -16,7 +16,7 @@ class UAttributeSet;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32)
 
 UCLASS()
-class GAS_SAMPLE_API ASamPlayerState : public APlayerState, public IAbilitySystemInterface, public IPlayerInterface
+class GAS_SAMPLE_API ASamPlayerState : public APlayerState, public IAbilitySystemInterface, public IExpLevelInterface
 {
 	GENERATED_BODY()
 public:

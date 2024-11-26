@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "PlayerInterface.generated.h"
+#include "ExpLevelInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UPlayerInterface : public UInterface
+class UExpLevelInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class GAS_SAMPLE_API IPlayerInterface
+class GAS_SAMPLE_API IExpLevelInterface
 {
 	GENERATED_BODY()
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Data/UpgradeInfo.h"
 #include "GameFramework/GameStateBase.h"
-#include "Player/PlayerInterface.h"
+#include "Player/ExpLevelInterface.h"
 #include "SamGameStateBase.generated.h"
 
 class ULevelUpInfo;
@@ -55,7 +55,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32,
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
 
 UCLASS()
-class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IPlayerInterface
+class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IExpLevelInterface
 {
 	GENERATED_BODY()
 

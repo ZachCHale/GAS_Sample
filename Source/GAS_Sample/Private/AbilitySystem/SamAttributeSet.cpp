@@ -6,7 +6,7 @@
 #include "GameplayEffectExtension.h"
 #include "SamLogChannels.h"
 #include "Character/SamCharacterBase.h"
-#include "Player/PlayerInterface.h"
+#include "Player/ExpLevelInterface.h"
 
 USamAttributeSet::USamAttributeSet()
 {
@@ -108,10 +108,10 @@ void USamAttributeSet::PostExecuteIncomingExp(const FGameplayEffectModCallbackDa
 	SetIncomingExp(0);
 
 	AActor* TargetActor = Data.Target.GetAvatarActor();
-	if(!TargetActor->Implements<UPlayerInterface>())
+	if(!TargetActor->Implements<UExpLevelInterface>())
 		return;
 
-	IPlayerInterface* Player = Cast<IPlayerInterface>(TargetActor);
+	IExpLevelInterface* Player = Cast<IExpLevelInterface>(TargetActor);
 	
 	int32 CurrentLevel = Player->GetLevel();
 	int32 CurrentExp = Player->GetTotalExp();
