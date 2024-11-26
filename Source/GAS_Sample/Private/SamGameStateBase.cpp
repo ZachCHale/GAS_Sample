@@ -30,7 +30,6 @@ void ASamGameStateBase::AddToExp(int32 AddedExp)
 
 void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 {
-	//TODO: Handle Edge case of multiple level ups, keep a backlogged count of level ups, when we go to unpause, open selection again instead.
 	if(!HasAuthority()) return;
 	if(AddedLevels <= 0) return;
 	StateStatus = EGameStateStatus::LevelUpSelection;
@@ -108,107 +107,42 @@ void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 	}
 }
 
-void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(const APlayerState* PlayerState)
-{
-	check(HasAuthority());
-	bool bAreAllPlayersReady = true;
-	for (int i = 0; i < LevelUpSelectionState.Num(); i++)
-	{
-		if(LevelUpSelectionState[i].PlayerState == PlayerState)
-		{
-			LevelUpSelectionState[i].bIsReady = true;
-		}
-		bAreAllPlayersReady &= LevelUpSelectionState[i].bIsReady;
-	}
-	if(bAreAllPlayersReady)
-	{
-		for(int i = 0; i < LevelUpSelectionState.Num(); i++)
-		{
-			LevelUpSelectionState[i].bIsReady = false;
-		}
-		Multicast_EndLevelUpEvent(SharedPlayerLevel);
-		GetWorld()->GetFirstPlayerController()->SetPause(false);
-	}
-	
-}
-
 void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag)
 {
 	check(HasAuthority());
 	if(StateStatus != EGameStateStatus::LevelUpSelection)return;
-	bool bAreAllPlayersReady = true;
-	int32 ReadyCount = 0;
-	for (int32 i = 0; i < LevelUpSelectionState.Num(); i++)
+	
+	if(FPlayerLevelUpSelectionState* PlayerSelectionState = GetPlayerLevelUpSelectionState(PlayerState))
 	{
-		if(LevelUpSelectionState[i].PlayerState == PlayerState)
-		{
-			LevelUpSelectionState[i].bIsReady = true;
-			LevelUpSelectionState[i].CurrentlySelectedChoice = UpgradeTag;
-		}
-		if(LevelUpSelectionState[i].bIsReady)
-			ReadyCount++;
-		bAreAllPlayersReady &= LevelUpSelectionState[i].bIsReady;
+		PlayerSelectionState->bIsReady = true;
+		PlayerSelectionState->CurrentlySelectedChoice = UpgradeTag;
 	}
-	int32 PrevReadyCount = PlayerReadyCount;
-	PlayerReadyCount = ReadyCount;
+
+	PlayerReadyCount = CountPlayerSelectionsReady();
 	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
-	if(bAreAllPlayersReady)
+	
+	if(PlayerReadyCount == PlayerArray.Num())
 	{
-		for(int32 i = 0; i < LevelUpSelectionState.Num(); i++)
-		{
-			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(LevelUpSelectionState[i].PlayerState);
-			USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
-			SamASC->Auth_IncrementUpgradeEffect(LevelUpSelectionState[i].CurrentlySelectedChoice);
-			LevelUpSelectionState[i].ResetSelectionState();
-		}
-		if(QueuedLevelUps <=0)
-		{
-			StateStatus = EGameStateStatus::Gameplay;
-			Multicast_EndLevelUpEvent(SharedPlayerLevel);
-			GetWorld()->GetFirstPlayerController()->SetPause(false);
-		}
-		else
-		{
-			AddToLevel(QueuedLevelUps);
-		}
-		
+		Auth_SubmitAllPlayerUpgradeSelections();
 	}
 }
 
 bool ASamGameStateBase::IsValidUpgradeSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag)
 {
-	for (int32 i = 0; i < LevelUpSelectionState.Num(); i++)
-	{
-		if(LevelUpSelectionState[i].PlayerState == PlayerState)
-		{
-			//Invalid Choice
-			if(!LevelUpSelectionState[i].UpgradeChoiceTags.Contains(UpgradeTag))
-				return false;
-			break;
-		}
-	}
+	FPlayerLevelUpSelectionState* PlayerSelectionState = GetPlayerLevelUpSelectionState(PlayerState);
+	if(!PlayerSelectionState || !PlayerSelectionState->UpgradeChoiceTags.Contains(UpgradeTag)) return false;
 	return true;
 }
 
 void ASamGameStateBase::Auth_ClearPlayerLevelUpSelection(APlayerState* PlayerState)
 {
 	check(HasAuthority());
-	int32 ReadyCount = 0;
-	for (int i = 0; i < LevelUpSelectionState.Num(); i++)
+	if(FPlayerLevelUpSelectionState* PlayerSelectionState = GetPlayerLevelUpSelectionState(PlayerState))
 	{
-		if(LevelUpSelectionState[i].PlayerState == PlayerState)
-		{
-			LevelUpSelectionState[i].bIsReady = false;
-			LevelUpSelectionState[i].CurrentlySelectedChoice = FGameplayTag();
-		}
-		else if(LevelUpSelectionState[i].bIsReady)
-		{
-			ReadyCount++;
-		}
+		PlayerSelectionState->bIsReady = false;
+		PlayerSelectionState->CurrentlySelectedChoice = FGameplayTag();
 	}
-	int32 PrevCount = PlayerReadyCount;
-	PlayerReadyCount = ReadyCount;
-	//OnRep_PlayerReadyCount(PrevCount);
+	PlayerReadyCount = CountPlayerSelectionsReady();
 	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
 }
 
@@ -222,7 +156,7 @@ TArray<FUpgradeInfoItem> ASamGameStateBase::GetLocalPlayerSelectionChoices()
 			continue;
 		if(PlayerSelectionState.PlayerState->GetPlayerController()->IsLocalPlayerController())
 		{
-			for (auto Tag : PlayerSelectionState.UpgradeChoiceTags)
+			for (FGameplayTag Tag : PlayerSelectionState.UpgradeChoiceTags)
 			{
 				ChoicesInfo.Add(UpgradeInfo->GetUpgradeInfoFromTag(Tag));
 			}
@@ -271,6 +205,53 @@ void ASamGameStateBase::Auth_GenerateUpgradesForPlayers()
 		PlayerLevelUpState.UpgradeChoiceTags = UpgradeInfo->GetRandomUpgradeTags(3);
 	}
 
+}
+
+FPlayerLevelUpSelectionState* ASamGameStateBase::GetPlayerLevelUpSelectionState(const APlayerState* PlayerState)
+{
+	for (int i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		if(LevelUpSelectionState[i].PlayerState == PlayerState)
+		{
+			return &LevelUpSelectionState[i];
+		}
+	}
+	return nullptr;
+}
+
+int32 ASamGameStateBase::CountPlayerSelectionsReady()
+{
+	int32 ReadyCount = 0;
+	for (auto PlayerLevelUpSelection : LevelUpSelectionState)
+	{
+		if(PlayerLevelUpSelection.bIsReady) ReadyCount++;
+	}
+	return ReadyCount;
+}
+
+void ASamGameStateBase::Auth_SubmitAllPlayerUpgradeSelections()
+{
+	if(!HasAuthority()) return;
+	//Increase Level / Create new effect for selected upgrades.
+	for(int32 i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(LevelUpSelectionState[i].PlayerState);
+		USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
+		SamASC->Auth_IncrementUpgradeEffect(LevelUpSelectionState[i].CurrentlySelectedChoice);
+		LevelUpSelectionState[i].ResetSelectionState();
+	}
+	
+	//Handle Simultaneous Level ups, or resume gameplay
+	if(QueuedLevelUps <=0)
+	{
+		StateStatus = EGameStateStatus::Gameplay;
+		Multicast_EndLevelUpEvent(SharedPlayerLevel);
+		GetWorld()->GetFirstPlayerController()->SetPause(false);
+	}
+	else
+	{
+		AddToLevel(QueuedLevelUps);
+	}
 }
 
 

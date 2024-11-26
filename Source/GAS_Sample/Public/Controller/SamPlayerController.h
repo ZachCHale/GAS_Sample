@@ -33,9 +33,6 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	UFUNCTION(BlueprintCallable)
 	const float& GetCursorRange() const;
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void Sever_ReadyToProceedWithLevelUpSelection();
-
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void Sever_SendLevelUpSelection(FGameplayTag UpgradeTag);
 

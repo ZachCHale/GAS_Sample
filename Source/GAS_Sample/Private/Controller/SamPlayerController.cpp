@@ -54,14 +54,6 @@ void ASamPlayerController::SetupInputComponent()
 	SamInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::InputActionPressed, &ThisClass::InputActionReleased, &ThisClass::InputActionHeld);
 }
 
-void ASamPlayerController::Sever_ReadyToProceedWithLevelUpSelection_Implementation()
-{
-	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
-	{
-		SamGS->Auth_ReadyUpPlayerForLevelUpSelection(PlayerState);
-	}
-}
-
 void ASamPlayerController::UpdateCursorInformation()
 {
 	if(APawn* ControlledPawn = GetPawn<APawn>())
