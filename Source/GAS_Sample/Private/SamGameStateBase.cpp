@@ -32,12 +32,14 @@ void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 {
 	//TODO: Handle Edge case of multiple level ups, keep a backlogged count of level ups, when we go to unpause, open selection again instead.
 	if(!HasAuthority()) return;
+	if(AddedLevels <= 0) return;
 	StateStatus = EGameStateStatus::LevelUpSelection;
-	SharedPlayerLevel+=AddedLevels;
+	QueuedLevelUps = AddedLevels;
+	QueuedLevelUps--;
+	SharedPlayerLevel++;
 	Auth_GenerateUpgradesForPlayers();
 	//Broadcast Events to clients
 	Multicast_StartLevelUpEvent(SharedPlayerLevel, SharedPlayerExp, LevelUpSelectionState);
-
 	//Pause Game
 	if(SharedPlayerLevel != 0)
 	{
@@ -106,7 +108,7 @@ void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 	}
 }
 
-void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* PlayerState)
+void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(const APlayerState* PlayerState)
 {
 	check(HasAuthority());
 	bool bAreAllPlayersReady = true;
@@ -130,7 +132,7 @@ void ASamGameStateBase::Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* Play
 	
 }
 
-void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(APlayerState* PlayerState, FGameplayTag UpgradeTag)
+void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag)
 {
 	check(HasAuthority());
 	if(StateStatus != EGameStateStatus::LevelUpSelection)return;
@@ -141,7 +143,6 @@ void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(APlayerState* PlayerStat
 		if(LevelUpSelectionState[i].PlayerState == PlayerState)
 		{
 			LevelUpSelectionState[i].bIsReady = true;
-			//ToDo: Add validation that UpgradeTag is a valid choice. Needs to be done from the SeverRPC located in the player controller 
 			LevelUpSelectionState[i].CurrentlySelectedChoice = UpgradeTag;
 		}
 		if(LevelUpSelectionState[i].bIsReady)
@@ -155,17 +156,38 @@ void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(APlayerState* PlayerStat
 	{
 		for(int32 i = 0; i < LevelUpSelectionState.Num(); i++)
 		{
-			//TODO: Apply gameplay effects for UpgradeTag
-			UE_LOG(SamLog, Log, TEXT("%s submitted %s"), *LevelUpSelectionState[i].PlayerState->GetName(), *LevelUpSelectionState[i].CurrentlySelectedChoice.GetTagName().ToString());
 			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(LevelUpSelectionState[i].PlayerState);
 			USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
 			SamASC->Auth_IncrementUpgradeEffect(LevelUpSelectionState[i].CurrentlySelectedChoice);
 			LevelUpSelectionState[i].ResetSelectionState();
 		}
-		StateStatus = EGameStateStatus::Gameplay;
-		Multicast_EndLevelUpEvent(SharedPlayerLevel);
-		GetWorld()->GetFirstPlayerController()->SetPause(false);
+		if(QueuedLevelUps <=0)
+		{
+			StateStatus = EGameStateStatus::Gameplay;
+			Multicast_EndLevelUpEvent(SharedPlayerLevel);
+			GetWorld()->GetFirstPlayerController()->SetPause(false);
+		}
+		else
+		{
+			AddToLevel(QueuedLevelUps);
+		}
+		
 	}
+}
+
+bool ASamGameStateBase::IsValidUpgradeSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag)
+{
+	for (int32 i = 0; i < LevelUpSelectionState.Num(); i++)
+	{
+		if(LevelUpSelectionState[i].PlayerState == PlayerState)
+		{
+			//Invalid Choice
+			if(!LevelUpSelectionState[i].UpgradeChoiceTags.Contains(UpgradeTag))
+				return false;
+			break;
+		}
+	}
+	return true;
 }
 
 void ASamGameStateBase::Auth_ClearPlayerLevelUpSelection(APlayerState* PlayerState)
@@ -217,28 +239,10 @@ void ASamGameStateBase::Multicast_StartLevelUpEvent_Implementation(int32 NewLeve
 	OnRep_SharedPlayerExp();
 	SharedPlayerLevel = NewLevel;
 	OnRep_SharedPlayerLevel();
-	//ExpChangedDelegate.Broadcast(SharedPlayerExp);
-	//LevelChangedDelegate.Broadcast(SharedPlayerLevel);
-
 	
 	//Server generates the upgrade choices and sends them via this RPC
 	//Replicate the relevant data for Upgrade selection before broadcasting UpgradeSelectionDelegate.
 	LevelUpSelectionState = UpdatedLevelUpSelectionState;
-
-	//Debug, TODO:Remove
-	for (auto PlayerSelectionState : LevelUpSelectionState)
-	{
-		//If on client, remote player states won't have a controller
-		if(PlayerSelectionState.PlayerState->GetPlayerController() == nullptr)
-			continue;
-		if(PlayerSelectionState.PlayerState->GetPlayerController()->IsLocalPlayerController())
-		{
-			for (auto ChoiceTag : PlayerSelectionState.UpgradeChoiceTags)
-			{
-				UE_LOG(SamLog, Log, TEXT("%s"), *ChoiceTag.GetTagName().ToString())
-			}
-		}
-	}
 	
 	BeginLevelUpSelectionDelegate.Broadcast();
 }

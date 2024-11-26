@@ -52,8 +52,6 @@ struct FPlayerLevelUpSelectionState
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStatChangedSignature, int32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32, int32);
-//TODO: Add a param representing choices that were generated on the server. Create a ServerRPC that sends the index of the choice made by the client.
-//Where should choices be stored until client selects? We can keep all of them on the Player State or game state. Clients dont NEED to know about the other players choices, but there isn't any harm in it, and could be used later.
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
 
 UCLASS()
@@ -104,10 +102,13 @@ public:
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 	
 	UFUNCTION()
-	void Auth_ReadyUpPlayerForLevelUpSelection(APlayerState* PlayerState);
+	void Auth_ReadyUpPlayerForLevelUpSelection(const APlayerState* PlayerState);
 
 	UFUNCTION()
-	void Auth_SendPlayerLevelUpSelection(APlayerState* PlayerState, FGameplayTag UpgradeTag);
+	void Auth_SendPlayerLevelUpSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag);
+
+	UFUNCTION()
+	bool IsValidUpgradeSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag);
 
 	UFUNCTION()
 	void Auth_ClearPlayerLevelUpSelection(APlayerState* PlayerState);
@@ -138,4 +139,6 @@ private:
 	EGameStateStatus StateStatus = EGameStateStatus::Gameplay;
 	
 	int32 PlayerReadyCount = 0;
+
+	int32 QueuedLevelUps;
 };

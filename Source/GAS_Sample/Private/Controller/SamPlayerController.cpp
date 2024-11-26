@@ -160,6 +160,16 @@ const float& ASamPlayerController::GetCursorRange() const
 	return CursorRange;
 }
 
+bool ASamPlayerController::Sever_SendLevelUpSelection_Validate(FGameplayTag UpgradeTag)
+{
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	if(SamGS && SamGS->IsValidUpgradeSelection(PlayerState, UpgradeTag))
+	{
+		return true;
+	}
+	return false;
+}
+
 void ASamPlayerController::Sever_SendLevelUpSelection_Implementation(FGameplayTag UpgradeTag)
 {
 	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))

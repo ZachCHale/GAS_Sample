@@ -36,7 +36,7 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Sever_ReadyToProceedWithLevelUpSelection();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void Sever_SendLevelUpSelection(FGameplayTag UpgradeTag);
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
