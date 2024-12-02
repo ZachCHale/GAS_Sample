@@ -14,6 +14,14 @@
 #include "Player/SamPlayerState.h"
 #include "UI/HUD/SamHUD.h"
 
+ASamGameStateBase::ASamGameStateBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	CurrentGameTimerValueSeconds = GameTimerStartValueSeconds;
+	QueuedLevelUps = 0;
+}
+
 void ASamGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -69,6 +77,11 @@ TArray<ACharacter*> ASamGameStateBase::GetAllPlayerCharacters()
 	return Characters;
 }
 
+float ASamGameStateBase::GetLastSyncedGameTime() const
+{
+	return CurrentGameTimerValueSeconds;
+}
+
 void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
 {
 	EndLevelUpSelectionDelegate.Broadcast();
@@ -104,6 +117,29 @@ void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 			PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
 			return;
 		}
+	}
+}
+
+void ASamGameStateBase::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ASamGameStateBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	Auth_Tick(DeltaSeconds);
+}
+
+void ASamGameStateBase::Auth_Tick(float DeltaSeconds)
+{
+	if(!HasAuthority())return;
+
+	CurrentGameTimerValueSeconds-=DeltaSeconds;
+	if(CurrentGameTimerValueSeconds <= 0)
+	{
+		//ToDo: End Game
+		UE_LOG(SamLog, Log, TEXT("End Game"));
 	}
 }
 

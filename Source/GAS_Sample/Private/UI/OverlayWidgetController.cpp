@@ -23,6 +23,8 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 	OnLevelChangedDelegate.Broadcast(SamPS->GetLevel());
 	OnPlayerReadyCountChangedDelegate.Broadcast(0, SamGS->PlayerArray.Num());
+	//Game Time only syncs the initial value, we don't bind in BindCallbacksToDependencies
+	OnGameTimerSyncDelegate.Broadcast(SamGS->GetLastSyncedGameTime());
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()

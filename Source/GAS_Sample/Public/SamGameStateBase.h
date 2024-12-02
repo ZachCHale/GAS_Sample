@@ -13,6 +13,8 @@ class ULevelUpInfo;
 UENUM()
 enum EGameStateStatus: int32
 {
+	//Todo: Make game wait for all players to connect before starting the game.
+	WaitingForGameStartRequirements,	
 	LevelUpSelection,
 	Gameplay,
 };
@@ -53,6 +55,7 @@ struct FPlayerLevelUpSelectionState
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStatChangedSignature, int32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32, int32);
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
+DECLARE_MULTICAST_DELEGATE(FOnGameStateEventSignature);
 
 UCLASS()
 class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IExpLevelInterface
@@ -60,11 +63,22 @@ class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IExpLeve
 	GENERATED_BODY()
 
 public:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	ASamGameStateBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	//~AActor interface
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+	//~End AActor interface
+
+	//~AGameStateBase interface
 	virtual void AddPlayerState(APlayerState* PlayerState) override;
-
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
+	//~End AGameStateBase interface
+
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	void Auth_Tick(float DeltaSeconds);
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
@@ -74,21 +88,24 @@ public:
 	
 	FOnGameStatChangedSignature ExpChangedDelegate;
 	FOnGameStatChangedSignature LevelChangedDelegate;
+	FOnGameStateEventSignature NewGameStartDelegate;
 	
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
 
 	TArray<ACharacter*> GetAllPlayerCharacters();
 
+	//Authority will always be accurate, clients will be when the GameState last replicated
+	float GetLastSyncedGameTime() const;
+
 	/*
-	 *	TODO: Change Name of PlayerInterface now that it is specifically for Levels and Experience.
-	 *	IPlayerInterface
+	 *	IExpLevelInterface
 	 */
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
 	/*
-	 *	End IPlayerInterface
+	 *	End IExpLevelInterface
 	 */
 
 private:
@@ -104,7 +121,10 @@ private:
 	UFUNCTION()  
 	void OnRep_SharedPlayerExp() const;
 
-	EGameStateStatus StateStatus = EGameStateStatus::Gameplay;
+	EGameStateStatus StateStatus = EGameStateStatus::WaitingForGameStartRequirements;
+	
+	const float GameTimerStartValueSeconds = 120;
+	float CurrentGameTimerValueSeconds;
 	
 	/*
 	*	Upgrade Selection

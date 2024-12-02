@@ -14,5 +14,8 @@ UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpSelectionSignature_Dynamic);
 
 UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFloatStatChangedSignature_Dynamic, float, NewValue);
+
+UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature_Dynamic, int, ReadyPlayerCount, int, TotalPlayerCount);
 

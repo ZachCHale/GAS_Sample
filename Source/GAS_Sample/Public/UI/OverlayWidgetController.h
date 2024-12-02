@@ -36,6 +36,11 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnLevelUpSelectionSignature_Dynamic OnEndLevelUpSelectionDelegate;
 
+	// This will NOT be sent every tick that the time changes on the server.
+	// After receiving this delegate, decrementing the time should be done locally for ui representation only.
+	UPROPERTY(BlueprintAssignable)
+	FOnFloatStatChangedSignature_Dynamic OnGameTimerSyncDelegate;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerReadyCountChangedSignature_Dynamic OnPlayerReadyCountChangedDelegate;
 
