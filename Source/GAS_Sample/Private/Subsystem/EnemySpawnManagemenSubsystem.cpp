@@ -109,14 +109,6 @@ void UEnemySpawnManagemenSubsystem::StartSpawnAttempt()
 		}
 	}
 	
-	/*UE_LOG(SamLog, Log, TEXT("Class: %s"), *DefaultEnemyInfo.CharacterClass->GetName());
-
-	for (auto PlayerPosition : PlayerPositions)
-	{
-		const FVector SpawnPosition = PlayerPosition + (FVector(FMath::RandRange(-1.f, 1.f),FMath::RandRange(-1.f, 1.f), 0.f).GetSafeNormal() * SpawnDistance) + FVector(0.f,0.f,VerticalOffset);
-		const FRotator SpawnRotation = FRotator();
-		ScopedWorld->SpawnActor<ASamCharacterBase>(DefaultEnemyInfo.CharacterClass, SpawnPosition, SpawnRotation);
-	}*/
 }
 
 void UEnemySpawnManagemenSubsystem::HandleUnitDeath(ASamCharacterBase* UnitInstance)

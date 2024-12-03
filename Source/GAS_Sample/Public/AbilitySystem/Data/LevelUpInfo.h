@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
 #include "LevelUpInfo.generated.h"
 
@@ -37,6 +38,8 @@ class GAS_SAMPLE_API ULevelUpInfo : public UDataAsset
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FLevelUpInfoItem> LevelUpInfo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat ExpRequirementPerLevel;
 
 	int32 FindLevelFromTotalExp(int32 TotalExp);
 
