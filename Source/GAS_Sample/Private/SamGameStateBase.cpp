@@ -82,6 +82,12 @@ float ASamGameStateBase::GetLastSyncedGameTime() const
 	return CurrentGameTimerValueSeconds;
 }
 
+float ASamGameStateBase::Auth_GetCurrentGameProgress()
+{
+	if(!HasAuthority()) return 0.f;
+	return 1.f-(CurrentGameTimerValueSeconds/GameTimerStartValueSeconds);
+}
+
 void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
 {
 	EndLevelUpSelectionDelegate.Broadcast();

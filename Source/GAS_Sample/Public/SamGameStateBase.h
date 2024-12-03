@@ -8,6 +8,7 @@
 #include "Player/ExpLevelInterface.h"
 #include "SamGameStateBase.generated.h"
 
+class ULevelSpawnPatternInfo;
 class ULevelUpInfo;
 
 UENUM()
@@ -98,6 +99,8 @@ public:
 	//Authority will always be accurate, clients will be when the GameState last replicated
 	float GetLastSyncedGameTime() const;
 
+	float Auth_GetCurrentGameProgress();
+
 	/*
 	 *	IExpLevelInterface
 	 */
@@ -123,7 +126,7 @@ private:
 
 	EGameStateStatus StateStatus = EGameStateStatus::WaitingForGameStartRequirements;
 	
-	const float GameTimerStartValueSeconds = 120;
+	const float GameTimerStartValueSeconds = 600;
 	float CurrentGameTimerValueSeconds;
 	
 	/*

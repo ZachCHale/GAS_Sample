@@ -25,6 +25,13 @@ UCharacterClassInfo* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObje
 	return SamGameMode->CharacterClassInfo;
 }
 
+ULevelSpawnPatternInfo* USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(const UObject* WorldContextObject)
+{
+	ASamGameModeBase* SamGameMode = Cast<ASamGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(SamGameMode == nullptr) return nullptr;
+	return SamGameMode->LevelSpawnPatternInfo;
+}
+
 UUpgradeInfo* USamAbilitySystemLibrary::GetUpgradeInfo(const UObject* WorldContextObject)
 {
 	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
@@ -33,16 +40,16 @@ UUpgradeInfo* USamAbilitySystemLibrary::GetUpgradeInfo(const UObject* WorldConte
 }
 
 FCharacterClassDefaultInfo USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(const UObject* WorldContextObject,
-                                                                                     const ECharacterClass CharacterClass)
+                                                                                     const FGameplayTag CharacterClassTag)
 {
-	return GetCharacterClassInfo(WorldContextObject)->GetClassDefaultInfo(CharacterClass);
+	return GetCharacterClassInfo(WorldContextObject)->GetClassDefaultInfoFromTag(CharacterClassTag);
 }
 
-void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level)
+void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, FGameplayTag CharacterClassTag, UAbilitySystemComponent* ASC, int32 Level)
 {
 	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if(ClassInfo == nullptr) return;
-	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClass];
+	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClassTag];
 
 	AActor* AvatarActor = ASC->GetAvatarActor();
 
@@ -53,11 +60,11 @@ void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 }
 
 void USamAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContextObject,
-	ECharacterClass CharacterClass, UAbilitySystemComponent* ASC, int32 Level)
+	FGameplayTag CharacterClassTag, UAbilitySystemComponent* ASC, int32 Level)
 {
 	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if(ClassInfo == nullptr) return;
-	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClass];
+	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClassTag];
 
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilityClasses = DefaultInfo.DefaultAbilities;
 

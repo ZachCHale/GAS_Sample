@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "CharacterClassInfo.generated.h"
 
+class ASamCharacterBase;
 class UGameplayAbility;
 class UGameplayEffect;
 
@@ -32,6 +34,9 @@ struct FCharacterClassDefaultInfo
 	GENERATED_BODY()
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<ASamCharacterBase> CharacterClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -52,8 +57,8 @@ class GAS_SAMPLE_API UCharacterClassInfo : public UDataAsset
 	
 public:
 	UPROPERTY(EditDefaultsOnly)
-	TMap<ECharacterClass,FCharacterClassDefaultInfo> ClassDefaultInfo;
+	TMap<FGameplayTag,FCharacterClassDefaultInfo> ClassDefaultInfo;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
+	FCharacterClassDefaultInfo GetClassDefaultInfoFromTag(FGameplayTag CharacterClassTag);
 };

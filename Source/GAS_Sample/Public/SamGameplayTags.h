@@ -71,3 +71,15 @@ namespace SamTags::UpgradeTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_HealthBoost);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_HealthRegen);
 }
+
+namespace SamTags::CharacterClass
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Enemy_Default);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Default);
+}
+
+namespace SamTags::Levels
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Level_Gameplay_Default);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Level_MainMenu);
+}

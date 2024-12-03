@@ -37,10 +37,32 @@ bool ASamCharacterBase::GetIsDead() const
 	return bIsDead;
 }
 
+bool ASamCharacterBase::GetIsActive() const
+{
+	return bIsActive;
+}
+
 FCharacterClassDefaultInfo ASamCharacterBase::GetCharacterClassDefaultInfo()
 {
-	return USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(this, CharacterClass);
+	return USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(this, CharacterClassTag);
 }
+
+void ASamCharacterBase::Auth_ActivateCharacter()
+{
+	if(!HasAuthority())return;
+	bIsActive = true;
+	GetMovementComponent()->Activate();
+	SetActorHiddenInGame(false);
+}
+
+void ASamCharacterBase::Auth_DeactivateCharacter()
+{
+	if(!HasAuthority())return;
+	bIsActive = false;
+	GetMovementComponent()->Deactivate();
+	SetActorHiddenInGame(true);
+}
+
 
 void ASamCharacterBase::BeginPlay()
 {
@@ -78,16 +100,16 @@ void ASamCharacterBase::SetMovementSpeed(float NewSpeed)
 void ASamCharacterBase::InitDefaultAttributes()
 {
 	if(!HasAuthority()) return;
-		USamAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, AbilitySystemComponent);
+		USamAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClassTag, AbilitySystemComponent);
 }
 
 void ASamCharacterBase::InitDefaultAbilities()
 {
 	if(!HasAuthority()) return;
-		USamAbilitySystemLibrary::InitializeDefaultAbilities(this, CharacterClass, AbilitySystemComponent);
+		USamAbilitySystemLibrary::InitializeDefaultAbilities(this, CharacterClassTag, AbilitySystemComponent);
 }
 
 void ASamCharacterBase::MultiCastHandleDeath_Implementation()
 {
-	OnDeathDelegate.Broadcast();
+	OnDeathDelegate.Broadcast(this);
 }

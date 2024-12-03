@@ -69,3 +69,14 @@ namespace SamTags::UpgradeTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_HealthRegen, "Upgrade.HealthRegen", "Upgrade associated with health regen increases.")
 }
 
+namespace SamTags::CharacterClass
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CharacterClass_Enemy_Default, "CharacterClass.Enemy.Default", "Default Enemy Character.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CharacterClass_Player_Default, "CharacterClass.Player.Default", "Default Player Character.")
+}
+
+namespace SamTags::Levels
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Level_Gameplay_Default, "Level.Gameplay.Default", "Default Gameplay Level.")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Level_MainMenu, "Level.MainMenu", "Main Menu.")
+}
