@@ -4,6 +4,7 @@
 #include "SubSystem/EnemySpawnManagemenSubsystem.h"
 
 #include "LevelSpawnPatternInfo.h"
+#include "SamGameModeBase.h"
 #include "SamGameplayTags.h"
 #include "SamGameStateBase.h"
 #include "SamLogChannels.h"
@@ -15,12 +16,22 @@ void UEnemySpawnManagemenSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	Super::OnWorldBeginPlay(InWorld);
 	TimeTillNextSpawnAttempt = DelayFromGameStart;
 	ScopedWorld = InWorld;
+	TObjectPtr<ASamGameModeBase> SamGameMode = Cast<ASamGameModeBase>(ScopedWorld->GetAuthGameMode());
+	bIsSystemActive = false;
+	if(SamGameMode == nullptr)
+		bIsSystemActive = false;
+	else
+	{
+		bIsSystemActive = true;
+	}
 	
 }
 
 void UEnemySpawnManagemenSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if(!bIsSystemActive)
+		return;
 	TimeTillNextSpawnAttempt -= DeltaTime;
 	if(TimeTillNextSpawnAttempt <= 0)
 	{
@@ -35,10 +46,17 @@ bool UEnemySpawnManagemenSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	{
 		return false;
 	}
-
+	
 	UWorld* World = Cast<UWorld>(Outer);
+
+	if(World->WorldType == EWorldType::Editor)
+		return false;
+	
 	ENetMode netmode = World->GetNetMode();
-	return netmode  < NM_Client;
+	if(netmode  >= NM_Client)
+		return false;
+
+	return true;
 }
 
 bool UEnemySpawnManagemenSubsystem::IsTickable() const

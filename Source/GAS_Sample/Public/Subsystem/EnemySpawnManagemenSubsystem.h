@@ -37,4 +37,6 @@ private:
 	UFUNCTION()
 	void HandleUnitDeath(ASamCharacterBase* UnitInstance);
 
+	bool bIsSystemActive;
+
 };
