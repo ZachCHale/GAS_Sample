@@ -60,6 +60,25 @@ int32 ASamGameStateBase::FindLevelForExp(int32 ExpValue)
 	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
 }
 
+EGameStateStatus ASamGameStateBase::GetGameStatus() const
+{
+	return StateStatus;
+}
+
+void ASamGameStateBase::Multicast_StartNewGame_Implementation()
+{
+	StateStatus = EGameStateStatus::Gameplay;
+	if(HasAuthority())
+	{
+		GetWorld()->GetFirstPlayerController()->SetPause(false);
+		for (APlayerState* PS : PlayerArray)
+		{
+			Auth_ClearPlayerLevelUpSelection(PS);
+		}
+	}
+	NewGameStartDelegate.Broadcast();
+}
+
 TArray<ACharacter*> ASamGameStateBase::GetAllPlayerCharacters()
 {
 	TArray<TObjectPtr<ACharacter>> Characters;
@@ -129,6 +148,16 @@ void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 void ASamGameStateBase::BeginPlay()
 {
 	Super::BeginPlay();
+	if(GEngine->GetNetMode(GetWorld()) == NM_Standalone)
+	{
+		StateStatus = EGameStateStatus::Gameplay;
+	}
+	else
+	{
+		//Start the game paused in pregame lobby
+		StateStatus = EGameStateStatus::PreGameLobby;
+		GetWorld()->GetFirstPlayerController()->SetPause(true);
+	}
 }
 
 void ASamGameStateBase::Tick(float DeltaSeconds)
@@ -167,6 +196,26 @@ void ASamGameStateBase::Auth_SendPlayerLevelUpSelection(const APlayerState* Play
 	{
 		Auth_SubmitAllPlayerUpgradeSelections();
 	}
+}
+
+void ASamGameStateBase::Auth_SetPlayerReadyInLobby(const APlayerState* PlayerState)
+{
+	check(HasAuthority());
+	if(StateStatus != EGameStateStatus::PreGameLobby)return;
+
+	//Repurpose the Selection state since it has a ready up bool
+	if(FPlayerLevelUpSelectionState* PlayerSelectionState = GetPlayerLevelUpSelectionState(PlayerState))
+	{
+		PlayerSelectionState->bIsReady = true;
+	}
+
+	PlayerReadyCount = CountPlayerSelectionsReady();
+	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
+	if(PlayerReadyCount == PlayerArray.Num())
+	{
+		Multicast_StartNewGame();
+	}
+
 }
 
 bool ASamGameStateBase::IsValidUpgradeSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag)

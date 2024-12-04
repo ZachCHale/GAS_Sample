@@ -106,7 +106,6 @@ FGameplayEffectSpecHandle USamAbilitySystemLibrary::CreateGameplayEffectSpecHand
 	int32 Level)
 {
 	check(GameplayEffectClass);
-	check(SourceObject);
 	check(Instigator);
 	check(EffectCauser);
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Instigator);

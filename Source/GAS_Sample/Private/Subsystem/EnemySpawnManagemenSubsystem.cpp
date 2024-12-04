@@ -32,6 +32,12 @@ void UEnemySpawnManagemenSubsystem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if(!bIsSystemActive)
 		return;
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(ScopedWorld);
+	EGameStateStatus GameStatus = SamGS->GetGameStatus();
+	
+	if(GameStatus != EGameStateStatus::Gameplay)
+		return;
+	
 	TimeTillNextSpawnAttempt -= DeltaTime;
 	if(TimeTillNextSpawnAttempt <= 0)
 	{

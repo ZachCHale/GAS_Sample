@@ -152,6 +152,14 @@ const float& ASamPlayerController::GetCursorRange() const
 	return CursorRange;
 }
 
+void ASamPlayerController::Sever_SendReadyUpLobby_Implementation()
+{
+	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
+	{
+		SamGS->Auth_SetPlayerReadyInLobby(PlayerState);
+	}
+}
+
 bool ASamPlayerController::Sever_SendLevelUpSelection_Validate(FGameplayTag UpgradeTag)
 {
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);

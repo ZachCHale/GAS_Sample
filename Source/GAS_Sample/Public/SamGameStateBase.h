@@ -15,7 +15,7 @@ UENUM()
 enum EGameStateStatus: int32
 {
 	//Todo: Make game wait for all players to connect before starting the game.
-	WaitingForGameStartRequirements,	
+	PreGameLobby,
 	LevelUpSelection,
 	Gameplay,
 };
@@ -56,7 +56,7 @@ struct FPlayerLevelUpSelectionState
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStatChangedSignature, int32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32, int32);
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
-DECLARE_MULTICAST_DELEGATE(FOnGameStateEventSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStateEventSignature);
 
 UCLASS()
 class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IExpLevelInterface
@@ -89,6 +89,7 @@ public:
 	
 	FOnGameStatChangedSignature ExpChangedDelegate;
 	FOnGameStatChangedSignature LevelChangedDelegate;
+	UPROPERTY(BlueprintAssignable)
 	FOnGameStateEventSignature NewGameStartDelegate;
 	
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
@@ -111,6 +112,12 @@ public:
 	 *	End IExpLevelInterface
 	 */
 
+	UFUNCTION(BlueprintCallable)
+	EGameStateStatus GetGameStatus() const;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StartNewGame();
+
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SharedPlayerLevel)  
 	int32 SharedPlayerLevel = 1;  
@@ -123,8 +130,8 @@ private:
   
 	UFUNCTION()  
 	void OnRep_SharedPlayerExp() const;
-
-	EGameStateStatus StateStatus = EGameStateStatus::WaitingForGameStartRequirements;
+	
+	EGameStateStatus StateStatus = EGameStateStatus::PreGameLobby;
 	
 	const float GameTimerStartValueSeconds = 600;
 	float CurrentGameTimerValueSeconds;
@@ -149,6 +156,9 @@ public:
 
 	UFUNCTION()
 	void Auth_SendPlayerLevelUpSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag);
+
+	UFUNCTION()
+	void Auth_SetPlayerReadyInLobby(const APlayerState* PlayerState);
 
 	UFUNCTION()
 	bool IsValidUpgradeSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag);
