@@ -9,11 +9,15 @@
 
 #include "SamPlayerState.generated.h"
 
+class ASamCharacterBase;
 class ULevelUpInfo;
 class ASamCharacterPlayer;
 class UAttributeSet;
+class ASamPlayerState;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32)
+DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerStateEventSignature, ASamPlayerState*)
+
 
 UCLASS()
 class GAS_SAMPLE_API ASamPlayerState : public APlayerState, public IAbilitySystemInterface, public IExpLevelInterface
@@ -38,6 +42,11 @@ public:
 
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
 
+	FPlayerStateEventSignature OnPlayerCharacterDeathDelegate;
+
+	bool HasLivingCharacter() const;
+
+	void InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter);
 
 protected:
 	UPROPERTY()
@@ -48,5 +57,7 @@ protected:
 
 private:
 	static inline TArray<TObjectPtr<ASamPlayerState>> PlayerStateList;
+	UFUNCTION()
+	void HandleCharacterDeath(ASamCharacterBase* CharacterInstance);
 
 };

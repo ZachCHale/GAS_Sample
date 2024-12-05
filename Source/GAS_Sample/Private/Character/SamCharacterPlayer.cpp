@@ -53,6 +53,7 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	BindToAttributeChanges();
 	InitDefaultAttributes();
 	InitDefaultAbilities();
+	SamPS->InitWithPlayerCharacter(this);
 	
 	APlayerController* PC = SamPS->GetPlayerController();
 	if(PC)

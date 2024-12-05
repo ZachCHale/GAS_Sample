@@ -8,6 +8,7 @@
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
+#include "Character/SamCharacterPlayer.h"
 
 ASamPlayerState::ASamPlayerState()
 {
@@ -75,4 +76,23 @@ int32 ASamPlayerState::FindLevelForExp(int32 ExpValue)
 {
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
 	return SamGS->FindLevelForExp(ExpValue);
+}
+
+bool ASamPlayerState::HasLivingCharacter() const
+{
+	AActor* AvatarActor = AbilitySystemComponent->GetAvatarActor();
+	if(AvatarActor == nullptr)
+		return false;
+	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AvatarActor);
+	return !PlayerCharacter->GetIsDead();
+}
+
+void ASamPlayerState::InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter)
+{
+	PlayerCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleCharacterDeath);
+}
+
+void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
+{
+	OnPlayerCharacterDeathDelegate.Broadcast(this);
 }

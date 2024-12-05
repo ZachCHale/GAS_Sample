@@ -18,7 +18,7 @@ ASamGameStateBase::ASamGameStateBase(const FObjectInitializer& ObjectInitializer
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
-	CurrentGameTimerValueSeconds = GameTimerStartValueSeconds;
+	CurrentGameTimerValueSeconds = MatchLengthSeconds;
 	QueuedLevelUps = 0;
 }
 
@@ -65,6 +65,16 @@ EGameStateStatus ASamGameStateBase::GetGameStatus() const
 	return StateStatus;
 }
 
+void ASamGameStateBase::Multicast_GameLost_Implementation()
+{
+	GameLostDelegate.Broadcast();
+}
+
+void ASamGameStateBase::Multicast_GameWon_Implementation()
+{
+	GameWonDelegate.Broadcast();
+}
+
 void ASamGameStateBase::Multicast_StartNewGame_Implementation()
 {
 	StateStatus = EGameStateStatus::Gameplay;
@@ -104,7 +114,7 @@ float ASamGameStateBase::GetLastSyncedGameTime() const
 float ASamGameStateBase::Auth_GetCurrentGameProgress()
 {
 	if(!HasAuthority()) return 0.f;
-	return 1.f-(CurrentGameTimerValueSeconds/GameTimerStartValueSeconds);
+	return 1.f-(CurrentGameTimerValueSeconds/MatchLengthSeconds);
 }
 
 void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
@@ -127,6 +137,9 @@ void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
 			PlayerArray.AddUnique(PlayerState);
 			LevelUpSelectionState.Add(FPlayerLevelUpSelectionState(PlayerState));
 			PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
+			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
+			SamPS->OnPlayerCharacterDeathDelegate.AddUObject(this, &ThisClass::HandlePlayerDeath);
+			
 		}
 	}
 }
@@ -173,8 +186,7 @@ void ASamGameStateBase::Auth_Tick(float DeltaSeconds)
 	CurrentGameTimerValueSeconds-=DeltaSeconds;
 	if(CurrentGameTimerValueSeconds <= 0)
 	{
-		//ToDo: End Game
-		UE_LOG(SamLog, Log, TEXT("End Game"));
+		Auth_EndGameWin();
 	}
 }
 
@@ -280,6 +292,45 @@ void ASamGameStateBase::OnRep_SharedPlayerLevel() const
 void ASamGameStateBase::OnRep_SharedPlayerExp() const
 {
 	ExpChangedDelegate.Broadcast(SharedPlayerExp);
+}
+
+void ASamGameStateBase::HandlePlayerDeath(ASamPlayerState* PlayerState)
+{
+	//Check how many players are dead and how many exist
+	int32 PlayersInGame = PlayerArray.Num();
+	int32 DeadPlayers = 0;
+	for (APlayerState* PS : PlayerArray)
+	{
+		ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PS);
+		if(!SamPS->HasLivingCharacter())
+		{
+			DeadPlayers++;
+		}
+	}
+	if(DeadPlayers >= PlayersInGame)
+	{
+		Auth_EndGameLoss();
+	}
+}
+
+void ASamGameStateBase::Auth_EndGameLoss()
+{
+	if(!HasAuthority())return;
+	if(StateStatus == GameEnd) return;
+	GetWorld()->GetFirstPlayerController()->SetPause(true);
+	StateStatus = GameEnd;
+	//Notify Clients To Show End Screens
+	Multicast_GameLost();
+}
+
+void ASamGameStateBase::Auth_EndGameWin()
+{
+	if(!HasAuthority())return;
+	if(StateStatus == GameEnd) return;
+	GetWorld()->GetFirstPlayerController()->SetPause(true);
+	StateStatus = GameEnd;
+	//Notify Clients To Show End Screens
+	Multicast_GameWon();
 }
 
 void ASamGameStateBase::OnRep_PlayerReadyCount() const

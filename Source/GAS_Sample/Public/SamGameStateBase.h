@@ -10,6 +10,7 @@
 
 class ULevelSpawnPatternInfo;
 class ULevelUpInfo;
+class ASamPlayerState;
 
 UENUM()
 enum EGameStateStatus: int32
@@ -18,6 +19,7 @@ enum EGameStateStatus: int32
 	PreGameLobby,
 	LevelUpSelection,
 	Gameplay,
+	GameEnd,
 };
 
 USTRUCT()
@@ -58,6 +60,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32,
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStateEventSignature);
 
+//TODO: See what can be moved into the player state. Try to better organize information about players relevant to the state of the game.
+
 UCLASS()
 class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IExpLevelInterface
 {
@@ -91,6 +95,12 @@ public:
 	FOnGameStatChangedSignature LevelChangedDelegate;
 	UPROPERTY(BlueprintAssignable)
 	FOnGameStateEventSignature NewGameStartDelegate;
+	UPROPERTY(BlueprintAssignable)
+	FOnGameStateEventSignature GameWonDelegate;
+	UPROPERTY(BlueprintAssignable)
+	FOnGameStateEventSignature GameLostDelegate;
+
+	
 	
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
@@ -118,6 +128,14 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_StartNewGame();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_GameWon();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_GameLost();
+
+	
+
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SharedPlayerLevel)  
 	int32 SharedPlayerLevel = 1;  
@@ -133,8 +151,15 @@ private:
 	
 	EGameStateStatus StateStatus = EGameStateStatus::PreGameLobby;
 	
-	const float GameTimerStartValueSeconds = 600;
+	const float MatchLengthSeconds = 600.f;
 	float CurrentGameTimerValueSeconds;
+
+	void HandlePlayerDeath(ASamPlayerState* PlayerState);
+
+	void Auth_EndGameLoss();
+
+	void Auth_EndGameWin();
+
 	
 	/*
 	*	Upgrade Selection
