@@ -15,11 +15,11 @@ class ASamPlayerState;
 UENUM()
 enum EGameStateStatus: int32
 {
-	//Todo: Make game wait for all players to connect before starting the game.
 	PreGameLobby,
 	LevelUpSelection,
 	Gameplay,
 	GameEnd,
+	PausedByPlayer,
 };
 
 USTRUCT()
@@ -99,8 +99,10 @@ public:
 	FOnGameStateEventSignature GameWonDelegate;
 	UPROPERTY(BlueprintAssignable)
 	FOnGameStateEventSignature GameLostDelegate;
-
-	
+	UPROPERTY(BlueprintAssignable)
+	FOnGameStateEventSignature GamePausedByPlayerDelegate;
+	UPROPERTY(BlueprintAssignable)
+	FOnGameStateEventSignature GameUnpausedByPlayerDelegate;
 	
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
@@ -134,7 +136,17 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_GameLost();
 
-	
+	//Notify Clients to show pause menus.
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_GamePausedByPlayer();
+	//Notify Clients to hide pause menus.
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_GameUnpausedByPlayer();
+
+	//Specifically for entering a paused game state that will display a pause menu.
+	void Auth_PauseGame();
+	//Specifically for exiting a paused game state that displayed a pause menu.
+	void Auth_UnpauseGame();
 
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SharedPlayerLevel)  
@@ -159,6 +171,8 @@ private:
 	void Auth_EndGameLoss();
 
 	void Auth_EndGameWin();
+
+
 
 	
 	/*

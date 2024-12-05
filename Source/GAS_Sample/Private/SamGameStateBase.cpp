@@ -284,6 +284,16 @@ void ASamGameStateBase::Multicast_StartLevelUpEvent_Implementation(int32 NewLeve
 	BeginLevelUpSelectionDelegate.Broadcast();
 }
 
+void ASamGameStateBase::Multicast_GamePausedByPlayer_Implementation()
+{
+	GamePausedByPlayerDelegate.Broadcast();
+}
+
+void ASamGameStateBase::Multicast_GameUnpausedByPlayer_Implementation()
+{
+	GameUnpausedByPlayerDelegate.Broadcast();
+}
+
 void ASamGameStateBase::OnRep_SharedPlayerLevel() const
 {
 	LevelChangedDelegate.Broadcast(SharedPlayerLevel);  
@@ -331,6 +341,24 @@ void ASamGameStateBase::Auth_EndGameWin()
 	StateStatus = GameEnd;
 	//Notify Clients To Show End Screens
 	Multicast_GameWon();
+}
+
+void ASamGameStateBase::Auth_PauseGame()
+{
+	if(!HasAuthority()) return;
+	if(StateStatus != Gameplay) return;
+	GetWorld()->GetFirstPlayerController()->SetPause(true);
+	StateStatus = PausedByPlayer;
+	Multicast_GamePausedByPlayer();
+}
+
+void ASamGameStateBase::Auth_UnpauseGame()
+{
+	if(!HasAuthority()) return;
+	if(StateStatus != PausedByPlayer) return;
+	GetWorld()->GetFirstPlayerController()->SetPause(false);
+	StateStatus = Gameplay;
+	Multicast_GameUnpausedByPlayer();
 }
 
 void ASamGameStateBase::OnRep_PlayerReadyCount() const

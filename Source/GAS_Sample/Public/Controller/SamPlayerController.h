@@ -40,6 +40,12 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	void Sever_SendReadyUpLobby();
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void Sever_SendPauseRequest();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void Sever_SendUnpauseRequest();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Sever_ClearLevelUpSelection();
 
 protected:

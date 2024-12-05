@@ -46,6 +46,19 @@ void ASamPlayerController::Tick(float DeltaSeconds)
 	AdjustCameraDistanceAhead();
 }
 
+void ASamPlayerController::Sever_SendPauseRequest_Implementation()
+{
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	SamGS->Auth_PauseGame();
+}
+
+void ASamPlayerController::Sever_SendUnpauseRequest_Implementation()
+{
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	SamGS->Multicast_GameUnpausedByPlayer();
+	SamGS->Auth_UnpauseGame();
+}
+
 void ASamPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
