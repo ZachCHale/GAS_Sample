@@ -18,7 +18,7 @@ void UEnemySpawnManagemenSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	ScopedWorld = InWorld;
 	TObjectPtr<ASamGameModeBase> SamGameMode = Cast<ASamGameModeBase>(ScopedWorld->GetAuthGameMode());
 	bIsSystemActive = false;
-	if(SamGameMode == nullptr)
+	if(SamGameMode == nullptr || InWorld.GetNetMode() >= NM_Client)
 		bIsSystemActive = false;
 	else
 	{
@@ -81,7 +81,6 @@ TStatId UEnemySpawnManagemenSubsystem::GetStatId() const
 
 void UEnemySpawnManagemenSubsystem::StartSpawnAttempt()
 {
-	UE_LOG(SamLog, Log, TEXT("Attempt Spawn"));
 	UCharacterClassInfo* ClassInfo = USamAbilitySystemLibrary::GetCharacterClassInfo(ScopedWorld);
 	FCharacterClassDefaultInfo DefaultEnemyInfo = ClassInfo->GetClassDefaultInfoFromTag(SamTags::CharacterClass::CharacterClass_Enemy_Default);
 

@@ -16,9 +16,9 @@ struct FStatChangePreview
 	UPROPERTY(BlueprintReadOnly)
 	FText StatName;
 	UPROPERTY(BlueprintReadOnly)
-	float StartingValue;
+	float StartingValue = 0;
 	UPROPERTY(BlueprintReadOnly)
-	float PredictedValue;
+	float PredictedValue = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -36,7 +36,7 @@ struct FUpgradeInfoItem
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText StatName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool PercentageFormat;
+	bool PercentageFormat = false;
 };
 
 

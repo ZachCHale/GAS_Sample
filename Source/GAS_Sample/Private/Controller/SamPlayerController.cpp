@@ -33,8 +33,8 @@ void ASamPlayerController::BeginPlay()
 		InputModeData.SetHideCursorDuringCapture(false);
 		SetInputMode(InputModeData);
 	}
-
-	InitialControllerRotation = GetControlRotation();
+	
+	InitialControllerRotation = FRotator();
 	check(MoveAction);
 }
 
