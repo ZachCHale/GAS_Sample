@@ -59,6 +59,16 @@ void ASamPlayerController::Sever_SendUnpauseRequest_Implementation()
 	SamGS->Auth_UnpauseGame();
 }
 
+void ASamPlayerController::StartSpectating()
+{
+	bIsSpectating = true;
+	TArray<ACharacter*> LiveCharacters = USamAbilitySystemLibrary::GetLivePlayerCharacters(this);
+	if(LiveCharacters.Num() <= 0) return;
+	ASamCharacterBase* SamCharacter = Cast<ASamCharacterBase>(LiveCharacters[0]);
+	SetViewTarget(SamCharacter);
+	SamCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleViewTargetDeath);
+}
+
 void ASamPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -133,6 +143,11 @@ USamAbilitySystemComponent* ASamPlayerController::GetASC()
 		SamAbilitySystemComponent = Cast<USamAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
 	}
 	return SamAbilitySystemComponent;
+}
+
+void ASamPlayerController::HandleViewTargetDeath(ASamCharacterBase* CharacterInstance)
+{
+	StartSpectating();
 }
 
 

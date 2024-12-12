@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "SamPlayerController.generated.h"
 
+class ASamCharacterBase;
 class USamInputConfig;
 class USamAbilitySystemComponent;
 struct FGameplayTag;
@@ -17,7 +18,8 @@ UCLASS()
 class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-
+	
+public:
 	ASamPlayerController();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -48,6 +50,8 @@ class GAS_SAMPLE_API ASamPlayerController : public APlayerController
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Sever_ClearLevelUpSelection();
 
+	void StartSpectating();
+
 protected:
 	virtual void SetupInputComponent() override;
 
@@ -58,6 +62,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputAction> MoveAction;
+
+	bool bIsSpectating;
 
 
 
@@ -84,6 +90,9 @@ private:
 	TObjectPtr<USamAbilitySystemComponent> SamAbilitySystemComponent;
 
 	USamAbilitySystemComponent* GetASC();
+
+	UFUNCTION()
+	void HandleViewTargetDeath(ASamCharacterBase* CharacterInstance);
 
 	
 

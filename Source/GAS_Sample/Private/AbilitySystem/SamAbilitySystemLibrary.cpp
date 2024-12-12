@@ -13,6 +13,7 @@
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamGameplayAbility.h"
 #include "Actor/Interface/TeamInterface.h"
+#include "Character/SamCharacterPlayer.h"
 #include "GameFramework/Character.h"
 #include "Player/SamPlayerState.h"
 #include "UI/SamWidgetController.h"
@@ -158,6 +159,20 @@ TArray<FVector> USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(con
 		CurrentLocations.Add(PlayerCharacter->GetActorLocation());
 	}
 	return CurrentLocations;
+}
+
+TArray<ACharacter*> USamAbilitySystemLibrary::GetLivePlayerCharacters(const UObject* WorldContextObject)
+{
+	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
+	TArray<ACharacter*> PlayerCharacters = SamGS->GetAllPlayerCharacters();
+	TArray<ACharacter*> LiveCharacters;
+	for (ACharacter* PlayerCharacter : PlayerCharacters)
+	{
+		ASamCharacterBase* SamCharacter = CastChecked<ASamCharacterBase>(PlayerCharacter);
+		if(!SamCharacter->GetIsDead())
+			LiveCharacters.Add(SamCharacter);
+	}
+	return LiveCharacters;
 }
 
 ASamGameStateBase* USamAbilitySystemLibrary::GetSamGameStateBase(const UObject* WorldContextObject)

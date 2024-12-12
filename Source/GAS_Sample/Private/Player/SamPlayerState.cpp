@@ -9,6 +9,8 @@
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
 #include "Character/SamCharacterPlayer.h"
+#include "Controller/SamPlayerController.h"
+#include "GameFramework/SpectatorPawn.h"
 
 ASamPlayerState::ASamPlayerState()
 {
@@ -95,4 +97,17 @@ void ASamPlayerState::InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharact
 void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 {
 	OnPlayerCharacterDeathDelegate.Broadcast(this);
+	if(HasAuthority())
+	{
+		if(APlayerController* PC = GetPlayerController())
+		{
+			AGameModeBase* GM = GetWorld()->GetAuthGameMode();
+			TSubclassOf<ASpectatorPawn> SpectatorClass = GM->SpectatorClass;
+			ASpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(SpectatorClass,FVector(), FRotator());
+			PC->Possess(SpectatorPawn);
+			ASamPlayerController* SamPC = CastChecked<ASamPlayerController>(PC);
+			SamPC->StartSpectating();
+		}
+	}
 }
+

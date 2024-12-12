@@ -46,7 +46,10 @@ ASamCharacterPlayer::ASamCharacterPlayer()
 
 void ASamCharacterPlayer::InitAbilityActorInfo()
 {
-	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
+	APlayerState* PS = GetPlayerState();
+	//If the Player State doesn't exist, it is likely the player is switching to the spectator pawn, so don't bother.
+	if(PS == nullptr)return;
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PS);
 	AbilitySystemComponent = SamPS->GetAbilitySystemComponent();
 	AttributeSet = SamPS->GetAttributeSet();
 	AbilitySystemComponent->InitAbilityActorInfo(SamPS, this);

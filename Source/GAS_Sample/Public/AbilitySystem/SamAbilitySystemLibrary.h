@@ -64,6 +64,9 @@ public:
 	static TArray<FVector> GetCurrentPlayerCharacterLocations(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable)
+	static TArray<ACharacter*> GetLivePlayerCharacters(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable)
 	static ASamGameStateBase* GetSamGameStateBase(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable)
