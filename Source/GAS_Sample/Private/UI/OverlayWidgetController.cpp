@@ -86,9 +86,4 @@ void UOverlayWidgetController::OnPlayerReadyCountChanged(int32 NewReadyCount, in
 	OnPlayerReadyCountChangedDelegate.Broadcast(NewReadyCount, NewTotalPlayerCount);
 }
 
-void UOverlayWidgetController::Test(int32 NewLevel)
-{
-	UE_LOG(SamLog, Error, TEXT("TEST FIRED"))
-}
-
 

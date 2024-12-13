@@ -69,7 +69,6 @@ int32 USamAbilitySystemComponent::GetCurrentUpgradeLevel(FGameplayTag UpgradeTag
 	if(ActiveEffectHandles.Num() == 1)
 	{
 		const FActiveGameplayEffect* FoundEffect = GetActiveGameplayEffect(ActiveEffectHandles[0]);
-		UE_LOG(SamLog, Log, TEXT("Found this"));
 		return FoundEffect->Spec.GetLevel();
 	}
 	return 0;
@@ -87,13 +86,11 @@ void USamAbilitySystemComponent::Auth_IncrementUpgradeEffect(FGameplayTag Upgrad
 		const FActiveGameplayEffect* FoundEffect = GetActiveGameplayEffect(ActiveEffectHandles[0]);
 		int32 CurrentEffectLevel = FoundEffect->Spec.GetLevel();
 		SetActiveGameplayEffectLevel(ActiveEffectHandles[0], CurrentEffectLevel + 1);
-		UE_LOG(SamLog, Log, TEXT("Upgraded %s Effect! to %d"), *UpgradeTag.GetTagName().ToString(), CurrentEffectLevel+1);
 	}else
 	{
 		//Create New Effect at Level 1
 		UUpgradeInfo* UpgradeInfo = USamAbilitySystemLibrary::GetUpgradeInfo(this);
 		check(UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect != nullptr)
 		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(GetOwnerActor(), UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect, 1);
-		UE_LOG(SamLog, Log, TEXT("New %s Effect!"), *UpgradeTag.GetTagName().ToString());
 	}
 }

@@ -49,8 +49,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Sever_ClearLevelUpSelection();
+	
+	void Auth_StartSpectating();
+	
 
-	void StartSpectating();
+	UFUNCTION(BlueprintCallable, Server, Unreliable)
+	void Server_SpectateNext();
+	UFUNCTION(BlueprintCallable, Server, Unreliable)
+	void Server_SpectatePrev();
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -64,8 +70,8 @@ private:
 	TObjectPtr<class UInputAction> MoveAction;
 
 	bool bIsSpectating;
-
-
+	//Index of live character being viewed when in spectator mode
+	int32 ViewTargetIndex;
 
 	void UpdateCursorInformation();
 	void RotateControllerToFaceCursorWorldPosition();

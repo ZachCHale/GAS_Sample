@@ -153,7 +153,7 @@ TArray<FVector> USamAbilitySystemLibrary::GetCurrentPlayerCharacterLocations(con
 	LastQueryTime = UGameplayStatics::GetTimeSeconds(WorldContextObject);
 	CurrentLocations.Empty();
 	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
-	TArray<ACharacter*> PlayerCharacters = SamGS->GetAllPlayerCharacters();
+	TArray<ACharacter*> PlayerCharacters = GetLivePlayerCharacters(WorldContextObject);
 	for (ACharacter* PlayerCharacter : PlayerCharacters)
 	{
 		CurrentLocations.Add(PlayerCharacter->GetActorLocation());

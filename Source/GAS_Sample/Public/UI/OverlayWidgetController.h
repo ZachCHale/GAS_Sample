@@ -56,7 +56,4 @@ private:
 	void OnBeginLevelUpSelection() const;
 	void OnEndLevelUpSelection() const;
 	void OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
-
-	UFUNCTION()
-	void Test(int32 NewLevel);
 };

@@ -101,12 +101,8 @@ void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 	{
 		if(APlayerController* PC = GetPlayerController())
 		{
-			AGameModeBase* GM = GetWorld()->GetAuthGameMode();
-			TSubclassOf<ASpectatorPawn> SpectatorClass = GM->SpectatorClass;
-			ASpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(SpectatorClass,FVector(), FRotator());
-			PC->Possess(SpectatorPawn);
 			ASamPlayerController* SamPC = CastChecked<ASamPlayerController>(PC);
-			SamPC->StartSpectating();
+			SamPC->Auth_StartSpectating();
 		}
 	}
 }

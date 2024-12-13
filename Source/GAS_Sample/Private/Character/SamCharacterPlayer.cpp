@@ -115,3 +115,16 @@ int32 ASamCharacterPlayer::FindLevelForExp(int32 ExpValue)
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
 	return SamPS->FindLevelForExp(ExpValue);
 }
+
+void ASamCharacterPlayer::Die()
+{
+	if(!HasAuthority()) return;
+	if(bIsDead) return;
+	bIsDead = true;
+	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(SamTags::AbilityTags::AbilityTag_ActivateOnDeath);
+	//Don't delete player characters (Encountered inconsistent bugs with deleting the character, spawning a spectator, then setting the view target)
+	//SetLifeSpan(1.f);
+	GetMovementComponent()->StopMovementImmediately();
+	SetActorEnableCollision(false);
+	MultiCastHandleDeath();
+}

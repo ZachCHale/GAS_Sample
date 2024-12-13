@@ -24,7 +24,7 @@ class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySyste
 public:
 	ASamCharacterBase();
 	
-	void Die();
+	virtual void Die();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDeathDelegate;

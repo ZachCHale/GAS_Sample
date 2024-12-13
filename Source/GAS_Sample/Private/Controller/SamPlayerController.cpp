@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "SamGameStateBase.h"
+#include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Character/SamCharacterPlayer.h"
@@ -59,14 +60,60 @@ void ASamPlayerController::Sever_SendUnpauseRequest_Implementation()
 	SamGS->Auth_UnpauseGame();
 }
 
-void ASamPlayerController::StartSpectating()
+void ASamPlayerController::Auth_StartSpectating()
 {
+	if(!HasAuthority())return;
 	bIsSpectating = true;
+	ViewTargetIndex = 0;
 	TArray<ACharacter*> LiveCharacters = USamAbilitySystemLibrary::GetLivePlayerCharacters(this);
 	if(LiveCharacters.Num() <= 0) return;
 	ASamCharacterBase* SamCharacter = Cast<ASamCharacterBase>(LiveCharacters[0]);
 	SetViewTarget(SamCharacter);
 	SamCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleViewTargetDeath);
+}
+
+
+void ASamPlayerController::Server_SpectateNext_Implementation()
+{
+	if(!bIsSpectating)return;
+	TArray<ACharacter*> LiveCharacters = USamAbilitySystemLibrary::GetLivePlayerCharacters(this);
+	if(LiveCharacters.Num() <= 0) return;
+
+	//Unbind from previous
+	ASamCharacterBase* PrevTarget = Cast<ASamCharacterBase>(LiveCharacters[ViewTargetIndex]);
+	PrevTarget->OnDeathDelegate.RemoveDynamic(this, &ThisClass::HandleViewTargetDeath);
+	//Change index
+	ViewTargetIndex++;
+	if(ViewTargetIndex >= LiveCharacters.Num())
+		ViewTargetIndex = 0;
+	if(ViewTargetIndex < 0)
+		ViewTargetIndex = LiveCharacters.Num()-1;
+	//Switch view and bind to new target
+	ASamCharacterBase* NextTarget = Cast<ASamCharacterBase>(LiveCharacters[ViewTargetIndex]);
+	SetViewTarget(NextTarget);
+	NextTarget->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleViewTargetDeath);
+}
+
+
+void ASamPlayerController::Server_SpectatePrev_Implementation()
+{
+	if(!bIsSpectating)return;
+	TArray<ACharacter*> LiveCharacters = USamAbilitySystemLibrary::GetLivePlayerCharacters(this);
+	if(LiveCharacters.Num() <= 0) return;
+	
+	//Unbind from previous
+	ASamCharacterBase* PrevTarget = Cast<ASamCharacterBase>(LiveCharacters[ViewTargetIndex]);
+	PrevTarget->OnDeathDelegate.RemoveDynamic(this, &ThisClass::HandleViewTargetDeath);
+	//Change index
+	ViewTargetIndex--;
+	if(ViewTargetIndex >= LiveCharacters.Num())
+		ViewTargetIndex = 0;
+	if(ViewTargetIndex < 0)
+		ViewTargetIndex = LiveCharacters.Num()-1;
+	//Switch view and bind to new target
+	ASamCharacterBase* NextTarget = Cast<ASamCharacterBase>(LiveCharacters[ViewTargetIndex]);
+	SetViewTarget(NextTarget);
+	NextTarget->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleViewTargetDeath);	
 }
 
 void ASamPlayerController::SetupInputComponent()
@@ -147,7 +194,7 @@ USamAbilitySystemComponent* ASamPlayerController::GetASC()
 
 void ASamPlayerController::HandleViewTargetDeath(ASamCharacterBase* CharacterInstance)
 {
-	StartSpectating();
+	Auth_StartSpectating();
 }
 
 
