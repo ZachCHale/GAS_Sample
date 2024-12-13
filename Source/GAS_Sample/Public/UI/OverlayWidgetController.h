@@ -36,6 +36,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnLevelUpSelectionSignature_Dynamic OnEndLevelUpSelectionDelegate;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerCharacterDeathSignature_Dynamic OnPlayerCharacterDeathDelegate;
+
 	// This will NOT be sent every tick that the time changes on the server.
 	// After receiving this delegate, decrementing the time should be done locally for ui representation only.
 	UPROPERTY(BlueprintAssignable)
@@ -56,4 +59,5 @@ private:
 	void OnBeginLevelUpSelection() const;
 	void OnEndLevelUpSelection() const;
 	void OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
+	void OnPlayerCharacterDeath(ASamPlayerState*) const;
 };

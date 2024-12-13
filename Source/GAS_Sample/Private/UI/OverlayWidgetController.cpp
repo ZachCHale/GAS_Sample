@@ -33,6 +33,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	const USamAttributeSet* SamAS = CastChecked<USamAttributeSet>(AttributeSet);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnHealthChanged);
 
+	SamPS->OnPlayerCharacterDeathDelegate.AddUObject(this, &ThisClass::OnPlayerCharacterDeath);
+
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
 	
 	SamGS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
@@ -84,6 +86,11 @@ void UOverlayWidgetController::OnEndLevelUpSelection() const
 void UOverlayWidgetController::OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const
 {
 	OnPlayerReadyCountChangedDelegate.Broadcast(NewReadyCount, NewTotalPlayerCount);
+}
+
+void UOverlayWidgetController::OnPlayerCharacterDeath(ASamPlayerState*) const
+{
+	OnPlayerCharacterDeathDelegate.Broadcast();
 }
 
 
