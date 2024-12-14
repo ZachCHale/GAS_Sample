@@ -39,8 +39,8 @@ void ASamPlayerState::BeginPlay()
 void ASamPlayerState::Destroyed()
 {
 	Super::Destroyed();
-	if(HasAuthority())
-		PlayerStateList.Remove(this);
+	//if(HasAuthority())
+	//	PlayerStateList.Remove(this);
 }
 
 

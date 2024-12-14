@@ -25,27 +25,30 @@ class GAS_SAMPLE_API ASamPlayerState : public APlayerState, public IAbilitySyste
 	GENERATED_BODY()
 public:
 	ASamPlayerState();
-	
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
+	//~AActor interface
 	virtual void BeginPlay() override;
-	
 	virtual void Destroyed() override;
-	
-	UAttributeSet* GetAttributeSet() const;
+	//~END AActor interface
 
+	//~IAbilitySystemInterface
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~END IAbilitySystemInterface
+
+	//~IExpLevelInterface
 	virtual int32 GetLevel() override;
 	virtual int32 GetTotalExp() override;
-
 	virtual void AddToExp(int32 AddedExp) override;
 	virtual void AddToLevel(int32 AddedLevels) override;
-
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
-
+	//~END IExpLevelInterface
+	
+	UAttributeSet* GetAttributeSet() const;
 	FPlayerStateEventSignature OnPlayerCharacterDeathDelegate;
 
+	// Checks if the player has a character (ASamCharacterBase), and if so, checks that it isn't in a dying/dead state
 	bool HasLivingCharacter() const;
 
+	// Mostly handles binding to events on the character such as death.
 	void InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter);
 
 protected:
@@ -56,7 +59,7 @@ protected:
 
 
 private:
-	static inline TArray<TObjectPtr<ASamPlayerState>> PlayerStateList;
+	//TODO: Might be able to bind to the character directly from the controller. There isn't much reason to do it heer anymore.
 	UFUNCTION()
 	void HandleCharacterDeath(ASamCharacterBase* CharacterInstance);
 
