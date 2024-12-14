@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
 #include "ExpLevelInterface.h"
+#include "GameplayTagContainer.h"
 
 #include "SamPlayerState.generated.h"
 
@@ -17,6 +18,34 @@ class ASamPlayerState;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerStateEventSignature, ASamPlayerState*)
+
+USTRUCT()
+struct FPlayerUpgradeState
+{
+	GENERATED_BODY()
+	FPlayerUpgradeState()
+	{
+		bIsReady = false;
+		CurrentlySelectedChoice = FGameplayTag();
+	}
+	void ResetSelectionState()
+	{
+		bIsReady = false;
+		CurrentlySelectedChoice = FGameplayTag();
+		UpgradeChoiceTags.Empty();
+	}
+
+	// The player has selected an upgrade.
+	UPROPERTY()
+	bool bIsReady;
+
+	// Tags representing the upgrades available to choose from right now.
+	UPROPERTY()
+	TArray<FGameplayTag> UpgradeChoiceTags;
+	// The current upgrade the player has selected.
+	UPROPERTY()
+	FGameplayTag CurrentlySelectedChoice;
+};
 
 
 UCLASS()
@@ -51,6 +80,20 @@ public:
 	// Mostly handles binding to events on the character such as death.
 	void InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter);
 
+	FPlayerUpgradeState* GetPlayerUpgradeState();
+
+	void Auth_GenerateNewUpgradeSelection();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StartNewUpgradeState();
+
+	void Auth_SubmitUpgradeSelection(FGameplayTag UpgradeTag);
+
+	void Auth_ClearUpgradeSelection();
+
+	// True if UpgradeTag matches one of the choices in the Upgrade State
+	bool IsUpgradeSelectionValid(FGameplayTag UpgradeTag);
+	
 protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -59,8 +102,14 @@ protected:
 
 
 private:
-	//TODO: Might be able to bind to the character directly from the controller. There isn't much reason to do it heer anymore.
+	//TODO: Might be able to bind to the character directly from the controller. There isn't much reason to do it here anymore.
 	UFUNCTION()
 	void HandleCharacterDeath(ASamCharacterBase* CharacterInstance);
+
+	FPlayerUpgradeState UpgradeState;
+
+	// Called From Server_StartNewUpgradeState
+	UFUNCTION(Client, Reliable)
+	void Client_StartNewUpgradeState(FPlayerUpgradeState NewUpgradeState);
 
 };

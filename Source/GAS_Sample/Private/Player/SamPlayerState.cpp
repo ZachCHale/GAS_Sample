@@ -39,8 +39,6 @@ void ASamPlayerState::BeginPlay()
 void ASamPlayerState::Destroyed()
 {
 	Super::Destroyed();
-	//if(HasAuthority())
-	//	PlayerStateList.Remove(this);
 }
 
 
@@ -94,6 +92,53 @@ void ASamPlayerState::InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharact
 	PlayerCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleCharacterDeath);
 }
 
+FPlayerUpgradeState* ASamPlayerState::GetPlayerUpgradeState()
+{
+	return &UpgradeState;
+}
+
+void ASamPlayerState::Auth_GenerateNewUpgradeSelection()
+{
+	
+}
+
+void ASamPlayerState::Auth_SubmitUpgradeSelection(FGameplayTag UpgradeTag)
+{
+	if(!HasAuthority())return;
+	UpgradeState.bIsReady = true;
+	UpgradeState.CurrentlySelectedChoice = UpgradeTag;
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	//TODO: Replace with delegate broadcast?
+	SamGS->Auth_SendPlayerLevelUpSelection();
+	
+}
+
+void ASamPlayerState::Auth_ClearUpgradeSelection()
+{
+	if(!HasAuthority())return;
+	UpgradeState.bIsReady = false;
+	UpgradeState.CurrentlySelectedChoice = FGameplayTag();
+	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
+	//TODO: Replace with delegate broadcast?
+	SamGS->Auth_ClearPlayerLevelUpSelection();
+}
+
+bool ASamPlayerState::IsUpgradeSelectionValid(FGameplayTag UpgradeTag)
+{
+	if(!UpgradeState.UpgradeChoiceTags.Contains(UpgradeTag)) return false;
+	return true;
+}
+
+void ASamPlayerState::Server_StartNewUpgradeState_Implementation()
+{
+	UE_LOG(SamLog, Log, TEXT("Server"))
+	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
+	UpgradeState.ResetSelectionState();
+	//TODO: Remove Hardcoded number of upgrades to generate. Add ways to increase this number through gameplay.
+	UpgradeState.UpgradeChoiceTags = PlayerCharacter->GetCharacterClassDefaultInfo().UpgradeSelectionInfo->GetRandomUpgradeTags(3);
+	Client_StartNewUpgradeState(UpgradeState);
+}
+
 void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 {
 	OnPlayerCharacterDeathDelegate.Broadcast(this);
@@ -105,5 +150,11 @@ void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 			SamPC->Auth_StartSpectating();
 		}
 	}
+}
+
+void ASamPlayerState::Client_StartNewUpgradeState_Implementation(FPlayerUpgradeState NewUpgradeState)
+{
+	UpgradeState = NewUpgradeState;
+	UE_LOG(SamLog, Log, TEXT("Client"))
 }
 

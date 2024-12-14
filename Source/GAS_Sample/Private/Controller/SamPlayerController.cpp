@@ -13,6 +13,7 @@
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Character/SamCharacterPlayer.h"
 #include "Input/SamInputComponent.h"
+#include "Player/SamPlayerState.h"
 
 ASamPlayerController::ASamPlayerController()
 {
@@ -237,26 +238,18 @@ void ASamPlayerController::Sever_SendReadyUpLobby_Implementation()
 
 bool ASamPlayerController::Sever_SendLevelUpSelection_Validate(FGameplayTag UpgradeTag)
 {
-	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	if(SamGS && SamGS->IsValidUpgradeSelection(PlayerState, UpgradeTag))
-	{
-		return true;
-	}
-	return false;
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
+	return SamPS->IsUpgradeSelectionValid(UpgradeTag);
 }
 
 void ASamPlayerController::Sever_SendLevelUpSelection_Implementation(FGameplayTag UpgradeTag)
 {
-	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
-	{
-		SamGS->Auth_SendPlayerLevelUpSelection(PlayerState, UpgradeTag);
-	}
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
+	SamPS->Auth_SubmitUpgradeSelection(UpgradeTag);
 }
 
 void ASamPlayerController::Sever_ClearLevelUpSelection_Implementation()
 {
-	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
-	{
-		SamGS->Auth_ClearPlayerLevelUpSelection(PlayerState);
-	}
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
+	SamPS->Auth_ClearUpgradeSelection();
 }

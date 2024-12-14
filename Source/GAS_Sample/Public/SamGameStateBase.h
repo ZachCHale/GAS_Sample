@@ -8,9 +8,12 @@
 #include "Player/ExpLevelInterface.h"
 #include "SamGameStateBase.generated.h"
 
+struct FPlayerUpgradeState;
 class ULevelSpawnPatternInfo;
 class ULevelUpInfo;
 class ASamPlayerState;
+
+//TODO: Add GameState Changed Event
 
 UENUM()
 enum EGameStateStatus: int32
@@ -20,39 +23,6 @@ enum EGameStateStatus: int32
 	Gameplay,
 	GameEnd,
 	PausedByPlayer,
-};
-
-USTRUCT()
-struct FPlayerLevelUpSelectionState
-{
-	GENERATED_BODY()
-	FPlayerLevelUpSelectionState()
-	{
-		PlayerState = nullptr;
-		bIsReady = false;
-		CurrentlySelectedChoice = FGameplayTag();
-	}
-	FPlayerLevelUpSelectionState(APlayerState* NewPS)
-	{
-		PlayerState = NewPS;
-		bIsReady = false;
-		CurrentlySelectedChoice = FGameplayTag();
-	}
-	UPROPERTY()
-	APlayerState* PlayerState;
-	UPROPERTY()
-	bool bIsReady;
-	UPROPERTY()
-	TArray<FGameplayTag> UpgradeChoiceTags;
-
-	UPROPERTY()
-	FGameplayTag CurrentlySelectedChoice;
-	void ResetSelectionState()
-	{
-		bIsReady = false;
-		CurrentlySelectedChoice = FGameplayTag();
-		UpgradeChoiceTags.Empty();
-	}
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStatChangedSignature, int32);
@@ -185,7 +155,7 @@ public:
 	FOnPlayerReadyCountChangedSignature PlayerReadyCountChangedDelegate;
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_StartLevelUpEvent(int32 NewLevel, int32 NewExp, const TArray<FPlayerLevelUpSelectionState>& UpdatedLevelUpSelectionState);
+	void Multicast_StartLevelUpEvent(int32 NewLevel, int32 NewExp);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EndLevelUpEvent(int32 NewLevel);
@@ -194,24 +164,18 @@ public:
 	void Multicast_UpdateReadyCount(int32 NewReady, int32 NewTotal);
 
 	UFUNCTION()
-	void Auth_SendPlayerLevelUpSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag);
+	void Auth_SendPlayerLevelUpSelection();
 
 	UFUNCTION()
-	void Auth_SetPlayerReadyInLobby(const APlayerState* PlayerState);
+	void Auth_SetPlayerReadyInLobby(APlayerState* PlayerState);
 
 	UFUNCTION()
-	bool IsValidUpgradeSelection(const APlayerState* PlayerState, FGameplayTag UpgradeTag);
-
-	UFUNCTION()
-	void Auth_ClearPlayerLevelUpSelection(APlayerState* PlayerState);
+	void Auth_ClearPlayerLevelUpSelection();
 
 	UFUNCTION(BlueprintCallable)
 	TArray<FUpgradeInfoItem> GetLocalPlayerSelectionChoices();
 	
 private:
-
-	TArray<FPlayerLevelUpSelectionState> LevelUpSelectionState;
-	
 	int32 PlayerReadyCount = 0;
 	int32 QueuedLevelUps;
 
@@ -220,8 +184,6 @@ private:
 	void OnRep_PlayerReadyCount() const;
 
 	void Auth_GenerateUpgradesForPlayers();
-
-	FPlayerLevelUpSelectionState* GetPlayerLevelUpSelectionState(const APlayerState* PlayerState);
 
 	int32 CountPlayerSelectionsReady();
 	

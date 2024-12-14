@@ -7,6 +7,7 @@
 #include "Engine/DataAsset.h"
 #include "CharacterClassInfo.generated.h"
 
+class UUpgradeInfo;
 class ASamCharacterBase;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -44,6 +45,9 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Kill Reward")
 	FExpRewardInfo ExpReward;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UUpgradeInfo> UpgradeSelectionInfo;
 	
 };
 
