@@ -52,6 +52,7 @@ void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 	//Auth_GenerateUpgradesForPlayers();
 	//Broadcast Events to clients
 	Multicast_StartLevelUpEvent(SharedPlayerLevel, SharedPlayerExp);
+	Multicast_UpdateUpgradeSelectionReadyCount(0, PlayerArray.Num());
 	//Pause Game
 	if(SharedPlayerLevel != 0)
 	{
@@ -117,7 +118,7 @@ float ASamGameStateBase::GetLastSyncedGameTime() const
 	return CurrentGameTimerValueSeconds;
 }
 
-float ASamGameStateBase::Auth_GetCurrentGameProgress()
+float ASamGameStateBase::GetAuthCurrentGameProgress()
 {
 	if(!HasAuthority()) return 0.f;
 	return 1.f-(CurrentGameTimerValueSeconds/MatchLengthSeconds);
@@ -128,10 +129,9 @@ void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
 	EndLevelUpSelectionDelegate.Broadcast();
 }
 
-void ASamGameStateBase::Multicast_UpdateReadyCount_Implementation(int32 NewReady, int32 NewTotal)
+void ASamGameStateBase::Multicast_UpdateUpgradeSelectionReadyCount_Implementation(int32 NewReady, int32 NewTotal)
 {
-	PlayerReadyCount = NewReady;
-	PlayerReadyCountChangedDelegate.Broadcast(NewReady, NewTotal);
+	PlayerUpgradeReadyCountChangedDelegate.Broadcast(NewReady, NewTotal);
 }
 
 void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
@@ -141,9 +141,15 @@ void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
 		if(!PlayerArray.Contains(PlayerState))
 		{
 			PlayerArray.AddUnique(PlayerState);
-			PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
+			int32 ReadyCount;
+			ReadyCount = CountPlayerSelectionsReady();
+			PlayerUpgradeReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
+			ReadyCount = CountPlayerLobbyReady();
+			PlayerLobbyReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
 			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 			SamPS->OnPlayerCharacterDeathDelegate.AddUObject(this, &ThisClass::HandlePlayerDeath);
+			SamPS->OnAuthUpgradeStateChangedDelegate.AddUObject(this, &ThisClass::HandleAuthPlayerUpgradeStateChanged);
+			SamPS->OnAuthLobbyStateChangedDelegate.AddUObject(this, &ThisClass::HandleAuthPlayerLobbyStateChanged);
 			
 		}
 	}
@@ -152,7 +158,11 @@ void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
 void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 {
 	Super::RemovePlayerState(PlayerState);
-	PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
+	int32 ReadyCount;
+	ReadyCount = CountPlayerSelectionsReady();
+	PlayerUpgradeReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
+	ReadyCount = CountPlayerLobbyReady();
+	PlayerLobbyReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
 }
 
 void ASamGameStateBase::BeginPlay()
@@ -179,7 +189,6 @@ void ASamGameStateBase::Tick(float DeltaSeconds)
 void ASamGameStateBase::Auth_Tick(float DeltaSeconds)
 {
 	if(!HasAuthority())return;
-
 	CurrentGameTimerValueSeconds-=DeltaSeconds;
 	if(CurrentGameTimerValueSeconds <= 0)
 	{
@@ -187,69 +196,6 @@ void ASamGameStateBase::Auth_Tick(float DeltaSeconds)
 	}
 }
 
-void ASamGameStateBase::Auth_SendPlayerLevelUpSelection()
-{
-	check(HasAuthority());
-	if(StateStatus != EGameStateStatus::LevelUpSelection)return;
-
-	PlayerReadyCount = CountPlayerSelectionsReady();
-	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
-	
-	if(PlayerReadyCount == PlayerArray.Num())
-	{
-		Auth_SubmitAllPlayerUpgradeSelections();
-	}
-}
-
-void ASamGameStateBase::Auth_SetPlayerReadyInLobby(APlayerState* PlayerState)
-{
-	check(HasAuthority());
-	if(StateStatus != EGameStateStatus::PreGameLobby)return;
-
-	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
-	
-	//Repurpose the Selection state since it has a ready up bool
-	if(FPlayerUpgradeState* PlayerUpgradeState = SamPS->GetPlayerUpgradeState())
-	{
-		PlayerUpgradeState->bIsReady = true;
-	}
-
-	PlayerReadyCount = CountPlayerSelectionsReady();
-	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
-	if(PlayerReadyCount == PlayerArray.Num())
-	{
-		Multicast_StartNewGame();
-	}
-
-}
-
-void ASamGameStateBase::Auth_ClearPlayerLevelUpSelection()
-{
-	check(HasAuthority());
-	PlayerReadyCount = CountPlayerSelectionsReady();
-	Multicast_UpdateReadyCount(PlayerReadyCount, PlayerArray.Num());
-}
-
-TArray<FUpgradeInfoItem> ASamGameStateBase::GetLocalPlayerSelectionChoices()
-{
-	TArray<FUpgradeInfoItem> ChoicesInfo;
-	for (auto PS : PlayerArray)
-	{
-		//If on client, remote player states won't have a controller
-		if(PS->GetPlayerController() == nullptr)
-			continue;
-		if(PS->GetPlayerController()->IsLocalPlayerController())
-		{
-			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PS);
-			for (FGameplayTag Tag : SamPS->GetPlayerUpgradeState()->UpgradeChoiceTags)
-			{
-				ChoicesInfo.Add(UpgradeInfo->GetUpgradeInfoFromTag(Tag));
-			}
-			break;
-		}
-	}
-	return ChoicesInfo;
-}
 
 void ASamGameStateBase:: Multicast_StartLevelUpEvent_Implementation(int32 NewLevel, int32 NewExp)
 {
@@ -258,8 +204,7 @@ void ASamGameStateBase:: Multicast_StartLevelUpEvent_Implementation(int32 NewLev
 	OnRep_SharedPlayerExp();
 	SharedPlayerLevel = NewLevel;
 	OnRep_SharedPlayerLevel();
-
-	UE_LOG(SamLog, Log, TEXT("UHHHHHH"))
+	
 	BeginLevelUpSelectionDelegate.Broadcast();
 }
 
@@ -271,6 +216,11 @@ void ASamGameStateBase::Multicast_GamePausedByPlayer_Implementation()
 void ASamGameStateBase::Multicast_GameUnpausedByPlayer_Implementation()
 {
 	GameUnpausedByPlayerDelegate.Broadcast();
+}
+
+void ASamGameStateBase::Multicast_UpdateLobbyReadyCount_Implementation(int32 NewReady, int32 NewTotal)
+{
+	PlayerLobbyReadyCountChangedDelegate.Broadcast(NewReady, NewTotal);
 }
 
 void ASamGameStateBase::OnRep_SharedPlayerLevel() const
@@ -340,18 +290,31 @@ void ASamGameStateBase::Auth_UnpauseGame()
 	Multicast_GameUnpausedByPlayer();
 }
 
-void ASamGameStateBase::OnRep_PlayerReadyCount() const
+void ASamGameStateBase::HandleAuthPlayerLobbyStateChanged(ASamPlayerState* PlayerState)
 {
-	PlayerReadyCountChangedDelegate.Broadcast(PlayerReadyCount, PlayerArray.Num());
+	check(HasAuthority());
+	if(StateStatus != EGameStateStatus::PreGameLobby)return;
+
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
+	
+	int32 ReadyCount = CountPlayerLobbyReady();
+	Multicast_UpdateLobbyReadyCount(ReadyCount, PlayerArray.Num());
+	if(ReadyCount == PlayerArray.Num())
+	{
+		Multicast_StartNewGame();
+	}
 }
 
-void ASamGameStateBase::Auth_GenerateUpgradesForPlayers()
+void ASamGameStateBase::HandleAuthPlayerUpgradeStateChanged(ASamPlayerState*)
 {
-	if(!HasAuthority()) return;
-	for (auto PS : PlayerArray)
+	if(StateStatus != EGameStateStatus::LevelUpSelection)return;
+
+	int32 ReadyCount = CountPlayerSelectionsReady();
+	Multicast_UpdateUpgradeSelectionReadyCount(ReadyCount, PlayerArray.Num());
+	
+	if(ReadyCount == PlayerArray.Num())
 	{
-		ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PS);
-		SamPS->Auth_GenerateNewUpgradeSelection();
+		Auth_ApplyAllPlayerUpgradeSelections();
 	}
 }
 
@@ -367,7 +330,19 @@ int32 ASamGameStateBase::CountPlayerSelectionsReady()
 	return ReadyCount;
 }
 
-void ASamGameStateBase::Auth_SubmitAllPlayerUpgradeSelections()
+int32 ASamGameStateBase::CountPlayerLobbyReady()
+{
+	int32 ReadyCount = 0;
+	for (auto PS : PlayerArray)
+	{
+		ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PS);
+		if(SamPS->GetPlayerLobbyState()->bIsReady)
+			ReadyCount++;
+	}
+	return ReadyCount;
+}
+
+void ASamGameStateBase::Auth_ApplyAllPlayerUpgradeSelections()
 {
 	if(!HasAuthority()) return;
 	//Increase Level / Create new effect for selected upgrades.

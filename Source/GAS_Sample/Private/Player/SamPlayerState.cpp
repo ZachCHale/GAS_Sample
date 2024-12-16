@@ -92,14 +92,26 @@ void ASamPlayerState::InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharact
 	PlayerCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleCharacterDeath);
 }
 
+TArray<FUpgradeInfoItem> ASamPlayerState::GetAvailableUpgradeChoices()
+{
+	TArray<FUpgradeInfoItem> ChoicesInfo;
+	 ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
+	 UUpgradeInfo* UpgradeInfo = PlayerCharacter->GetCharacterClassDefaultInfo().UpgradeSelectionInfo;
+	for (FGameplayTag Tag : UpgradeState.UpgradeChoiceTags)
+	{
+		ChoicesInfo.Add(UpgradeInfo->GetUpgradeInfoFromTag(Tag));
+	}
+	return ChoicesInfo;
+}
+
 FPlayerUpgradeState* ASamPlayerState::GetPlayerUpgradeState()
 {
 	return &UpgradeState;
 }
 
-void ASamPlayerState::Auth_GenerateNewUpgradeSelection()
+FPlayerLobbyState* ASamPlayerState::GetPlayerLobbyState()
 {
-	
+	return &LobbyState;
 }
 
 void ASamPlayerState::Auth_SubmitUpgradeSelection(FGameplayTag UpgradeTag)
@@ -108,9 +120,7 @@ void ASamPlayerState::Auth_SubmitUpgradeSelection(FGameplayTag UpgradeTag)
 	UpgradeState.bIsReady = true;
 	UpgradeState.CurrentlySelectedChoice = UpgradeTag;
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	//TODO: Replace with delegate broadcast?
-	SamGS->Auth_SendPlayerLevelUpSelection();
-	
+	OnAuthUpgradeStateChangedDelegate.Broadcast(this);
 }
 
 void ASamPlayerState::Auth_ClearUpgradeSelection()
@@ -119,11 +129,16 @@ void ASamPlayerState::Auth_ClearUpgradeSelection()
 	UpgradeState.bIsReady = false;
 	UpgradeState.CurrentlySelectedChoice = FGameplayTag();
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	//TODO: Replace with delegate broadcast?
-	SamGS->Auth_ClearPlayerLevelUpSelection();
+	OnAuthUpgradeStateChangedDelegate.Broadcast(this);
 }
 
-bool ASamPlayerState::IsUpgradeSelectionValid(FGameplayTag UpgradeTag)
+void ASamPlayerState::Auth_ReadyUpPlayerLobbyState()
+{
+	LobbyState.bIsReady = true;
+	OnAuthLobbyStateChangedDelegate.Broadcast(this);
+}
+
+bool ASamPlayerState::IsUpgradeSelectionValid(FGameplayTag UpgradeTag) const
 {
 	if(!UpgradeState.UpgradeChoiceTags.Contains(UpgradeTag)) return false;
 	return true;
@@ -131,7 +146,6 @@ bool ASamPlayerState::IsUpgradeSelectionValid(FGameplayTag UpgradeTag)
 
 void ASamPlayerState::Server_StartNewUpgradeState_Implementation()
 {
-	UE_LOG(SamLog, Log, TEXT("Server"))
 	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
 	UpgradeState.ResetSelectionState();
 	//TODO: Remove Hardcoded number of upgrades to generate. Add ways to increase this number through gameplay.
@@ -155,6 +169,5 @@ void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 void ASamPlayerState::Client_StartNewUpgradeState_Implementation(FPlayerUpgradeState NewUpgradeState)
 {
 	UpgradeState = NewUpgradeState;
-	UE_LOG(SamLog, Log, TEXT("Client"))
 }
 

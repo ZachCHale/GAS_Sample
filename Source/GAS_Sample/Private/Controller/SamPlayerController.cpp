@@ -230,10 +230,8 @@ const float& ASamPlayerController::GetCursorRange() const
 
 void ASamPlayerController::Sever_SendReadyUpLobby_Implementation()
 {
-	if(ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this))
-	{
-		SamGS->Auth_SetPlayerReadyInLobby(PlayerState);
-	}
+	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
+	SamPS->Auth_ReadyUpPlayerLobbyState();
 }
 
 bool ASamPlayerController::Sever_SendLevelUpSelection_Validate(FGameplayTag UpgradeTag)

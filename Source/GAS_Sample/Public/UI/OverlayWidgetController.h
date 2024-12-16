@@ -45,7 +45,11 @@ public:
 	FOnFloatStatChangedSignature_Dynamic OnGameTimerSyncDelegate;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnPlayerReadyCountChangedSignature_Dynamic OnPlayerReadyCountChangedDelegate;
+	FOnPlayerReadyCountChangedSignature_Dynamic OnPlayerUpgradeReadyCountChangedDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerReadyCountChangedSignature_Dynamic OnPlayerLobbyReadyCountChangedDelegate;
+	
 
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
@@ -58,6 +62,7 @@ private:
 	void OnLevelChanged(int32 NewLevel) const;
 	void OnBeginLevelUpSelection() const;
 	void OnEndLevelUpSelection() const;
-	void OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
+	void OnPlayerUpgradeReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
+	void OnPlayerLobbyReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
 	void OnPlayerCharacterDeath(ASamPlayerState*) const;
 };

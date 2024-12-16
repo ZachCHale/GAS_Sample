@@ -22,7 +22,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(SamPS->GetTotalExp());
 	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
 	OnLevelChangedDelegate.Broadcast(SamPS->GetLevel());
-	OnPlayerReadyCountChangedDelegate.Broadcast(0, SamGS->PlayerArray.Num());
+	OnPlayerUpgradeReadyCountChangedDelegate.Broadcast(0, SamGS->PlayerArray.Num());
 	//Game Time only syncs the initial value, we don't bind in BindCallbacksToDependencies
 	OnGameTimerSyncDelegate.Broadcast(SamGS->GetLastSyncedGameTime());
 }
@@ -31,19 +31,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 	const USamAttributeSet* SamAS = CastChecked<USamAttributeSet>(AttributeSet);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnHealthChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 
 	SamPS->OnPlayerCharacterDeathDelegate.AddUObject(this, &ThisClass::OnPlayerCharacterDeath);
 
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
 	
-	SamGS->ExpChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnExpChanged);
-	SamGS->LevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnLevelChanged);
-	SamGS->BeginLevelUpSelectionDelegate.AddUObject(this, &UOverlayWidgetController::OnBeginLevelUpSelection);
-	SamGS->EndLevelUpSelectionDelegate.AddUObject(this, &UOverlayWidgetController::OnEndLevelUpSelection);
-	SamGS->PlayerReadyCountChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnPlayerReadyCountChanged);
+	SamGS->ExpChangedDelegate.AddUObject(this, &ThisClass::OnExpChanged);
+	SamGS->LevelChangedDelegate.AddUObject(this, &ThisClass::OnLevelChanged);
+	SamGS->BeginLevelUpSelectionDelegate.AddUObject(this, &ThisClass::OnBeginLevelUpSelection);
+	SamGS->EndLevelUpSelectionDelegate.AddUObject(this, &ThisClass::OnEndLevelUpSelection);
+	SamGS->PlayerUpgradeReadyCountChangedDelegate.AddUObject(this, &ThisClass::OnPlayerUpgradeReadyCountChanged);
+	SamGS->PlayerLobbyReadyCountChangedDelegate.AddUObject(this, &ThisClass::OnPlayerLobbyReadyCountChanged);
 	
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetMaxHealthAttribute()).AddUObject(this, &ThisClass::OnMaxHealthChanged);
 }
 
 void UOverlayWidgetController::OnHealthChanged(const FOnAttributeChangeData& NewHealth) const
@@ -83,9 +84,14 @@ void UOverlayWidgetController::OnEndLevelUpSelection() const
 	OnEndLevelUpSelectionDelegate.Broadcast();
 }
 
-void UOverlayWidgetController::OnPlayerReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const
+void UOverlayWidgetController::OnPlayerUpgradeReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const
 {
-	OnPlayerReadyCountChangedDelegate.Broadcast(NewReadyCount, NewTotalPlayerCount);
+	OnPlayerUpgradeReadyCountChangedDelegate.Broadcast(NewReadyCount, NewTotalPlayerCount);
+}
+
+void UOverlayWidgetController::OnPlayerLobbyReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const
+{
+	OnPlayerLobbyReadyCountChangedDelegate.Broadcast(NewReadyCount, NewTotalPlayerCount);
 }
 
 void UOverlayWidgetController::OnPlayerCharacterDeath(ASamPlayerState*) const

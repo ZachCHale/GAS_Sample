@@ -21,9 +21,10 @@
 
 UCharacterClassInfo* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
-	ASamGameModeBase* SamGameMode = Cast<ASamGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if(SamGameMode == nullptr) return nullptr;
-	return SamGameMode->CharacterClassInfo;
+	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
+	
+	if(SamGS == nullptr) return nullptr;
+	return SamGS->CharacterClassInfo;
 }
 
 ULevelSpawnPatternInfo* USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(const UObject* WorldContextObject)

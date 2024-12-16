@@ -10,6 +10,7 @@
 
 #include "SamPlayerState.generated.h"
 
+struct FUpgradeInfoItem;
 class ASamCharacterBase;
 class ULevelUpInfo;
 class ASamCharacterPlayer;
@@ -47,6 +48,18 @@ struct FPlayerUpgradeState
 	FGameplayTag CurrentlySelectedChoice;
 };
 
+USTRUCT()
+struct FPlayerLobbyState
+{
+	GENERATED_BODY()
+	FPlayerLobbyState()
+	{
+		bIsReady = false;
+	}
+	UPROPERTY()
+	bool bIsReady;
+};
+
 
 UCLASS()
 class GAS_SAMPLE_API ASamPlayerState : public APlayerState, public IAbilitySystemInterface, public IExpLevelInterface
@@ -72,7 +85,11 @@ public:
 	//~END IExpLevelInterface
 	
 	UAttributeSet* GetAttributeSet() const;
+	
 	FPlayerStateEventSignature OnPlayerCharacterDeathDelegate;
+	FPlayerStateEventSignature OnAuthUpgradeStateChangedDelegate;
+	FPlayerStateEventSignature OnAuthLobbyStateChangedDelegate;
+
 
 	// Checks if the player has a character (ASamCharacterBase), and if so, checks that it isn't in a dying/dead state
 	bool HasLivingCharacter() const;
@@ -80,9 +97,11 @@ public:
 	// Mostly handles binding to events on the character such as death.
 	void InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter);
 
-	FPlayerUpgradeState* GetPlayerUpgradeState();
+	UFUNCTION(BlueprintCallable)
+	TArray<FUpgradeInfoItem> GetAvailableUpgradeChoices();
 
-	void Auth_GenerateNewUpgradeSelection();
+	FPlayerUpgradeState* GetPlayerUpgradeState();
+	FPlayerLobbyState* GetPlayerLobbyState();
 
 	UFUNCTION(Server, Reliable)
 	void Server_StartNewUpgradeState();
@@ -91,8 +110,10 @@ public:
 
 	void Auth_ClearUpgradeSelection();
 
+	void Auth_ReadyUpPlayerLobbyState();
+
 	// True if UpgradeTag matches one of the choices in the Upgrade State
-	bool IsUpgradeSelectionValid(FGameplayTag UpgradeTag);
+	bool IsUpgradeSelectionValid(FGameplayTag UpgradeTag) const;
 	
 protected:
 	UPROPERTY()
@@ -107,9 +128,13 @@ private:
 	void HandleCharacterDeath(ASamCharacterBase* CharacterInstance);
 
 	FPlayerUpgradeState UpgradeState;
+	FPlayerLobbyState LobbyState;
 
 	// Called From Server_StartNewUpgradeState
 	UFUNCTION(Client, Reliable)
 	void Client_StartNewUpgradeState(FPlayerUpgradeState NewUpgradeState);
+
+	// Indicates if a player is ready during the current game state (PreGameLobby, LevelUpSelection, etc)
+	bool bIsReady;
 
 };
