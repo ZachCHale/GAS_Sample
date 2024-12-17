@@ -151,6 +151,10 @@ void ASamPlayerController::UpdateCursorInformation()
 
 void ASamPlayerController::RotateControllerToFaceCursorWorldPosition()
 {
+	APawn* ControlledPawn = GetPawn<APawn>();
+	ASamCharacterPlayer* SamCharacterPlayer = Cast<ASamCharacterPlayer>(ControlledPawn);
+	if(SamCharacterPlayer==nullptr || SamCharacterPlayer->GetIsDead())return;
+	
 	ControlRotation = FacingCursorRotation;
 }
 
@@ -168,19 +172,32 @@ void ASamPlayerController::AdjustCameraDistanceAhead()
 
 void ASamPlayerController::InputActionPressed(FGameplayTag BoundTag)
 {
-	
+	if(GetASC() == nullptr) return;
+
+	APawn* ControlledPawn = GetPawn<APawn>();
+	ASamCharacterPlayer* SamCharacterPlayer = Cast<ASamCharacterPlayer>(ControlledPawn);
+	if(SamCharacterPlayer==nullptr || SamCharacterPlayer->GetIsDead()) return;
 	
 }
 
 void ASamPlayerController::InputActionReleased(FGameplayTag BoundTag)
 {
 	if(GetASC() == nullptr) return;
+	APawn* ControlledPawn = GetPawn<APawn>();
+	ASamCharacterPlayer* SamCharacterPlayer = Cast<ASamCharacterPlayer>(ControlledPawn);
+	if(SamCharacterPlayer==nullptr || SamCharacterPlayer->GetIsDead())return;
+	
 	GetASC()->AbilityInputReleased(BoundTag);
 }
 
 void ASamPlayerController::InputActionHeld(FGameplayTag BoundTag)
 {
 	if(GetASC() == nullptr) return;
+	
+	APawn* ControlledPawn = GetPawn<APawn>();
+	ASamCharacterPlayer* SamCharacterPlayer = Cast<ASamCharacterPlayer>(ControlledPawn);
+	if(SamCharacterPlayer==nullptr || SamCharacterPlayer->GetIsDead())return;
+	
 	GetASC()->AbilityInputHeld(BoundTag);
 }
 
@@ -201,12 +218,17 @@ void ASamPlayerController::HandleViewTargetDeath(ASamCharacterBase* CharacterIns
 
 void ASamPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	APawn* ControlledPawn = GetPawn<APawn>();
+	ASamCharacterPlayer* SamCharacterPlayer = Cast<ASamCharacterPlayer>(ControlledPawn);
+	if(SamCharacterPlayer==nullptr || SamCharacterPlayer->GetIsDead())return;
+
+	
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 	const FRotator Rotation = InitialControllerRotation;
 	const FRotator YawRotation = FRotator(0.0f, Rotation.Yaw, 0.0f);
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);  
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	if(APawn* ControlledPawn = GetPawn<APawn>())  
+	if(ControlledPawn)  
 	{  
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);  
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);  
