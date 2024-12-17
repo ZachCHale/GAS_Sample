@@ -87,7 +87,7 @@ void UEnemySpawnManagemenSubsystem::StartSpawnAttempt()
 	ULevelSpawnPatternInfo* SpawnPatternInfoDA = USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(ScopedWorld);
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(ScopedWorld);
 
-	float GameProgress = SamGS->GetAuthCurrentGameProgress();
+	float GameProgress = SamGS->GetCurrentGameProgress();
 	FGameplayTag LevelTag = SamTags::Levels::Level_Gameplay_Default;
 
 	FSpawnPatternInfo LevelInfo = SpawnPatternInfoDA->GetSpawnPatternInfoFromTag(LevelTag);

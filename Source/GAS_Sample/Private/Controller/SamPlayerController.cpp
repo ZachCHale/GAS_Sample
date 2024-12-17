@@ -57,8 +57,8 @@ void ASamPlayerController::Sever_SendPauseRequest_Implementation()
 void ASamPlayerController::Sever_SendUnpauseRequest_Implementation()
 {
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	SamGS->Multicast_GameUnpausedByPlayer();
 	SamGS->Auth_UnpauseGame();
+	SamGS->Multicast_GameUnpausedByPlayer();
 }
 
 void ASamPlayerController::Auth_StartSpectating()

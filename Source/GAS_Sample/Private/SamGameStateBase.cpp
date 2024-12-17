@@ -73,11 +73,13 @@ EGameStateStatus ASamGameStateBase::GetGameStatus() const
 
 void ASamGameStateBase::Multicast_GameLost_Implementation()
 {
+	StateStatus = EGameStateStatus::GameEnd;
 	GameLostDelegate.Broadcast();
 }
 
 void ASamGameStateBase::Multicast_GameWon_Implementation()
 {
+	StateStatus = EGameStateStatus::GameEnd;
 	GameWonDelegate.Broadcast();
 }
 
@@ -93,6 +95,7 @@ void ASamGameStateBase::Multicast_StartNewGame_Implementation()
 			SamPS->GetPlayerUpgradeState()->ResetSelectionState();
 		}
 	}
+	Multicast_SyncMatchTime(CurrentGameTimerValueSeconds);
 	NewGameStartDelegate.Broadcast();
 }
 
@@ -113,19 +116,19 @@ TArray<ACharacter*> ASamGameStateBase::GetAllPlayerCharacters()
 	return Characters;
 }
 
-float ASamGameStateBase::GetLastSyncedGameTime() const
+float ASamGameStateBase::GetMatchTimeRemaining() const
 {
 	return CurrentGameTimerValueSeconds;
 }
 
-float ASamGameStateBase::GetAuthCurrentGameProgress()
+float ASamGameStateBase::GetCurrentGameProgress()
 {
-	if(!HasAuthority()) return 0.f;
 	return 1.f-(CurrentGameTimerValueSeconds/MatchLengthSeconds);
 }
 
 void ASamGameStateBase::Multicast_EndLevelUpEvent_Implementation(int32 NewLevel)
 {
+	StateStatus = EGameStateStatus::Gameplay;
 	EndLevelUpSelectionDelegate.Broadcast();
 }
 
@@ -142,10 +145,10 @@ void ASamGameStateBase::AddPlayerState(APlayerState* PlayerState)
 		{
 			PlayerArray.AddUnique(PlayerState);
 			int32 ReadyCount;
-			ReadyCount = CountPlayerSelectionsReady();
-			PlayerUpgradeReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
-			ReadyCount = CountPlayerLobbyReady();
-			PlayerLobbyReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
+			ReadyCount = GetPlayerSelectionsReady();
+			Multicast_UpdateUpgradeSelectionReadyCount(ReadyCount, PlayerArray.Num());
+			ReadyCount = GetPlayerLobbyReady();
+			Multicast_UpdateLobbyReadyCount(ReadyCount, PlayerArray.Num());
 			ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 			SamPS->OnPlayerCharacterDeathDelegate.AddUObject(this, &ThisClass::HandlePlayerDeath);
 			SamPS->OnAuthUpgradeStateChangedDelegate.AddUObject(this, &ThisClass::HandleAuthPlayerUpgradeStateChanged);
@@ -159,9 +162,9 @@ void ASamGameStateBase::RemovePlayerState(APlayerState* PlayerState)
 {
 	Super::RemovePlayerState(PlayerState);
 	int32 ReadyCount;
-	ReadyCount = CountPlayerSelectionsReady();
+	ReadyCount = GetPlayerSelectionsReady();
 	PlayerUpgradeReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
-	ReadyCount = CountPlayerLobbyReady();
+	ReadyCount = GetPlayerLobbyReady();
 	PlayerLobbyReadyCountChangedDelegate.Broadcast(ReadyCount, PlayerArray.Num());
 }
 
@@ -183,14 +186,9 @@ void ASamGameStateBase::BeginPlay()
 void ASamGameStateBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	Auth_Tick(DeltaSeconds);
-}
-
-void ASamGameStateBase::Auth_Tick(float DeltaSeconds)
-{
-	if(!HasAuthority())return;
+	if(StateStatus != EGameStateStatus::Gameplay) return;
 	CurrentGameTimerValueSeconds-=DeltaSeconds;
-	if(CurrentGameTimerValueSeconds <= 0)
+	if(HasAuthority() && CurrentGameTimerValueSeconds <= 0)
 	{
 		Auth_EndGameWin();
 	}
@@ -200,6 +198,7 @@ void ASamGameStateBase::Auth_Tick(float DeltaSeconds)
 void ASamGameStateBase:: Multicast_StartLevelUpEvent_Implementation(int32 NewLevel, int32 NewExp)
 {
 	//Replication doesn't seem to work when the game is paused, so we need to manually replicate from the RPC
+	StateStatus = EGameStateStatus::LevelUpSelection;
 	SharedPlayerExp = NewExp;
 	OnRep_SharedPlayerExp();
 	SharedPlayerLevel = NewLevel;
@@ -210,11 +209,13 @@ void ASamGameStateBase:: Multicast_StartLevelUpEvent_Implementation(int32 NewLev
 
 void ASamGameStateBase::Multicast_GamePausedByPlayer_Implementation()
 {
+	StateStatus = EGameStateStatus::PausedByPlayer;
 	GamePausedByPlayerDelegate.Broadcast();
 }
 
 void ASamGameStateBase::Multicast_GameUnpausedByPlayer_Implementation()
 {
+	StateStatus = EGameStateStatus::Gameplay;
 	GameUnpausedByPlayerDelegate.Broadcast();
 }
 
@@ -231,6 +232,11 @@ void ASamGameStateBase::OnRep_SharedPlayerLevel() const
 void ASamGameStateBase::OnRep_SharedPlayerExp() const
 {
 	ExpChangedDelegate.Broadcast(SharedPlayerExp);
+}
+
+void ASamGameStateBase::Multicast_SyncMatchTime_Implementation(float TimeRemaining)
+{
+	CurrentGameTimerValueSeconds = TimeRemaining;
 }
 
 void ASamGameStateBase::HandlePlayerDeath(ASamPlayerState* PlayerState)
@@ -255,9 +261,9 @@ void ASamGameStateBase::HandlePlayerDeath(ASamPlayerState* PlayerState)
 void ASamGameStateBase::Auth_EndGameLoss()
 {
 	if(!HasAuthority())return;
-	if(StateStatus == GameEnd) return;
+	if(StateStatus == EGameStateStatus::GameEnd) return;
 	GetWorld()->GetFirstPlayerController()->SetPause(true);
-	StateStatus = GameEnd;
+	StateStatus = EGameStateStatus::GameEnd;
 	//Notify Clients To Show End Screens
 	Multicast_GameLost();
 }
@@ -265,9 +271,9 @@ void ASamGameStateBase::Auth_EndGameLoss()
 void ASamGameStateBase::Auth_EndGameWin()
 {
 	if(!HasAuthority())return;
-	if(StateStatus == GameEnd) return;
+	if(StateStatus == EGameStateStatus::GameEnd) return;
 	GetWorld()->GetFirstPlayerController()->SetPause(true);
-	StateStatus = GameEnd;
+	StateStatus = EGameStateStatus::GameEnd;
 	//Notify Clients To Show End Screens
 	Multicast_GameWon();
 }
@@ -275,18 +281,19 @@ void ASamGameStateBase::Auth_EndGameWin()
 void ASamGameStateBase::Auth_PauseGame()
 {
 	if(!HasAuthority()) return;
-	if(StateStatus != Gameplay) return;
+	if(StateStatus != EGameStateStatus::Gameplay) return;
 	GetWorld()->GetFirstPlayerController()->SetPause(true);
-	StateStatus = PausedByPlayer;
+	StateStatus = EGameStateStatus::PausedByPlayer;
 	Multicast_GamePausedByPlayer();
 }
 
 void ASamGameStateBase::Auth_UnpauseGame()
 {
 	if(!HasAuthority()) return;
-	if(StateStatus != PausedByPlayer) return;
+	if(StateStatus != EGameStateStatus::PausedByPlayer) return;
 	GetWorld()->GetFirstPlayerController()->SetPause(false);
-	StateStatus = Gameplay;
+	StateStatus = EGameStateStatus::Gameplay;
+	Multicast_SyncMatchTime(CurrentGameTimerValueSeconds);
 	Multicast_GameUnpausedByPlayer();
 }
 
@@ -297,7 +304,7 @@ void ASamGameStateBase::HandleAuthPlayerLobbyStateChanged(ASamPlayerState* Playe
 
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerState);
 	
-	int32 ReadyCount = CountPlayerLobbyReady();
+	int32 ReadyCount = GetPlayerLobbyReady();
 	Multicast_UpdateLobbyReadyCount(ReadyCount, PlayerArray.Num());
 	if(ReadyCount == PlayerArray.Num())
 	{
@@ -309,7 +316,7 @@ void ASamGameStateBase::HandleAuthPlayerUpgradeStateChanged(ASamPlayerState*)
 {
 	if(StateStatus != EGameStateStatus::LevelUpSelection)return;
 
-	int32 ReadyCount = CountPlayerSelectionsReady();
+	int32 ReadyCount = GetPlayerSelectionsReady();
 	Multicast_UpdateUpgradeSelectionReadyCount(ReadyCount, PlayerArray.Num());
 	
 	if(ReadyCount == PlayerArray.Num())
@@ -318,7 +325,7 @@ void ASamGameStateBase::HandleAuthPlayerUpgradeStateChanged(ASamPlayerState*)
 	}
 }
 
-int32 ASamGameStateBase::CountPlayerSelectionsReady()
+int32 ASamGameStateBase::GetPlayerSelectionsReady()
 {
 	int32 ReadyCount = 0;
 	for (auto PS : PlayerArray)
@@ -330,7 +337,7 @@ int32 ASamGameStateBase::CountPlayerSelectionsReady()
 	return ReadyCount;
 }
 
-int32 ASamGameStateBase::CountPlayerLobbyReady()
+int32 ASamGameStateBase::GetPlayerLobbyReady()
 {
 	int32 ReadyCount = 0;
 	for (auto PS : PlayerArray)
@@ -359,6 +366,7 @@ void ASamGameStateBase::Auth_ApplyAllPlayerUpgradeSelections()
 	if(QueuedLevelUps <=0)
 	{
 		StateStatus = EGameStateStatus::Gameplay;
+		Multicast_SyncMatchTime(CurrentGameTimerValueSeconds);
 		Multicast_EndLevelUpEvent(SharedPlayerLevel);
 		GetWorld()->GetFirstPlayerController()->SetPause(false);
 	}

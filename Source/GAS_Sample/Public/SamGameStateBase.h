@@ -14,10 +14,8 @@ class ULevelSpawnPatternInfo;
 class ULevelUpInfo;
 class ASamPlayerState;
 
-//TODO: Add GameState Changed Event
-
 UENUM()
-enum EGameStateStatus: int32
+enum class EGameStateStatus: int32
 {
 	PreGameLobby,
 	LevelUpSelection,
@@ -30,6 +28,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStatChangedSignature, int32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerReadyCountChangedSignature, int32, int32);
 DECLARE_MULTICAST_DELEGATE(FOnLevelupSelectionSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStateEventSignature_Dynamic);
+
 
 UCLASS()
 class GAS_SAMPLE_API ASamGameStateBase : public AGameStateBase , public IExpLevelInterface
@@ -99,11 +98,11 @@ public:
 	// Returns all player characters, even if in a dead/dying state.
 	TArray<ACharacter*> GetAllPlayerCharacters();
 
-	//Authority will always be accurate, clients will be when the GameState last replicated
-	float GetLastSyncedGameTime() const;
+	UFUNCTION(BlueprintCallable)
+	float GetMatchTimeRemaining() const;
 
 	//Returns the progress of the current in game time against the total match length, between 0.0 and 1.0
-	float GetAuthCurrentGameProgress();
+	float GetCurrentGameProgress();
 
 	// Returns an ENUM representing the current state of the game.
 	UFUNCTION(BlueprintCallable)
@@ -165,6 +164,9 @@ private:
   
 	UFUNCTION()  
 	void OnRep_SharedPlayerExp() const;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SyncMatchTime(float TimeRemaining);
 	
 	EGameStateStatus StateStatus = EGameStateStatus::PreGameLobby;
 	
@@ -187,6 +189,6 @@ private:
 	// Apply selected upgrades to players, then resume gameplay unless more level ups are queued.
 	void Auth_ApplyAllPlayerUpgradeSelections();
 	// Loop through the all player states and count how many are ready.
-	int32 CountPlayerSelectionsReady();
-	int32 CountPlayerLobbyReady();
+	int32 GetPlayerSelectionsReady();
+	int32 GetPlayerLobbyReady();
 };
