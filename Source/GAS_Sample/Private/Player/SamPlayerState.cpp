@@ -3,6 +3,7 @@
 
 #include "Player/SamPlayerState.h"
 
+#include "SamGameplayTags.h"
 #include "SamGameStateBase.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
@@ -104,6 +105,11 @@ TArray<FUpgradeInfoItem> ASamPlayerState::GetAvailableUpgradeChoices()
 	return ChoicesInfo;
 }
 
+TArray<FGameplayTag> ASamPlayerState::GetAvailableCardTags()
+{
+	return UpgradeState.UpgradeChoiceTags;
+}
+
 FPlayerUpgradeState* ASamPlayerState::GetPlayerUpgradeState()
 {
 	return &UpgradeState;
@@ -149,7 +155,44 @@ void ASamPlayerState::Server_StartNewUpgradeState_Implementation()
 	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
 	UpgradeState.ResetSelectionState();
 	//TODO: Remove Hardcoded number of upgrades to generate. Add ways to increase this number through gameplay.
-	UpgradeState.UpgradeChoiceTags = PlayerCharacter->GetCharacterClassDefaultInfo().UpgradeSelectionInfo->GetRandomUpgradeTags(3);
+	//UpgradeState.UpgradeChoiceTags = PlayerCharacter->GetCharacterClassDefaultInfo().UpgradeSelectionInfo->GetRandomUpgradeTags(3);
+	if(!HasLivingCharacter())
+	{
+		//TODO: Make sure there are no bugs related to reviving while the character is in the process of dying (hasn't finished fading out and hasn't switched to spectator)
+		UpgradeState.UpgradeChoiceTags.Add(SamTags::ExecCards::ExecCard_Special_Revive);
+	}
+	else
+	{
+		// Upgrade Tags
+		TArray<FGameplayTag> ValidUpgradeTags;
+		// Get all upgrades available for this class
+		PlayerCharacter->GetCharacterClassDefaultInfo().AvailableUpgradeCards.GetGameplayTagArray(ValidUpgradeTags);
+		// TODO: Filter out Maxed upgrades or upgrades that have requirements. (This may be a future feature) 
+
+		// TODO: Make number to draw not hardcoded. Make it a number that can be upgraded in game.
+		//Draw 3 at random.
+		int32 NumberToDraw = 3;
+		for(int i = 0; i < NumberToDraw; i++)
+		{
+			if(ValidUpgradeTags.Num()<=0)
+				break;
+			int32 RandI = FMath::RandRange(0,ValidUpgradeTags.Num()-1);
+			UpgradeState.UpgradeChoiceTags.Add(ValidUpgradeTags[RandI]);
+			ValidUpgradeTags.RemoveAt(RandI);
+		}
+		
+
+		
+	}
+
+	// TODO: Add a default card that does nothing, in the off chance this ever comes up naturally as a result of changes to how upgrades work.
+	// Check if the player somehow doesnt have any choices.
+	if(UpgradeState.UpgradeChoiceTags.Num()==0)
+	{
+		checkf(UpgradeState.UpgradeChoiceTags.Num()!=0, TEXT("Player somehow was given zero cards to choose from during levelup phase."));
+	}
+
+	
 	Client_StartNewUpgradeState(UpgradeState);
 }
 

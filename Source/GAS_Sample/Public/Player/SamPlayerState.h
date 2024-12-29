@@ -100,6 +100,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FUpgradeInfoItem> GetAvailableUpgradeChoices();
 
+	UFUNCTION(BlueprintCallable)
+	TArray<FGameplayTag> GetAvailableCardTags();
+
 	FPlayerUpgradeState* GetPlayerUpgradeState();
 	FPlayerLobbyState* GetPlayerLobbyState();
 

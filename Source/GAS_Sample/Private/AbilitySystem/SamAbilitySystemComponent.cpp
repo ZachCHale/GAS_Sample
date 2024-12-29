@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 
+#include "SamGameStateBase.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 
@@ -88,9 +89,11 @@ void USamAbilitySystemComponent::Auth_IncrementUpgradeEffect(FGameplayTag Upgrad
 		SetActiveGameplayEffectLevel(ActiveEffectHandles[0], CurrentEffectLevel + 1);
 	}else
 	{
+		
 		//Create New Effect at Level 1
-		UUpgradeInfo* UpgradeInfo = USamAbilitySystemLibrary::GetUpgradeInfo(this);
-		check(UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect != nullptr)
-		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(GetOwnerActor(), UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect, 1);
+		//UUpgradeInfo* UpgradeInfo = USamAbilitySystemLibrary::GetUpgradeInfo(this);
+		//check(UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect != nullptr)
+		TSubclassOf<UGameplayEffect> UpgradeEffectClass = USamAbilitySystemLibrary::GetSamGameStateBase(this)->ExecCardAsset->GetGameplayEffectFromUpgradeTag(UpgradeTag);
+		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(GetOwnerActor(), UpgradeEffectClass, 1);
 	}
 }

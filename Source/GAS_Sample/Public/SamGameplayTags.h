@@ -83,3 +83,15 @@ namespace SamTags::Levels
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Level_Gameplay_Default);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Level_MainMenu);
 }
+
+namespace SamTags::ExecCards
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Special);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Special_Revive);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_Swiftness);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_Toughness);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_HeavyHitter);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_RapidFire);
+}

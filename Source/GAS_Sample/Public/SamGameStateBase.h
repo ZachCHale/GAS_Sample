@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/ActionableCardAsset.h"
 #include "AbilitySystem/Data/UpgradeInfo.h"
 #include "GameFramework/GameStateBase.h"
 #include "Player/ExpLevelInterface.h"
@@ -68,6 +69,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UActionableCardAsset> ExecCardAsset;
 	//~End Data Assets
 
 	//~Level/Exp Delegates

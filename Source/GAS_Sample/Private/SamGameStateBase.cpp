@@ -3,6 +3,7 @@
 
 #include "SamGameStateBase.h"
 
+#include "SamGameplayTags.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
@@ -352,13 +353,15 @@ int32 ASamGameStateBase::GetPlayerLobbyReady()
 void ASamGameStateBase::Auth_ApplyAllPlayerUpgradeSelections()
 {
 	if(!HasAuthority()) return;
+	
 	//Increase Level / Create new effect for selected upgrades.
 	for(int32 i = 0; i < PlayerArray.Num(); i++)
 	{
 		ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(PlayerArray[i]);
 		USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
 		FPlayerUpgradeState* UpgradeState = SamPS->GetPlayerUpgradeState();
-		SamASC->Auth_IncrementUpgradeEffect(UpgradeState->CurrentlySelectedChoice);
+		//SamASC->Auth_IncrementUpgradeEffect(UpgradeState->CurrentlySelectedChoice);
+		ExecCardAsset->ExecuteCard(SamPS, UpgradeState->CurrentlySelectedChoice);
 		UpgradeState->ResetSelectionState();
 	}
 	

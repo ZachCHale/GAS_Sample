@@ -80,3 +80,15 @@ namespace SamTags::Levels
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Level_Gameplay_Default, "Level.Gameplay.Default", "Default Gameplay Level.")
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Level_MainMenu, "Level.MainMenu", "Main Menu.")
 }
+
+namespace SamTags::ExecCards
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Special, "ExecCard.Special", "For special actions, eg: Revive.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Special_Revive, "ExecCard.Special.Revive", "For special actions, eg: Revive.");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade, "ExecCard.Upgrade", "For applying stat upgrades to a player.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_Swiftness, "ExecCard.Upgrade.Swiftness", "Simple Move Speed Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_Toughness, "ExecCard.Upgrade.Toughness", "Simple Max Health Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_HeavyHitter, "ExecCard.Upgrade.HeavyHitter", "Simple Damage Scale Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_RapidFire, "ExecCard.Upgrade.RapidFire", "Simple Attack Speed Upgrade");
+}
