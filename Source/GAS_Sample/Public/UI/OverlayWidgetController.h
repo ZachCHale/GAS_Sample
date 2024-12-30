@@ -39,6 +39,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerCharacterDeathSignature_Dynamic OnPlayerCharacterDeathDelegate;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerCharacterReviveSignature_Dynamic OnPlayerCharacterReviveDelegate;
+
 	// This will NOT be sent every tick that the time changes on the server.
 	// After receiving this delegate, decrementing the time should be done locally for ui representation only.
 	UPROPERTY(BlueprintAssignable)
@@ -65,4 +68,6 @@ private:
 	void OnPlayerUpgradeReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
 	void OnPlayerLobbyReadyCountChanged(int32 NewReadyCount, int32 NewTotalPlayerCount) const;
 	void OnPlayerCharacterDeath(ASamPlayerState*) const;
+	void OnPlayerCharacterRevive(ASamPlayerState*) const;
+
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CardInfo.h"
 #include "GameplayTagContainer.h"
+#include "Components/PanelWidget.h"
 #include "Engine/DataAsset.h"
 #include "SpecialFunctionCardAsset.generated.h"
 
@@ -18,11 +19,11 @@ class USpecialFunctionCardAsset;
 
 typedef void (USpecialFunctionCardAsset::*SpecialCardFuncPtr)(APlayerState*, FGameplayTag);
 
-USTRUCT(BlueprintType)
-struct FSpecialExecCardInfo
+UCLASS(BlueprintType, DefaultToInstanced, Blueprintable, EditInlineNew, Abstract)
+class USpecialCardInfo : public UObject
 {
 	GENERATED_BODY()
-
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText CardTitle = FText::FromString("No Title");
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -30,9 +31,9 @@ struct FSpecialExecCardInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> IconImage;
 	FGameplayTag ExecCardTag = FGameplayTag();
-	SpecialCardFuncPtr CardAction = nullptr;
+	UFUNCTION(BlueprintImplementableEvent)
+	void ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ActionTag);
 };
-
 
 
 /**
@@ -52,23 +53,15 @@ public:
 	virtual void InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag, UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer) override;
 	//~End ICardInfoInterface
 	
-	UPROPERTY(EditDefaultsOnly)
-	TMap<FGameplayTag, FSpecialExecCardInfo> SpecialCards;
+	UPROPERTY(EditDefaultsOnly, Instanced)
+	TMap<FGameplayTag, USpecialCardInfo*> SpecialCards;
 	
-	// Finds the card with given tag and executes on the function pointer contained within.
+	// Finds the card with given tag and executes it
 	void ExecuteSpecialCard(APlayerState* TargetPlayerState, FGameplayTag ActionTag);
-	
-	// Special Function for reviving the TargetPlayer.
-	void RevivePlayer(APlayerState* TargetPlayer, FGameplayTag ActionTag);
+
 
 private:
 	void InitSpecialCardFunctions();
-
-	// Adds function pointer to card with the same GameplayTag;
-	void GiveFuncPtrToCard(FGameplayTag ExecCardTag, SpecialCardFuncPtr CardAction);
-
-	// Checks if any cards in the DataAsset are missing a function to associate with.
-	void CheckForMissingFunctions();
 
 	bool bIsInitialized = false;
 

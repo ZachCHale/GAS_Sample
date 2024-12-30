@@ -34,6 +34,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAS->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 
 	SamPS->OnPlayerCharacterDeathDelegate.AddUObject(this, &ThisClass::OnPlayerCharacterDeath);
+	SamPS->OnPlayerCharacterReviveDelegate.AddUObject(this, &ThisClass::OnPlayerCharacterRevive);
 
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
 	
@@ -97,6 +98,11 @@ void UOverlayWidgetController::OnPlayerLobbyReadyCountChanged(int32 NewReadyCoun
 void UOverlayWidgetController::OnPlayerCharacterDeath(ASamPlayerState*) const
 {
 	OnPlayerCharacterDeathDelegate.Broadcast();
+}
+
+void UOverlayWidgetController::OnPlayerCharacterRevive(ASamPlayerState*) const
+{
+	OnPlayerCharacterReviveDelegate.Broadcast();
 }
 
 

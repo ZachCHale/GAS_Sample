@@ -9,6 +9,9 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReviveSignature_Dynamic, ASamCharacterBase*, CharacterInstance);
+
 /**
  * 
  */
@@ -35,11 +38,19 @@ public:
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
 
 	virtual void Die() override;
+
+	void Revive();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnReviveSignature_Dynamic OnReviveDelegate;
 	
 
 private:
 	
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 	TObjectPtr<UCameraComponent> CameraComponent;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiCastHandleRevive();
 	
 };

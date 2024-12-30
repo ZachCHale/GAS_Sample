@@ -91,6 +91,7 @@ bool ASamPlayerState::HasLivingCharacter() const
 void ASamPlayerState::InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter)
 {
 	PlayerCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleCharacterDeath);
+	PlayerCharacter->OnReviveDelegate.AddUniqueDynamic(this, &ThisClass::HandleCharacterRevive);
 }
 
 TArray<FUpgradeInfoItem> ASamPlayerState::GetAvailableUpgradeChoices()
@@ -118,6 +119,14 @@ FPlayerUpgradeState* ASamPlayerState::GetPlayerUpgradeState()
 FPlayerLobbyState* ASamPlayerState::GetPlayerLobbyState()
 {
 	return &LobbyState;
+}
+
+void ASamPlayerState::Auth_ReviveCharacter()
+{
+	if(!HasAuthority())return;
+	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
+	PlayerCharacter->Revive();
+	Cast<ASamPlayerController>(GetPlayerController())->Auth_StopSpectating();
 }
 
 void ASamPlayerState::Auth_SubmitUpgradeSelection(FGameplayTag UpgradeTag)
@@ -207,6 +216,11 @@ void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 			SamPC->Auth_StartSpectating();
 		}
 	}
+}
+
+void ASamPlayerState::HandleCharacterRevive(ASamCharacterBase* CharacterInstance)
+{
+	OnPlayerCharacterReviveDelegate.Broadcast(this);
 }
 
 void ASamPlayerState::Client_StartNewUpgradeState_Implementation(FPlayerUpgradeState NewUpgradeState)

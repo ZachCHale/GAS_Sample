@@ -16,5 +16,5 @@ class GAS_SAMPLE_API UCardBody_Special : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintNativeEvent)
-	void SetInfo(const FSpecialExecCardInfo& Info);
+	void SetInfo(const USpecialCardInfo* Info);
 };

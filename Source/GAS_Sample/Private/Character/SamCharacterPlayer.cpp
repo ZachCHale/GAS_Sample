@@ -128,3 +128,17 @@ void ASamCharacterPlayer::Die()
 	SetActorEnableCollision(false);
 	MultiCastHandleDeath();
 }
+
+void ASamCharacterPlayer::Revive()
+{
+	if(!HasAuthority()) return;
+	bIsDead = false;
+	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(SamTags::AbilityTags::AbilityTag_ActivateOnDeath);
+	SetActorEnableCollision(true);
+	MultiCastHandleRevive();
+}
+
+void ASamCharacterPlayer::MultiCastHandleRevive_Implementation()
+{
+	OnReviveDelegate.Broadcast(this);
+}

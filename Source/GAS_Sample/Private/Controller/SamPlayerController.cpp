@@ -64,6 +64,8 @@ void ASamPlayerController::Sever_SendUnpauseRequest_Implementation()
 void ASamPlayerController::Auth_StartSpectating()
 {
 	if(!HasAuthority())return;
+	//ASamCharacterPlayer* SamChar = Cast<ASamCharacterPlayer>(GetCharacter());
+	//
 	bIsSpectating = true;
 	ViewTargetIndex = 0;
 	TArray<ACharacter*> LiveCharacters = USamAbilitySystemLibrary::GetLivePlayerCharacters(this);
@@ -71,6 +73,19 @@ void ASamPlayerController::Auth_StartSpectating()
 	ASamCharacterBase* SamCharacter = Cast<ASamCharacterBase>(LiveCharacters[0]);
 	SetViewTarget(SamCharacter);
 	SamCharacter->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleViewTargetDeath);
+}
+
+void ASamPlayerController::Auth_StopSpectating()
+{
+	if(!HasAuthority())return;
+	bIsSpectating = false;
+	
+	//Unbind from previous
+	ASamCharacterBase* PrevTarget = Cast<ASamCharacterBase>(GetViewTarget());
+	PrevTarget->OnDeathDelegate.RemoveDynamic(this, &ThisClass::HandleViewTargetDeath);
+	
+	ASamCharacterPlayer* SamChar = Cast<ASamCharacterPlayer>(GetCharacter());
+	SetViewTarget(SamChar);
 }
 
 

@@ -17,6 +17,9 @@ UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerCharacterDeathSignature_Dynamic);
 
 UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerCharacterReviveSignature_Dynamic);
+
+UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFloatStatChangedSignature_Dynamic, float, NewValue);
 
 UDELEGATE()

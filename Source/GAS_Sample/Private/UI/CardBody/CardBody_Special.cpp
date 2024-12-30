@@ -4,6 +4,6 @@
 #include "UI/CardBody/CardBody_Special.h"
 
 
-void UCardBody_Special::SetInfo_Implementation(const FSpecialExecCardInfo& Info)
+void UCardBody_Special::SetInfo_Implementation(const USpecialCardInfo* Info)
 {
 }

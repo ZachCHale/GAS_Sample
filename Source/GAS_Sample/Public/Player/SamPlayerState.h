@@ -87,6 +87,7 @@ public:
 	UAttributeSet* GetAttributeSet() const;
 	
 	FPlayerStateEventSignature OnPlayerCharacterDeathDelegate;
+	FPlayerStateEventSignature OnPlayerCharacterReviveDelegate;
 	FPlayerStateEventSignature OnAuthUpgradeStateChangedDelegate;
 	FPlayerStateEventSignature OnAuthLobbyStateChangedDelegate;
 
@@ -105,6 +106,9 @@ public:
 
 	FPlayerUpgradeState* GetPlayerUpgradeState();
 	FPlayerLobbyState* GetPlayerLobbyState();
+
+	UFUNCTION(BlueprintCallable)
+	void Auth_ReviveCharacter();
 
 	UFUNCTION(Server, Reliable)
 	void Server_StartNewUpgradeState();
@@ -129,6 +133,8 @@ private:
 	//TODO: Might be able to bind to the character directly from the controller. There isn't much reason to do it here anymore.
 	UFUNCTION()
 	void HandleCharacterDeath(ASamCharacterBase* CharacterInstance);
+	UFUNCTION()
+	void HandleCharacterRevive(ASamCharacterBase* CharacterInstance);
 
 	FPlayerUpgradeState UpgradeState;
 	FPlayerLobbyState LobbyState;

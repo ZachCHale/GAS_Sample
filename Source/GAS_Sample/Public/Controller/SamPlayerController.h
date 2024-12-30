@@ -52,6 +52,9 @@ public:
 	
 	void Auth_StartSpectating();
 	
+	void Auth_StopSpectating();
+
+	
 
 	UFUNCTION(BlueprintCallable, Server, Unreliable)
 	void Server_SpectateNext();

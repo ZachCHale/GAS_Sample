@@ -18,9 +18,9 @@ void UItemDropAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		FTransform SpawnTransform = InitItemTransform();
 		AActor* InstancedItem = GetWorld()->SpawnActorDeferred<AActor>(ItemClass, SpawnTransform);
+		InstancedItem->FinishSpawning(SpawnTransform);
 		InitItemReplication(InstancedItem);
 		InitItemExtraData(InstancedItem);
-		InstancedItem->FinishSpawning(SpawnTransform);
 		AddImpulseToItem(InstancedItem);
 
 	}
