@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Data/ActionableCardAsset.h"
-#include "AbilitySystem/Data/UpgradeInfo.h"
 #include "GameFramework/GameStateBase.h"
 #include "Player/ExpLevelInterface.h"
 #include "SamGameStateBase.generated.h"
@@ -63,9 +62,6 @@ public:
 	//~Data Assets
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UUpgradeInfo> UpgradeInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;

@@ -47,9 +47,6 @@ struct FCharacterClassDefaultInfo
 	FExpRewardInfo ExpReward;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UUpgradeInfo> UpgradeSelectionInfo;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTagContainer AvailableUpgradeCards;
 	
 };

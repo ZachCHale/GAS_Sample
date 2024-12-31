@@ -7,13 +7,6 @@
 #include "Engine/DataAsset.h"
 #include "LevelUpInfo.generated.h"
 
-USTRUCT(BlueprintType)
-struct FLevelUpInfoItem
-{
-	GENERATED_BODY()
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 ExpRequirement = 0;
-};
 
 USTRUCT(BlueprintType)
 struct FExpProgressDetails
@@ -36,8 +29,6 @@ class GAS_SAMPLE_API ULevelUpInfo : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FLevelUpInfoItem> LevelUpInfo;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FScalableFloat ExpRequirementPerLevel;
 

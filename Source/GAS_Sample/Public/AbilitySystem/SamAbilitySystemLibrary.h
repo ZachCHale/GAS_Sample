@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "Data/CharacterClassInfo.h"
-#include "Data/UpgradeInfo.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
@@ -34,9 +33,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static ULevelSpawnPatternInfo* GetLevelSpawnPatternInfo(const UObject* WorldContextObject);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static UUpgradeInfo* GetUpgradeInfo(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FCharacterClassDefaultInfo GetDefaultInfoForCharacterClass(const UObject* WorldContextObject, const FGameplayTag CharacterClassTag);

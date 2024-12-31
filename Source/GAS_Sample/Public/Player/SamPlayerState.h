@@ -12,7 +12,6 @@
 
 struct FUpgradeInfoItem;
 class ASamCharacterBase;
-class ULevelUpInfo;
 class ASamCharacterPlayer;
 class UAttributeSet;
 class ASamPlayerState;
@@ -97,9 +96,6 @@ public:
 
 	// Mostly handles binding to events on the character such as death.
 	void InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharacter);
-
-	UFUNCTION(BlueprintCallable)
-	TArray<FUpgradeInfoItem> GetAvailableUpgradeChoices();
 
 	UFUNCTION(BlueprintCallable)
 	TArray<FGameplayTag> GetAvailableCardTags();

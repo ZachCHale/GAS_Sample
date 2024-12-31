@@ -34,13 +34,6 @@ ULevelSpawnPatternInfo* USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(const
 	return SamGameMode->LevelSpawnPatternInfo;
 }
 
-UUpgradeInfo* USamAbilitySystemLibrary::GetUpgradeInfo(const UObject* WorldContextObject)
-{
-	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
-	if(SamGS == nullptr) return nullptr;
-	return SamGS->UpgradeInfo;
-}
-
 FCharacterClassDefaultInfo USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(const UObject* WorldContextObject,
                                                                                      const FGameplayTag CharacterClassTag)
 {

@@ -94,18 +94,6 @@ void ASamPlayerState::InitWithPlayerCharacter(ASamCharacterPlayer* PlayerCharact
 	PlayerCharacter->OnReviveDelegate.AddUniqueDynamic(this, &ThisClass::HandleCharacterRevive);
 }
 
-TArray<FUpgradeInfoItem> ASamPlayerState::GetAvailableUpgradeChoices()
-{
-	TArray<FUpgradeInfoItem> ChoicesInfo;
-	 ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
-	 UUpgradeInfo* UpgradeInfo = PlayerCharacter->GetCharacterClassDefaultInfo().UpgradeSelectionInfo;
-	for (FGameplayTag Tag : UpgradeState.UpgradeChoiceTags)
-	{
-		ChoicesInfo.Add(UpgradeInfo->GetUpgradeInfoFromTag(Tag));
-	}
-	return ChoicesInfo;
-}
-
 TArray<FGameplayTag> ASamPlayerState::GetAvailableCardTags()
 {
 	return UpgradeState.UpgradeChoiceTags;
