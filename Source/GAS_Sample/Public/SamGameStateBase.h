@@ -56,18 +56,16 @@ public:
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };
 	//~End IExpLevelInterface
-	
-	void Auth_Tick(float DeltaSeconds);
 
 	//~Data Assets
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<ULevelProgressionAsset> LevelUpInfo;
+	TObjectPtr<ULevelProgressionAsset> LevelProgressionAsset;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UCharacterClassDatabase> CharacterClassInfo;
+	TObjectPtr<UCharacterClassDatabase> CharacterClassDatabase;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UCardDatabase> ExecCardAsset;
+	TObjectPtr<UCardDatabase> CardDatabase;
 	//~End Data Assets
 
 	//~Level/Exp Delegates

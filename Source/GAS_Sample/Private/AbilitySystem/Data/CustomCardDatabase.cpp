@@ -15,35 +15,18 @@ void UCustomCardDatabase::InitializeCardDisplay(APlayerState* TargetPlayer, FGam
                                                 UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer)
 {
 	check(CustomCards.Contains(CardTag));
-	const UCustomCardInfo* SpecialCard = CustomCards[CardTag];
-	TitleTextBock->SetText(SpecialCard->CardTitle);
-	IconImage->SetBrushFromTexture(SpecialCard->IconImage);
+	const UCustomCardInfo* CustomCard = CustomCards[CardTag];
+	TitleTextBock->SetText(CustomCard->CardTitle);
+	IconImage->SetBrushFromTexture(CustomCard->IconImage);
 	
 	UUserWidget* Body = CreateWidget<UUserWidget>(BodyContainer, CardBodyClass);
-	Cast<UCardBody_Custom>(Body)->SetInfo(SpecialCard);
+	Cast<UCardBody_Custom>(Body)->SetInfo(CustomCard);
 	BodyContainer->AddChild(Body);
 }
 
-void UCustomCardDatabase::ExecuteSpecialCard(APlayerState* TargetPlayerState, FGameplayTag ActionTag)
+void UCustomCardDatabase::ExecuteCustomCard(APlayerState* TargetPlayerState, FGameplayTag ActionTag)
 {
-	if(!bIsInitialized)
-		InitSpecialCardFunctions();
 	
-	checkf(CustomCards.Contains(ActionTag), TEXT("Could not find Special Card with associated GameplayTag : %s"), *ActionTag.ToString());
+	checkf(CustomCards.Contains(ActionTag), TEXT("Could not find Custom Card with associated GameplayTag : %s"), *ActionTag.ToString());
 	CustomCards[ActionTag]->ExecuteCard(TargetPlayerState, ActionTag);
-}
-
-
-
-void UCustomCardDatabase::InitSpecialCardFunctions()
-{
-	if(bIsInitialized) return;
-	
-	// Set the gameplay tags for the cards based on the keys used in the TMap.
-	for (auto Card : CustomCards)
-	{
-		Card.Value->ExecCardTag = Card.Key;
-	}
-	
-	bIsInitialized = true;
 }

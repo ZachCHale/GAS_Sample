@@ -24,7 +24,7 @@ UCharacterClassDatabase* USamAbilitySystemLibrary::GetCharacterClassInfo(const U
 	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
 	
 	if(SamGS == nullptr) return nullptr;
-	return SamGS->CharacterClassInfo;
+	return SamGS->CharacterClassDatabase;
 }
 
 ULevelSpawnPatternInfo* USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(const UObject* WorldContextObject)

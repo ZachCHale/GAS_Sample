@@ -63,8 +63,8 @@ void ASamGameStateBase::AddToLevel(int32 AddedLevels)
 
 int32 ASamGameStateBase::FindLevelForExp(int32 ExpValue)
 {
-	check(LevelUpInfo)
-	return LevelUpInfo->FindLevelFromTotalExp(ExpValue);
+	check(LevelProgressionAsset)
+	return LevelProgressionAsset->FindLevelFromTotalExp(ExpValue);
 }
 
 EGameStateStatus ASamGameStateBase::GetGameStatus() const
@@ -361,7 +361,7 @@ void ASamGameStateBase::Auth_ApplyAllPlayerUpgradeSelections()
 		USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
 		FPlayerUpgradeState* UpgradeState = SamPS->GetPlayerUpgradeState();
 		//SamASC->Auth_IncrementUpgradeEffect(UpgradeState->CurrentlySelectedChoice);
-		ExecCardAsset->ExecuteCard(SamPS, UpgradeState->CurrentlySelectedChoice);
+		CardDatabase->ExecuteCard(SamPS, UpgradeState->CurrentlySelectedChoice);
 		UpgradeState->ResetSelectionState();
 	}
 	

@@ -93,7 +93,7 @@ void USamAbilitySystemComponent::Auth_IncrementUpgradeEffect(FGameplayTag Upgrad
 		//Create New Effect at Level 1
 		//UUpgradeInfo* UpgradeInfo = USamAbilitySystemLibrary::GetUpgradeInfo(this);
 		//check(UpgradeInfo->GetUpgradeInfoFromTag(UpgradeTag).UpgradeEffect != nullptr)
-		TSubclassOf<UGameplayEffect> UpgradeEffectClass = USamAbilitySystemLibrary::GetSamGameStateBase(this)->ExecCardAsset->GetGameplayEffectFromUpgradeTag(UpgradeTag);
+		TSubclassOf<UGameplayEffect> UpgradeEffectClass = USamAbilitySystemLibrary::GetSamGameStateBase(this)->CardDatabase->GetGameplayEffectFromUpgradeTag(UpgradeTag);
 		USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(GetOwnerActor(), UpgradeEffectClass, 1);
 	}
 }

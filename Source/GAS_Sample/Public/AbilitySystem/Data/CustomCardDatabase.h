@@ -57,13 +57,7 @@ public:
 	TMap<FGameplayTag, UCustomCardInfo*> CustomCards;
 	
 	// Finds the card with given tag and executes it
-	void ExecuteSpecialCard(APlayerState* TargetPlayerState, FGameplayTag ActionTag);
-
-
-private:
-	void InitSpecialCardFunctions();
-
-	bool bIsInitialized = false;
+	void ExecuteCustomCard(APlayerState* TargetPlayerState, FGameplayTag ActionTag);
 
 	
 };

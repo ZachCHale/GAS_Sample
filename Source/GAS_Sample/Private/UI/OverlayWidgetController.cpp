@@ -17,7 +17,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnHealthChangedDelegate.Broadcast(SamAS->GetHealth(), SamAS->GetMaxHealth(), SamAS->GetHealth()/SamAS->GetMaxHealth());
 	
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	ULevelProgressionAsset* LevelUpInfo = SamGS->LevelUpInfo;
+	ULevelProgressionAsset* LevelUpInfo = SamGS->LevelProgressionAsset;
 	
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(SamPS->GetTotalExp());
 	OnExpProgressChangedDelegate.Broadcast(ExpDetails.CurrentExp, ExpDetails.NeededExp, ExpDetails.ProgressPercentage);
@@ -63,7 +63,7 @@ void UOverlayWidgetController::OnMaxHealthChanged(const FOnAttributeChangeData& 
 void UOverlayWidgetController::OnExpChanged(int32 NewExp) const
 {
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	ULevelProgressionAsset* LevelUpInfo = SamGS->LevelUpInfo;
+	ULevelProgressionAsset* LevelUpInfo = SamGS->LevelProgressionAsset;
 	
 	checkf(LevelUpInfo, TEXT("Unable to find level up info"));
 	FExpProgressDetails ExpDetails = LevelUpInfo->GetExpProgressDetails(NewExp);

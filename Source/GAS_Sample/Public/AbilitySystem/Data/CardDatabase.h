@@ -23,11 +23,11 @@ public:
 	virtual void InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag, UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer) override;
 	//~End IInitCardDisplay
 	
-	UPROPERTY(EditDefaultsOnly, Category="Universal")
-	TObjectPtr<UCustomCardDatabase> SpecialExecCardAsset;
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UCustomCardDatabase> CustomCardDatabase;
 
-	UPROPERTY(EditDefaultsOnly, Category="Upgrades")
-	TObjectPtr<UUpgradeCardDatabase> UpgradeCardAsset;
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UUpgradeCardDatabase> UpgradeCardDatabase;
 
 	void ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCardTag);
 

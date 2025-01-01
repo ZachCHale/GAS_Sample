@@ -14,11 +14,11 @@ void UCardDatabase::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayT
 	// Determine the type of card
 	if(CardTag.MatchesTag(SamTags::ExecCards::ExecCard_Special))
 	{
-		SpecialExecCardAsset->InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
+		CustomCardDatabase->InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
 	}
 	else if(CardTag.MatchesTag(SamTags::ExecCards::ExecCard_Upgrade))
 	{
-		UpgradeCardAsset->InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
+		UpgradeCardDatabase->InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
 	}
 	
 }
@@ -28,15 +28,15 @@ void UCardDatabase::ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCar
 	// Determine the type of card
 	if(ExecCardTag.MatchesTag(SamTags::ExecCards::ExecCard_Special))
 	{
-		SpecialExecCardAsset->ExecuteSpecialCard(TargetPlayer, ExecCardTag);
+		CustomCardDatabase->ExecuteCustomCard(TargetPlayer, ExecCardTag);
 	}
 	else if(ExecCardTag.MatchesTag(SamTags::ExecCards::ExecCard_Upgrade))
 	{
-		UpgradeCardAsset->ApplyUpgrade(TargetPlayer, ExecCardTag);
+		UpgradeCardDatabase->ApplyUpgrade(TargetPlayer, ExecCardTag);
 	}
 }
 
 TSubclassOf<UGameplayEffect> UCardDatabase::GetGameplayEffectFromUpgradeTag(FGameplayTag UpgradeTag) const
 {
-	return UpgradeCardAsset->GetEffectFromTag(UpgradeTag);
+	return UpgradeCardDatabase->GetEffectFromTag(UpgradeTag);
 }
