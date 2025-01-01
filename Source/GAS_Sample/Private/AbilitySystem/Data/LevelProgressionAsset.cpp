@@ -1,9 +1,9 @@
 // Copyright ZH_Dev
 
 
-#include "AbilitySystem/Data/LevelUpInfo.h"
+#include "AbilitySystem/Data/LevelProgressionAsset.h"
 
-int32 ULevelUpInfo::FindLevelFromTotalExp(int32 TotalExp)  
+int32 ULevelProgressionAsset::FindLevelFromTotalExp(int32 TotalExp)  
 {  
 	int32 TotalExpCounter = 0;
 	int32 TotalLevelCounter = 0;
@@ -15,7 +15,7 @@ int32 ULevelUpInfo::FindLevelFromTotalExp(int32 TotalExp)
 	return TotalLevelCounter;
 }
 
-FExpProgressDetails ULevelUpInfo::GetExpProgressDetails(int32 TotalExp)
+FExpProgressDetails ULevelProgressionAsset::GetExpProgressDetails(int32 TotalExp)
 {
 	int32 TotalLevelCounter = 0;
 	int32 RemainingExpForLevelUp = TotalExp;

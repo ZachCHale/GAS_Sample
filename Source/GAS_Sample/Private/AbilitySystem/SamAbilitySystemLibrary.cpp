@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectTypes.h"
 #include "SamGameModeBase.h"
-#include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "AbilitySystem/Data/CharacterClassDatabase.h"
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "SamGameStateBase.h"
@@ -19,7 +19,7 @@
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
 
-UCharacterClassInfo* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+UCharacterClassDatabase* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
 	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
 	
@@ -42,7 +42,7 @@ FCharacterClassDefaultInfo USamAbilitySystemLibrary::GetDefaultInfoForCharacterC
 
 void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, FGameplayTag CharacterClassTag, UAbilitySystemComponent* ASC, int32 Level)
 {
-	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
+	UCharacterClassDatabase* ClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if(ClassInfo == nullptr) return;
 	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClassTag];
 
@@ -57,7 +57,7 @@ void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 void USamAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContextObject,
 	FGameplayTag CharacterClassTag, UAbilitySystemComponent* ASC, int32 Level)
 {
-	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
+	UCharacterClassDatabase* ClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if(ClassInfo == nullptr) return;
 	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClassTag];
 

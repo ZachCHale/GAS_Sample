@@ -1,7 +1,7 @@
 // Copyright ZH_Dev
 
 
-#include "AbilitySystem/Data/UpgradeCardAsset.h"
+#include "AbilitySystem/Data/UpgradeCardDatabase.h"
 
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
@@ -13,7 +13,7 @@
 #include "UI/CardBody/CardBody_Upgrade.h"
 
 
-void UUpgradeCardAsset::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag,
+void UUpgradeCardDatabase::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag,
 	UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer)
 {
 	if(!bIsInitialized)
@@ -34,7 +34,7 @@ void UUpgradeCardAsset::InitializeCardDisplay(APlayerState* TargetPlayer, FGamep
 	
 }
 
-void UUpgradeCardAsset::ApplyUpgrade(APlayerState* TargetPlayer, FGameplayTag UpgradeTag)
+void UUpgradeCardDatabase::ApplyUpgrade(APlayerState* TargetPlayer, FGameplayTag UpgradeTag)
 {
 	if(!bIsInitialized)
 		InitData();
@@ -44,7 +44,7 @@ void UUpgradeCardAsset::ApplyUpgrade(APlayerState* TargetPlayer, FGameplayTag Up
 	SamASC->Auth_IncrementUpgradeEffect(UpgradeTag);
 }
 
-TSubclassOf<UGameplayEffect> UUpgradeCardAsset::GetEffectFromTag(FGameplayTag UpgradeTag)
+TSubclassOf<UGameplayEffect> UUpgradeCardDatabase::GetEffectFromTag(FGameplayTag UpgradeTag)
 {
 	check(UpgradeCards.Contains(UpgradeTag));
 	return UpgradeCards[UpgradeTag]->UpgradeEffect;
@@ -52,7 +52,7 @@ TSubclassOf<UGameplayEffect> UUpgradeCardAsset::GetEffectFromTag(FGameplayTag Up
 
 
 
-void UUpgradeCardAsset::InitData()
+void UUpgradeCardDatabase::InitData()
 {
 	if(bIsInitialized)
 		return;

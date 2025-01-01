@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
-#include "Data/CharacterClassInfo.h"
+#include "Data/CharacterClassDatabase.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
 
@@ -17,7 +17,7 @@ class UOverlayWidgetController;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 enum class ECharacterClass : uint8;
-class UCharacterClassInfo;
+class UCharacterClassDatabase;
 /**
  * 
  */
@@ -29,7 +29,7 @@ class GAS_SAMPLE_API USamAbilitySystemLibrary : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+	static UCharacterClassDatabase* GetCharacterClassInfo(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static ULevelSpawnPatternInfo* GetLevelSpawnPatternInfo(const UObject* WorldContextObject);

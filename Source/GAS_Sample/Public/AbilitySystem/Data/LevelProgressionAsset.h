@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
-#include "LevelUpInfo.generated.h"
+#include "LevelProgressionAsset.generated.h"
 
 
 USTRUCT(BlueprintType)
@@ -24,7 +24,7 @@ struct FExpProgressDetails
  * 
  */
 UCLASS()
-class GAS_SAMPLE_API ULevelUpInfo : public UDataAsset
+class GAS_SAMPLE_API ULevelProgressionAsset : public UDataAsset
 {
 	GENERATED_BODY()
 

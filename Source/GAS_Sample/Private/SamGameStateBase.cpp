@@ -6,7 +6,7 @@
 #include "SamGameplayTags.h"
 #include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
-#include "AbilitySystem/Data/LevelUpInfo.h"
+#include "AbilitySystem/Data/LevelProgressionAsset.h"
 #include "Character/SamCharacterPlayer.h"
 #include "Controller/SamPlayerController.h"
 #include "GameFramework/PlayerState.h"

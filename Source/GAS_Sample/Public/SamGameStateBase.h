@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Data/ActionableCardAsset.h"
+#include "AbilitySystem/Data/CardDatabase.h"
 #include "GameFramework/GameStateBase.h"
 #include "Player/ExpLevelInterface.h"
 #include "SamGameStateBase.generated.h"
 
-class UCharacterClassInfo;
+class UCharacterClassDatabase;
 struct FPlayerUpgradeState;
 class ULevelSpawnPatternInfo;
-class ULevelUpInfo;
+class ULevelProgressionAsset;
 class ASamPlayerState;
 
 UENUM()
@@ -61,13 +61,13 @@ public:
 
 	//~Data Assets
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<ULevelUpInfo> LevelUpInfo;
+	TObjectPtr<ULevelProgressionAsset> LevelUpInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+	TObjectPtr<UCharacterClassDatabase> CharacterClassInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UActionableCardAsset> ExecCardAsset;
+	TObjectPtr<UCardDatabase> ExecCardAsset;
 	//~End Data Assets
 
 	//~Level/Exp Delegates

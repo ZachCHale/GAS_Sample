@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "AbilitySystem/Data/UpgradeCardAsset.h"
+#include "AbilitySystem/Data/UpgradeCardDatabase.h"
 #include "CardBody_Upgrade.generated.h"
 
 /**

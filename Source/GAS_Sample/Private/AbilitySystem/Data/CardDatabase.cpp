@@ -1,16 +1,15 @@
 // Copyright ZH_Dev
 
 
-#include "AbilitySystem/Data/ActionableCardAsset.h"
+#include "AbilitySystem/Data/CardDatabase.h"
 
 #include "SamGameplayTags.h"
-#include "AbilitySystem/Data/ExecCardAction.h"
-#include "AbilitySystem/Data/SpecialFunctionCardAsset.h"
+#include "AbilitySystem/Data/CustomCardDatabase.h"
 
-void UActionableCardAsset::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag,
-	UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer)
+void UCardDatabase::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag,
+                                          UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer)
 {
-	ICardInfo::InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
+	IInitCardDisplay::InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
 	
 	// Determine the type of card
 	if(CardTag.MatchesTag(SamTags::ExecCards::ExecCard_Special))
@@ -24,7 +23,7 @@ void UActionableCardAsset::InitializeCardDisplay(APlayerState* TargetPlayer, FGa
 	
 }
 
-void UActionableCardAsset::ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCardTag)
+void UCardDatabase::ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCardTag)
 {
 	// Determine the type of card
 	if(ExecCardTag.MatchesTag(SamTags::ExecCards::ExecCard_Special))
@@ -37,7 +36,7 @@ void UActionableCardAsset::ExecuteCard(APlayerState* TargetPlayer, FGameplayTag 
 	}
 }
 
-TSubclassOf<UGameplayEffect> UActionableCardAsset::GetGameplayEffectFromUpgradeTag(FGameplayTag UpgradeTag) const
+TSubclassOf<UGameplayEffect> UCardDatabase::GetGameplayEffectFromUpgradeTag(FGameplayTag UpgradeTag) const
 {
 	return UpgradeCardAsset->GetEffectFromTag(UpgradeTag);
 }

@@ -7,7 +7,7 @@
 #include "AbilitySystem/SamAbilitySystemComponent.h"
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "AbilitySystem/SamAttributeSet.h"
-#include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "AbilitySystem/Data/CharacterClassDatabase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ASamCharacterBase::ASamCharacterBase()

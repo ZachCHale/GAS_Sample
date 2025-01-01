@@ -7,7 +7,7 @@
 #include "SamGameModeBase.generated.h"
 
 class ULevelSpawnPatternInfo;
-class UCharacterClassInfo;
+class UCharacterClassDatabase;
 /**
  * 
  */
@@ -18,7 +18,7 @@ class GAS_SAMPLE_API ASamGameModeBase : public AGameModeBase
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+	TObjectPtr<UCharacterClassDatabase> CharacterClassInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<ULevelSpawnPatternInfo> LevelSpawnPatternInfo;

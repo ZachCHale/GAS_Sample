@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CardInfo.h"
+#include "InitCardDisplay.h"
 #include "GameplayTagContainer.h"
 #include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
-#include "UpgradeCardAsset.generated.h"
+#include "UpgradeCardDatabase.generated.h"
 
 
 class UGameplayEffect;
@@ -47,11 +47,8 @@ public:
 };
 
 
-
-
-
 UCLASS()
-class GAS_SAMPLE_API UUpgradeCardAsset : public UDataAsset, public ICardInfo
+class GAS_SAMPLE_API UUpgradeCardDatabase : public UDataAsset, public IInitCardDisplay
 {
 	GENERATED_BODY()
 public:
@@ -59,9 +56,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCardBody_Upgrade> CardBodyClass;
 
-	//~ICardInfoInterface
+	//~IInitCardDisplay
 	virtual void InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag, UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer) override;
-	//~End ICardInfoInterface
+	//~End IInitCardDisplay
 	
 	void ApplyUpgrade(APlayerState* TargetPlayer, FGameplayTag UpgradeTag);
 

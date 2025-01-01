@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "CharacterClassInfo.generated.h"
+#include "CharacterClassDatabase.generated.h"
 
 class UUpgradeInfo;
 class ASamCharacterBase;
@@ -55,7 +55,7 @@ struct FCharacterClassDefaultInfo
  * 
  */
 UCLASS()
-class GAS_SAMPLE_API UCharacterClassInfo : public UDataAsset
+class GAS_SAMPLE_API UCharacterClassDatabase : public UDataAsset
 {
 	GENERATED_BODY()
 	

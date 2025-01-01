@@ -3,31 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CardInfo.h"
+#include "InitCardDisplay.h"
 #include "GameplayTagContainer.h"
-#include "UpgradeCardAsset.h"
+#include "UpgradeCardDatabase.h"
 #include "Engine/DataAsset.h"
-#include "ActionableCardAsset.generated.h"
+#include "CardDatabase.generated.h"
 
-class USpecialFunctionCardAsset;
+class UCustomCardDatabase;
 class USpecialFunctionCard;
 //	Manages ALL Actionable Cards, Regardless of Type. Each Type should also have its own DataAsset, which will be referenced here.
 UCLASS()
-class GAS_SAMPLE_API UActionableCardAsset : public UDataAsset, public ICardInfo
+class GAS_SAMPLE_API UCardDatabase : public UDataAsset, public IInitCardDisplay
 {
 	GENERATED_BODY()
 
 public:
 
-	//~ICardInfoInterface
+	//~IInitCardDisplay
 	virtual void InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayTag CardTag, UTextBlock* TitleTextBock, UImage* IconImage, UPanelWidget* BodyContainer) override;
-	//~End ICardInfoInterface
+	//~End IInitCardDisplay
 	
 	UPROPERTY(EditDefaultsOnly, Category="Universal")
-	TObjectPtr<USpecialFunctionCardAsset> SpecialExecCardAsset;
+	TObjectPtr<UCustomCardDatabase> SpecialExecCardAsset;
 
 	UPROPERTY(EditDefaultsOnly, Category="Upgrades")
-	TObjectPtr<UUpgradeCardAsset> UpgradeCardAsset;
+	TObjectPtr<UUpgradeCardDatabase> UpgradeCardAsset;
 
 	void ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCardTag);
 
