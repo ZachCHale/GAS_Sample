@@ -9,7 +9,7 @@
 #include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Actor/Projectile.h"
 
-void UProjectileAbility::SpawnProjectile(const FTransform& ProjectileSpawnTransform, const FGameplayAbilityActivationInfo& ActivationInfo)
+void UProjectileAbility::Auth_SpawnProjectile(const FTransform& ProjectileSpawnTransform, const FGameplayAbilityActivationInfo& ActivationInfo)
 {
 	//Handled by Server Only
 	bool bIsServer = HasAuthority(&ActivationInfo);

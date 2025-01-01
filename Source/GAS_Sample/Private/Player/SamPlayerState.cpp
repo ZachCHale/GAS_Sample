@@ -60,17 +60,17 @@ int32 ASamPlayerState::GetTotalExp()
 	return SamGS->GetTotalExp();
 }
 
-void ASamPlayerState::AddToExp(int32 AddedExp)
+void ASamPlayerState::Auth_AddToExp(int32 AddedExp)
 {
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	SamGS->AddToExp(AddedExp);
+	SamGS->Auth_AddToExp(AddedExp);
 }
 
   
-void ASamPlayerState::AddToLevel(int32 AddedLevels)  
+void ASamPlayerState::Auth_AddToLevel(int32 AddedLevels)  
 {  
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
-	SamGS->AddToLevel(AddedLevels);
+	SamGS->Auth_AddToLevel(AddedLevels);
 }
 
 int32 ASamPlayerState::FindLevelForExp(int32 ExpValue)
@@ -113,7 +113,7 @@ void ASamPlayerState::Auth_ReviveCharacter()
 {
 	if(!HasAuthority())return;
 	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
-	PlayerCharacter->Revive();
+	PlayerCharacter->Auth_Revive();
 	Cast<ASamPlayerController>(GetPlayerController())->Auth_StopSpectating();
 }
 

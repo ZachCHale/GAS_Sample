@@ -30,14 +30,14 @@ void ASamGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ASamGameStateBase, SharedPlayerExp);
 }
 
-void ASamGameStateBase::AddToExp(int32 AddedExp)
+void ASamGameStateBase::Auth_AddToExp(int32 AddedExp)
 {
 	if(!HasAuthority()) return;
 	SharedPlayerExp += AddedExp;  
 	ExpChangedDelegate.Broadcast(SharedPlayerExp);
 }
 
-void ASamGameStateBase::AddToLevel(int32 AddedLevels)
+void ASamGameStateBase::Auth_AddToLevel(int32 AddedLevels)
 {
 	if(!HasAuthority()) return;
 	if(AddedLevels <= 0) return;
@@ -375,7 +375,7 @@ void ASamGameStateBase::Auth_ApplyAllPlayerUpgradeSelections()
 	}
 	else
 	{
-		AddToLevel(QueuedLevelUps);
+		Auth_AddToLevel(QueuedLevelUps);
 	}
 }
 

@@ -33,13 +33,13 @@ public:
 
 	virtual int32 GetLevel() override;
 	virtual int32 GetTotalExp() override;
-	virtual void AddToExp(int32 AddedExp) override;
-	virtual void AddToLevel(int32 AddedLevels) override;
+	virtual void Auth_AddToExp(int32 AddedExp) override;
+	virtual void Auth_AddToLevel(int32 AddedLevels) override;
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
 
-	virtual void Die() override;
+	virtual void Auth_Die() override;
 
-	void Revive();
+	void Auth_Revive();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnReviveSignature_Dynamic OnReviveDelegate;

@@ -25,7 +25,7 @@ private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	void MoveTowardsClosestPlayer();
+	void Auth_MoveTowardsClosestPlayer();
 
 protected:
 	virtual void InitAbilityActorInfo() override;

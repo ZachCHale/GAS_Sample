@@ -50,8 +50,8 @@ public:
 	//~End AGameStateBase interface
 
 	//~IExpLevelInterface
-	virtual void AddToExp(int32 AddedExp) override;
-	virtual void AddToLevel(int32 AddedLevels) override;
+	virtual void Auth_AddToExp(int32 AddedExp) override;
+	virtual void Auth_AddToLevel(int32 AddedLevels) override;
 	virtual int32 FindLevelForExp(int32 ExpValue) override;
 	virtual int32 GetLevel() override { return SharedPlayerLevel; }
 	virtual int32 GetTotalExp() override { return SharedPlayerExp; };

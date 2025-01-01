@@ -15,7 +15,7 @@ ASamCharacterBase::ASamCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-void ASamCharacterBase::Die()
+void ASamCharacterBase::Auth_Die()
 {
 	if(!HasAuthority()) return;
 	if(bIsDead) return;
@@ -78,7 +78,7 @@ void ASamCharacterBase::BindToAttributeChanges()
 {
 	USamAttributeSet* SamAttributeSet = CastChecked<USamAttributeSet>(AttributeSet);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(SamAttributeSet->TagsToAttributes[SamTags::AttributeTags::Attribute_Primary_MovementSpeed]()).AddUObject(this, &ASamCharacterBase::OnMovementSpeedAttributeChanged);
-	SetMovementSpeed(SamAttributeSet->TagsToAttributes[SamTags::AttributeTags::Attribute_Primary_MovementSpeed]().GetNumericValue(SamAttributeSet));
+	Auth_SetMovementSpeed(SamAttributeSet->TagsToAttributes[SamTags::AttributeTags::Attribute_Primary_MovementSpeed]().GetNumericValue(SamAttributeSet));
 }
 
 UAbilitySystemComponent* ASamCharacterBase::GetAbilitySystemComponent() const
@@ -88,22 +88,23 @@ UAbilitySystemComponent* ASamCharacterBase::GetAbilitySystemComponent() const
 
 void ASamCharacterBase::OnMovementSpeedAttributeChanged(const FOnAttributeChangeData& Data)
 {
-	SetMovementSpeed(Data.NewValue);
+	Auth_SetMovementSpeed(Data.NewValue);
 }
 
-void ASamCharacterBase::SetMovementSpeed(float NewSpeed)
+void ASamCharacterBase::Auth_SetMovementSpeed(float NewSpeed)
 {
+	if(!HasAuthority())	return;
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 	GetCharacterMovement()->MaxAcceleration = NewSpeed;
 }
 
-void ASamCharacterBase::InitDefaultAttributes()
+void ASamCharacterBase::Auth_InitDefaultAttributes()
 {
 	if(!HasAuthority()) return;
 		USamAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClassTag, AbilitySystemComponent);
 }
 
-void ASamCharacterBase::InitDefaultAbilities()
+void ASamCharacterBase::Auth_InitDefaultAbilities()
 {
 	if(!HasAuthority()) return;
 		USamAbilitySystemLibrary::InitializeDefaultAbilities(this, CharacterClassTag, AbilitySystemComponent);

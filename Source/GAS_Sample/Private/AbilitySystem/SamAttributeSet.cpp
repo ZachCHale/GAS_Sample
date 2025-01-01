@@ -96,7 +96,7 @@ void USamAttributeSet::PostExecuteIncomingDamage(const FGameplayEffectModCallbac
 			ASamCharacterBase* SamCharacter = Cast<ASamCharacterBase>(Data.Target.GetAvatarActor());
 			if(SamCharacter != nullptr)
 			{
-				SamCharacter->Die();
+				SamCharacter->Auth_Die();
 			}
 		}
 	}
@@ -118,10 +118,10 @@ void USamAttributeSet::PostExecuteIncomingExp(const FGameplayEffectModCallbackDa
 	int32 NewExp = CurrentExp + LocalIncomingExp;
 	int NewLevel = Player->FindLevelForExp(NewExp);
 	int32 LevelChange = NewLevel-CurrentLevel;
-	Player->AddToExp(LocalIncomingExp);
+	Player->Auth_AddToExp(LocalIncomingExp);
 	if(LevelChange > 0)
 	{
 		//LevelUp
-		Player->AddToLevel(LevelChange);
+		Player->Auth_AddToLevel(LevelChange);
 	}
 }

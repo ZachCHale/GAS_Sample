@@ -24,7 +24,7 @@ class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySyste
 public:
 	ASamCharacterBase();
 	
-	virtual void Die();
+	virtual void Auth_Die();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDeathDelegate;
@@ -65,11 +65,11 @@ protected:
 
 	void OnMovementSpeedAttributeChanged(const FOnAttributeChangeData& Data);
 
-	void SetMovementSpeed(float NewSpeed);
+	void Auth_SetMovementSpeed(float NewSpeed);
 
-	void InitDefaultAttributes();
+	void Auth_InitDefaultAttributes();
 
-	void InitDefaultAbilities();
+	void Auth_InitDefaultAbilities();
 
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag CharacterClassTag;

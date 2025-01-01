@@ -54,8 +54,8 @@ void ASamCharacterPlayer::InitAbilityActorInfo()
 	AttributeSet = SamPS->GetAttributeSet();
 	AbilitySystemComponent->InitAbilityActorInfo(SamPS, this);
 	BindToAttributeChanges();
-	InitDefaultAttributes();
-	InitDefaultAbilities();
+	Auth_InitDefaultAttributes();
+	Auth_InitDefaultAbilities();
 	SamPS->InitWithPlayerCharacter(this);
 	
 	APlayerController* PC = SamPS->GetPlayerController();
@@ -98,16 +98,16 @@ int32 ASamCharacterPlayer::GetTotalExp()
 	return SamPS->GetTotalExp();
 }
 
-void ASamCharacterPlayer::AddToExp(int32 AddedExp)
+void ASamCharacterPlayer::Auth_AddToExp(int32 AddedExp)
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
-	return SamPS->AddToExp(AddedExp);
+	return SamPS->Auth_AddToExp(AddedExp);
 }
 
-void ASamCharacterPlayer::AddToLevel(int32 AddedLevels)
+void ASamCharacterPlayer::Auth_AddToLevel(int32 AddedLevels)
 {
 	ASamPlayerState* SamPS = CastChecked<ASamPlayerState>(GetPlayerState());
-	return SamPS->AddToLevel(AddedLevels);
+	return SamPS->Auth_AddToLevel(AddedLevels);
 }
 
 int32 ASamCharacterPlayer::FindLevelForExp(int32 ExpValue)
@@ -116,7 +116,7 @@ int32 ASamCharacterPlayer::FindLevelForExp(int32 ExpValue)
 	return SamPS->FindLevelForExp(ExpValue);
 }
 
-void ASamCharacterPlayer::Die()
+void ASamCharacterPlayer::Auth_Die()
 {
 	if(!HasAuthority()) return;
 	if(bIsDead) return;
@@ -129,7 +129,7 @@ void ASamCharacterPlayer::Die()
 	MultiCastHandleDeath();
 }
 
-void ASamCharacterPlayer::Revive()
+void ASamCharacterPlayer::Auth_Revive()
 {
 	if(!HasAuthority()) return;
 	bIsDead = false;

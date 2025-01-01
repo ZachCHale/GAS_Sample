@@ -20,7 +20,7 @@ class GAS_SAMPLE_API IExpLevelInterface
 public:
 	virtual int32 GetTotalExp() = 0;
 	virtual int32 GetLevel() = 0;
-	virtual void AddToExp(int32 AddedExp) = 0;
-	virtual void AddToLevel(int32 AddedLevels) = 0;
+	virtual void Auth_AddToExp(int32 AddedExp) = 0;
+	virtual void Auth_AddToLevel(int32 AddedLevels) = 0;
 	virtual int32 FindLevelForExp(int32 ExpValue) = 0;
 };

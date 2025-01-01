@@ -34,7 +34,7 @@ private:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile(const FTransform& ProjectileSpawnTransform, const FGameplayAbilityActivationInfo& ActivationInfo);
+	void Auth_SpawnProjectile(const FTransform& ProjectileSpawnTransform, const FGameplayAbilityActivationInfo& ActivationInfo);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FTransform GetInstigatorTransform();

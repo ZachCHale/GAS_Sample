@@ -46,10 +46,10 @@ void ASamCharacterEnemy::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	if(bIsDead) return;
-	MoveTowardsClosestPlayer();
+	Auth_MoveTowardsClosestPlayer();
 }
 
-void ASamCharacterEnemy::MoveTowardsClosestPlayer()
+void ASamCharacterEnemy::Auth_MoveTowardsClosestPlayer()
 {
 	if(!HasAuthority())
 		return;
@@ -76,8 +76,8 @@ void ASamCharacterEnemy::InitAbilityActorInfo()
 	Super::InitAbilityActorInfo();
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	BindToAttributeChanges();
-	InitDefaultAttributes();
-	InitDefaultAbilities();
+	Auth_InitDefaultAttributes();
+	Auth_InitDefaultAbilities();
 }
 
 

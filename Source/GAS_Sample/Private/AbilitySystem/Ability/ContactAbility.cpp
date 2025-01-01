@@ -19,7 +19,7 @@ void UContactAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	
 }
 
-void UContactAbility::ApplyToActorsInContactRange(const FGameplayAbilityActivationInfo& ActivationInfo)
+void UContactAbility::Auth_ApplyToActorsInContactRange(const FGameplayAbilityActivationInfo& ActivationInfo)
 {
 	bool bIsServer =  HasAuthority(&ActivationInfo);
 	if (!bIsServer) return;
