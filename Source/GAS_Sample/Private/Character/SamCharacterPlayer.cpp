@@ -4,10 +4,7 @@
 #include "Character/SamCharacterPlayer.h"
 
 #include "SamGameplayTags.h"
-#include "SamGameStateBase.h"
-#include "SamLogChannels.h"
 #include "AbilitySystem/SamAbilitySystemComponent.h"
-#include "AbilitySystem/SamAbilitySystemLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -122,8 +119,6 @@ void ASamCharacterPlayer::Auth_Die()
 	if(bIsDead) return;
 	bIsDead = true;
 	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(SamTags::AbilityTags::AbilityTag_ActivateOnDeath);
-	//Don't delete player characters (Encountered inconsistent bugs with deleting the character, spawning a spectator, then setting the view target)
-	//SetLifeSpan(1.f);
 	GetMovementComponent()->StopMovementImmediately();
 	SetActorEnableCollision(false);
 	MultiCastHandleDeath();
@@ -133,7 +128,6 @@ void ASamCharacterPlayer::Auth_Revive()
 {
 	if(!HasAuthority()) return;
 	bIsDead = false;
-	CastChecked<USamAbilitySystemComponent>(AbilitySystemComponent)->TryActivateAbilitiesByDynamicTag(SamTags::AbilityTags::AbilityTag_ActivateOnDeath);
 	SetActorEnableCollision(true);
 	MultiCastHandleRevive();
 }

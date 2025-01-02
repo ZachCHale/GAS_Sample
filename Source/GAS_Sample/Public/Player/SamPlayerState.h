@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
 #include "ExpLevelInterface.h"
+#include "GameplayEffect.h"
 #include "GameplayTagContainer.h"
 
 #include "SamPlayerState.generated.h"
@@ -90,6 +91,9 @@ public:
 	FPlayerStateEventSignature OnAuthUpgradeStateChangedDelegate;
 	FPlayerStateEventSignature OnAuthLobbyStateChangedDelegate;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> FullHealGameplayEffect;
+	
 
 	// Checks if the player has a character (ASamCharacterBase), and if so, checks that it isn't in a dying/dead state
 	bool HasLivingCharacter() const;
@@ -126,7 +130,6 @@ protected:
 
 
 private:
-	//TODO: Might be able to bind to the character directly from the controller. There isn't much reason to do it here anymore.
 	UFUNCTION()
 	void HandleCharacterDeath(ASamCharacterBase* CharacterInstance);
 	UFUNCTION()

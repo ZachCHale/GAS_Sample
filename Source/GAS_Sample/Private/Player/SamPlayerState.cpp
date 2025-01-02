@@ -112,9 +112,10 @@ FPlayerLobbyState* ASamPlayerState::GetPlayerLobbyState()
 void ASamPlayerState::Auth_ReviveCharacter()
 {
 	if(!HasAuthority())return;
+	USamAbilitySystemLibrary::CreateAndApplyGameplayEffectToSelf(this, FullHealGameplayEffect);
 	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
 	PlayerCharacter->Auth_Revive();
-	Cast<ASamPlayerController>(GetPlayerController())->Auth_StopSpectating();
+	//Cast<ASamPlayerController>(GetPlayerController())->Auth_StopSpectating();
 }
 
 void ASamPlayerState::Auth_SubmitUpgradeSelection(FGameplayTag UpgradeTag)
@@ -151,8 +152,6 @@ void ASamPlayerState::Server_StartNewUpgradeState_Implementation()
 {
 	ASamCharacterPlayer* PlayerCharacter = CastChecked<ASamCharacterPlayer>(AbilitySystemComponent->GetAvatarActor());
 	UpgradeState.ResetSelectionState();
-	//TODO: Remove Hardcoded number of upgrades to generate. Add ways to increase this number through gameplay.
-	//UpgradeState.UpgradeChoiceTags = PlayerCharacter->GetCharacterClassDefaultInfo().UpgradeSelectionInfo->GetRandomUpgradeTags(3);
 	if(!HasLivingCharacter())
 	{
 		//TODO: Make sure there are no bugs related to reviving while the character is in the process of dying (hasn't finished fading out and hasn't switched to spectator)
@@ -188,7 +187,6 @@ void ASamPlayerState::Server_StartNewUpgradeState_Implementation()
 	{
 		checkf(UpgradeState.UpgradeChoiceTags.Num()!=0, TEXT("Player somehow was given zero cards to choose from during levelup phase."));
 	}
-
 	
 	Client_StartNewUpgradeState(UpgradeState);
 }
@@ -196,14 +194,6 @@ void ASamPlayerState::Server_StartNewUpgradeState_Implementation()
 void ASamPlayerState::HandleCharacterDeath(ASamCharacterBase* CharacterInstance)
 {
 	OnPlayerCharacterDeathDelegate.Broadcast(this);
-	if(HasAuthority())
-	{
-		if(APlayerController* PC = GetPlayerController())
-		{
-			ASamPlayerController* SamPC = CastChecked<ASamPlayerController>(PC);
-			SamPC->Auth_StartSpectating();
-		}
-	}
 }
 
 void ASamPlayerState::HandleCharacterRevive(ASamCharacterBase* CharacterInstance)

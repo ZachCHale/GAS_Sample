@@ -48,6 +48,17 @@ void ASamPlayerController::Tick(float DeltaSeconds)
 	AdjustCameraDistanceAhead();
 }
 
+void ASamPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	//Bind to character events
+	if(ASamCharacterPlayer* SamChar = Cast<ASamCharacterPlayer>(InPawn))
+	{
+		SamChar->OnReviveDelegate.AddUniqueDynamic(this, &ThisClass::HandleControlledCharacterRevive);
+		SamChar->OnDeathDelegate.AddUniqueDynamic(this, &ThisClass::HandleControlledCharacterDeath);
+	}
+}
+
 void ASamPlayerController::Sever_SendPauseRequest_Implementation()
 {
 	ASamGameStateBase* SamGS = USamAbilitySystemLibrary::GetSamGameStateBase(this);
@@ -228,6 +239,16 @@ USamAbilitySystemComponent* ASamPlayerController::GetASC()
 void ASamPlayerController::HandleViewTargetDeath(ASamCharacterBase* CharacterInstance)
 {
 	Auth_StartSpectating();
+}
+
+void ASamPlayerController::HandleControlledCharacterDeath(ASamCharacterBase* CharacterInstance)
+{
+	Auth_StartSpectating();
+}
+
+void ASamPlayerController::HandleControlledCharacterRevive(ASamCharacterBase* CharacterInstance)
+{
+	Auth_StopSpectating();
 }
 
 

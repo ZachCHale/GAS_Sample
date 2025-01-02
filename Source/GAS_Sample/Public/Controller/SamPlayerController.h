@@ -24,6 +24,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void OnPossess(APawn* InPawn) override;
+
 	void Move(const FInputActionValue& InputActionValue);
 
 	UFUNCTION(BlueprintCallable)
@@ -102,6 +104,12 @@ private:
 
 	UFUNCTION()
 	void HandleViewTargetDeath(ASamCharacterBase* CharacterInstance);
+
+	UFUNCTION()
+	void HandleControlledCharacterDeath(ASamCharacterBase* CharacterInstance);
+
+	UFUNCTION()
+	void HandleControlledCharacterRevive(ASamCharacterBase* CharacterInstance);
 
 	
 
