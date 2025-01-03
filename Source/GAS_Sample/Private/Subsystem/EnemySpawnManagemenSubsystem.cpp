@@ -81,7 +81,7 @@ TStatId UEnemySpawnManagemenSubsystem::GetStatId() const
 
 void UEnemySpawnManagemenSubsystem::StartSpawnAttempt()
 {
-	UCharacterClassDatabase* ClassInfo = USamAbilitySystemLibrary::GetCharacterClassInfo(ScopedWorld);
+	UCharacterClassDatabase* ClassInfo = USamAbilitySystemLibrary::GetCharacterClassDatabase(ScopedWorld);
 	FCharacterClassDefaultInfo DefaultEnemyInfo = ClassInfo->GetClassDefaultInfoFromTag(SamTags::CharacterClass::CharacterClass_Enemy_Default);
 
 	ULevelSpawnPatternInfo* SpawnPatternInfoDA = USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(ScopedWorld);

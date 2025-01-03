@@ -50,6 +50,15 @@ TSubclassOf<UGameplayEffect> UUpgradeCardDatabase::GetEffectFromTag(FGameplayTag
 	return UpgradeCards[UpgradeTag]->UpgradeEffect;
 }
 
+int32 UUpgradeCardDatabase::GetCapForUpgrade(FGameplayTag UpgradeTag)
+{
+	if(!UpgradeCards.Contains(UpgradeTag))
+	{
+		return 0;
+	}
+
+	return UpgradeCards[UpgradeTag]->LevelCap;
+}
 
 
 void UUpgradeCardDatabase::InitData()

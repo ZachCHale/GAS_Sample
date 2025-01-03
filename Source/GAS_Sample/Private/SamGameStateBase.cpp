@@ -361,7 +361,7 @@ void ASamGameStateBase::Auth_ApplyAllPlayerUpgradeSelections()
 		USamAbilitySystemComponent* SamASC = CastChecked<USamAbilitySystemComponent>(SamPS->GetAbilitySystemComponent());
 		FPlayerUpgradeState* UpgradeState = SamPS->GetPlayerUpgradeState();
 		//SamASC->Auth_IncrementUpgradeEffect(UpgradeState->CurrentlySelectedChoice);
-		CardDatabase->ExecuteCard(SamPS, UpgradeState->CurrentlySelectedChoice);
+		CardDatabase->ExecuteCard(SamPS, UpgradeState->CurrentlySelectedCardTag);
 		UpgradeState->ResetSelectionState();
 	}
 	

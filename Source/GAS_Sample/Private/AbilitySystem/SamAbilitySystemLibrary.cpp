@@ -19,7 +19,7 @@
 #include "UI/SamWidgetController.h"
 #include "UI/HUD/SamHUD.h"
 
-UCharacterClassDatabase* USamAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+UCharacterClassDatabase* USamAbilitySystemLibrary::GetCharacterClassDatabase(const UObject* WorldContextObject)
 {
 	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
 	
@@ -34,15 +34,22 @@ ULevelSpawnPatternInfo* USamAbilitySystemLibrary::GetLevelSpawnPatternInfo(const
 	return SamGameMode->LevelSpawnPatternInfo;
 }
 
+UCardDatabase* USamAbilitySystemLibrary::GetCardDatabase(const UObject* WorldContextObject)
+{
+	ASamGameStateBase* SamGS = GetSamGameStateBase(WorldContextObject);
+	if(SamGS == nullptr) return nullptr;
+	return SamGS->CardDatabase;
+}
+
 FCharacterClassDefaultInfo USamAbilitySystemLibrary::GetDefaultInfoForCharacterClass(const UObject* WorldContextObject,
                                                                                      const FGameplayTag CharacterClassTag)
 {
-	return GetCharacterClassInfo(WorldContextObject)->GetClassDefaultInfoFromTag(CharacterClassTag);
+	return GetCharacterClassDatabase(WorldContextObject)->GetClassDefaultInfoFromTag(CharacterClassTag);
 }
 
 void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, FGameplayTag CharacterClassTag, UAbilitySystemComponent* ASC, int32 Level)
 {
-	UCharacterClassDatabase* ClassInfo = GetCharacterClassInfo(WorldContextObject);
+	UCharacterClassDatabase* ClassInfo = GetCharacterClassDatabase(WorldContextObject);
 	if(ClassInfo == nullptr) return;
 	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClassTag];
 
@@ -57,7 +64,7 @@ void USamAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 void USamAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContextObject,
 	FGameplayTag CharacterClassTag, UAbilitySystemComponent* ASC, int32 Level)
 {
-	UCharacterClassDatabase* ClassInfo = GetCharacterClassInfo(WorldContextObject);
+	UCharacterClassDatabase* ClassInfo = GetCharacterClassDatabase(WorldContextObject);
 	if(ClassInfo == nullptr) return;
 	FCharacterClassDefaultInfo DefaultInfo = ClassInfo->ClassDefaultInfo[CharacterClassTag];
 

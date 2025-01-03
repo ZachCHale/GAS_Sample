@@ -27,13 +27,13 @@ struct FPlayerUpgradeState
 	FPlayerUpgradeState()
 	{
 		bIsReady = false;
-		CurrentlySelectedChoice = FGameplayTag();
+		CurrentlySelectedCardTag = FGameplayTag();
 	}
 	void ResetSelectionState()
 	{
 		bIsReady = false;
-		CurrentlySelectedChoice = FGameplayTag();
-		UpgradeChoiceTags.Empty();
+		CurrentlySelectedCardTag = FGameplayTag();
+		DrawnCardTags.Empty();
 	}
 
 	// The player has selected an upgrade.
@@ -42,10 +42,10 @@ struct FPlayerUpgradeState
 
 	// Tags representing the upgrades available to choose from right now.
 	UPROPERTY()
-	TArray<FGameplayTag> UpgradeChoiceTags;
+	TArray<FGameplayTag> DrawnCardTags;
 	// The current upgrade the player has selected.
 	UPROPERTY()
-	FGameplayTag CurrentlySelectedChoice;
+	FGameplayTag CurrentlySelectedCardTag;
 };
 
 USTRUCT()

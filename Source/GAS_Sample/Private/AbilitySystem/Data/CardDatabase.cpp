@@ -12,11 +12,11 @@ void UCardDatabase::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayT
 	IInitCardDisplay::InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
 	
 	// Determine the type of card
-	if(CardTag.MatchesTag(SamTags::ExecCards::ExecCard_Special))
+	if(CardTag.MatchesTag(SamTags::Cards::Card_Special))
 	{
 		CustomCardDatabase->InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
 	}
-	else if(CardTag.MatchesTag(SamTags::ExecCards::ExecCard_Upgrade))
+	else if(CardTag.MatchesTag(SamTags::Cards::Card_Upgrade))
 	{
 		UpgradeCardDatabase->InitializeCardDisplay(TargetPlayer, CardTag, TitleTextBock, IconImage, BodyContainer);
 	}
@@ -26,11 +26,11 @@ void UCardDatabase::InitializeCardDisplay(APlayerState* TargetPlayer, FGameplayT
 void UCardDatabase::ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCardTag)
 {
 	// Determine the type of card
-	if(ExecCardTag.MatchesTag(SamTags::ExecCards::ExecCard_Special))
+	if(ExecCardTag.MatchesTag(SamTags::Cards::Card_Special))
 	{
 		CustomCardDatabase->ExecuteCustomCard(TargetPlayer, ExecCardTag);
 	}
-	else if(ExecCardTag.MatchesTag(SamTags::ExecCards::ExecCard_Upgrade))
+	else if(ExecCardTag.MatchesTag(SamTags::Cards::Card_Upgrade))
 	{
 		UpgradeCardDatabase->ApplyUpgrade(TargetPlayer, ExecCardTag);
 	}

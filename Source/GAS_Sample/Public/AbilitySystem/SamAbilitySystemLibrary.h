@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
+#include "Data/CardDatabase.h"
 #include "Data/CharacterClassDatabase.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SamAbilitySystemLibrary.generated.h"
@@ -29,10 +30,13 @@ class GAS_SAMPLE_API USamAbilitySystemLibrary : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static UCharacterClassDatabase* GetCharacterClassInfo(const UObject* WorldContextObject);
+	static UCharacterClassDatabase* GetCharacterClassDatabase(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static ULevelSpawnPatternInfo* GetLevelSpawnPatternInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static UCardDatabase* GetCardDatabase(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FCharacterClassDefaultInfo GetDefaultInfoForCharacterClass(const UObject* WorldContextObject, const FGameplayTag CharacterClassTag);

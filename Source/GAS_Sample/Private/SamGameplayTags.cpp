@@ -60,15 +60,6 @@ namespace SamTags::Mappings
 	}
 }
 
-namespace SamTags::UpgradeTags
-{
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_MovementSpeed, "Upgrade.MovementSpeed", "Upgrade associated with movement speed increases.")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_AttackSpeed, "Upgrade.AttackSpeed", "Upgrade associated with attack speed increases.")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_DamageScale, "Upgrade.DamageScale", "Upgrade associated with damage scale increases.")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_HealthBoost, "Upgrade.HealthBoost", "Upgrade associated with max health increases.")
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Upgrade_HealthRegen, "Upgrade.HealthRegen", "Upgrade associated with health regen increases.")
-}
-
 namespace SamTags::CharacterClass
 {
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CharacterClass_Enemy_Default, "CharacterClass.Enemy.Default", "Default Enemy Character.")
@@ -81,14 +72,15 @@ namespace SamTags::Levels
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Level_MainMenu, "Level.MainMenu", "Main Menu.")
 }
 
-namespace SamTags::ExecCards
+namespace SamTags::Cards
 {
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Special, "ExecCard.Special", "For special actions, eg: Revive.");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Special_Revive, "ExecCard.Special.Revive", "For special actions, eg: Revive.");
-
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade, "ExecCard.Upgrade", "For applying stat upgrades to a player.");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_Swiftness, "ExecCard.Upgrade.Swiftness", "Simple Move Speed Upgrade");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_Toughness, "ExecCard.Upgrade.Toughness", "Simple Max Health Upgrade");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_HeavyHitter, "ExecCard.Upgrade.HeavyHitter", "Simple Damage Scale Upgrade");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ExecCard_Upgrade_RapidFire, "ExecCard.Upgrade.RapidFire", "Simple Attack Speed Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Special, "Card.Special", "For special actions, eg: Revive.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Special_Revive, "Card.Special.Revive", "Revives the player.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Special_Nothing, "Card.Special.Nothing", "Does nothing. Placeholder if there are no other cards to show.");
+	
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Upgrade, "Card.Upgrade", "For applying stat upgrades to a player.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Upgrade_Swiftness, "Card.Upgrade.Swiftness", "Simple Move Speed Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Upgrade_Toughness, "Card.Upgrade.Toughness", "Simple Max Health Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Upgrade_HeavyHitter, "Card.Upgrade.HeavyHitter", "Simple Damage Scale Upgrade");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Card_Upgrade_RapidFire, "Card.Upgrade.RapidFire", "Simple Attack Speed Upgrade");
 }

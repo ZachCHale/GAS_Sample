@@ -63,15 +63,6 @@ namespace SamTags::Mappings
 	TMap<FGameplayTag, FGameplayTag> GetDamageTypesToResistancesMap();
 }
 
-namespace SamTags::UpgradeTags
-{
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_MovementSpeed);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_AttackSpeed);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_DamageScale);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_HealthBoost);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Upgrade_HealthRegen);
-}
-
 namespace SamTags::CharacterClass
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Enemy_Default);
@@ -84,14 +75,15 @@ namespace SamTags::Levels
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Level_MainMenu);
 }
 
-namespace SamTags::ExecCards
+namespace SamTags::Cards
 {
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Special);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Special_Revive);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Special);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Special_Revive);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Special_Nothing);
 
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_Swiftness);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_Toughness);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_HeavyHitter);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ExecCard_Upgrade_RapidFire);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Upgrade);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Upgrade_Swiftness);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Upgrade_Toughness);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Upgrade_HeavyHitter);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Card_Upgrade_RapidFire);
 }

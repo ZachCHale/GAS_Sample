@@ -32,4 +32,6 @@ public:
 	void ExecuteCard(APlayerState* TargetPlayer, FGameplayTag ExecCardTag);
 
 	TSubclassOf<UGameplayEffect> GetGameplayEffectFromUpgradeTag(FGameplayTag UpgradeTag) const;
+
+	
 };

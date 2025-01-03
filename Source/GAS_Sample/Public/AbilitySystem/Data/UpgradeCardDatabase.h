@@ -40,6 +40,9 @@ public:
 	TSubclassOf<UGameplayEffect> UpgradeEffect;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 LevelCap;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FUpgradeCardStatInfo> StatInfo;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -67,6 +70,8 @@ public:
 	TMap<FGameplayTag, UUpgradeCardInfo*> UpgradeCards;
 
 	TSubclassOf<UGameplayEffect> GetEffectFromTag(FGameplayTag UpgradeTag);
+
+	int32 GetCapForUpgrade(FGameplayTag UpgradeTag);
 
 
 private:
