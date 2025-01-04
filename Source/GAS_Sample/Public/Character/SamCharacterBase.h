@@ -23,6 +23,8 @@ class GAS_SAMPLE_API ASamCharacterBase : public ACharacter, public IAbilitySyste
 
 public:
 	ASamCharacterBase();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	virtual void Auth_Die();
 
@@ -81,4 +83,10 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiCastHandleDeath();
+
+	UPROPERTY(ReplicatedUsing = OnRep_MovementSpeed)
+	float MovementSpeed;
+	
+	UFUNCTION()
+	void OnRep_MovementSpeed() const;
 };

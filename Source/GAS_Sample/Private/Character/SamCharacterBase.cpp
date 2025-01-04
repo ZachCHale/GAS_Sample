@@ -9,10 +9,17 @@
 #include "AbilitySystem/SamAttributeSet.h"
 #include "AbilitySystem/Data/CharacterClassDatabase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ASamCharacterBase::ASamCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
+}
+
+void ASamCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, MovementSpeed);
 }
 
 void ASamCharacterBase::Auth_Die()
@@ -94,8 +101,10 @@ void ASamCharacterBase::OnMovementSpeedAttributeChanged(const FOnAttributeChange
 void ASamCharacterBase::Auth_SetMovementSpeed(float NewSpeed)
 {
 	if(!HasAuthority())	return;
-	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
-	GetCharacterMovement()->MaxAcceleration = NewSpeed;
+	//This variable will get replicated to client, where it will update the client side movment component as well
+	MovementSpeed = NewSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
+	GetCharacterMovement()->MaxAcceleration = MovementSpeed;
 }
 
 void ASamCharacterBase::Auth_InitDefaultAttributes()
@@ -108,6 +117,12 @@ void ASamCharacterBase::Auth_InitDefaultAbilities()
 {
 	if(!HasAuthority()) return;
 		USamAbilitySystemLibrary::InitializeDefaultAbilities(this, CharacterClassTag, AbilitySystemComponent);
+}
+
+void ASamCharacterBase::OnRep_MovementSpeed() const
+{
+	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
+	GetCharacterMovement()->MaxAcceleration = MovementSpeed;
 }
 
 void ASamCharacterBase::MultiCastHandleDeath_Implementation()
